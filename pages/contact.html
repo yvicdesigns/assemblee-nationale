@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nous Contacter – Assemblée Nationale – République du Congo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .contact-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .contact-info-card {
+      background: var(--gris-c);
+      border-radius: 8px;
+      padding: 28px 24px;
+      text-align: center;
+      border-bottom: 4px solid var(--vert);
+    }
+    .contact-info-card:nth-child(2) { border-color: var(--rouge); }
+    .contact-info-card:nth-child(3) { border-color: var(--jaune); }
+    .contact-info-icon { font-size: 2rem; margin-bottom: 14px; }
+    .contact-info-title {
+      font-family: var(--font-h);
+      font-size: 1rem;
+      color: var(--noir);
+      margin-bottom: 10px;
+    }
+    .contact-info-text { font-size: 0.875rem; color: var(--gris-m); line-height: 1.7; }
+    .contact-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 48px;
+    }
+    .map-placeholder {
+      background: var(--gris-b);
+      border-radius: 8px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 2px dashed var(--gris-m);
+      color: var(--gris-m);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 24px;
+    }
+    .map-placeholder span { font-size: 2.5rem; }
+    @media (max-width: 768px) {
+      .contact-info-grid { grid-template-columns: 1fr; }
+      .contact-main-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date"></span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" title="YouTube">YT</a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" title="Facebook">FB</a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live"><a href="#"><span class="live-dot"></span> EN DIRECT</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-overlay"></div>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo">
+      <div class="logo-emblem">
+        <svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="50" r="48" fill="#009A44"/><path d="M50 10 L70 28 L65 65 L50 78 L35 65 L30 28 Z" fill="#FBDE4A" opacity="0.9"/><path d="M50 18 L64 32 L60 62 L50 72 L40 62 L36 32 Z" fill="#DC241F" opacity="0.85"/><circle cx="50" cy="45" r="10" fill="#FFFFFF" opacity="0.9"/><path d="M44 45 L48 49 L57 40" stroke="#009A44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-text__main">ASSEMBLÉE NATIONALE</div>
+        <div class="logo-text__sub">République du Congo</div>
+        <div class="logo-text__devise">Unité – Travail – Progrès</div>
+      </div>
+    </a>
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item"><a href="deputes.html" class="nav-link">Les Députés <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="bureau.html" class="dropdown-link">Le Bureau</a>
+            <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
+            <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="#" class="nav-link">Travaux Parlementaires <span class="arrow">▾</span></a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Coopération <span class="arrow">▾</span></a></li>
+        <li class="nav-item"><a href="role.html" class="nav-link">Découvrir <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="role.html" class="dropdown-link">Rôle de l'Assemblée nationale</a>
+            <a href="histoire.html" class="dropdown-link">Notre histoire</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb">
+      <a href="../index.html">Accueil</a>
+      <span>›</span>
+      <span>Nous contacter</span>
+    </div>
+    <h1 class="page-hero__title">Nous Contacter</h1>
+    <p class="page-hero__sub">Assemblée Nationale de la République du Congo — Brazzaville</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="container">
+
+    <!-- Cartes info -->
+    <div class="contact-info-grid">
+      <div class="contact-info-card">
+        <div class="contact-info-icon">📍</div>
+        <h3 class="contact-info-title">Notre adresse</h3>
+        <p class="contact-info-text">
+          Rond-point de la place de la République (Ex CCF),
+          entre le boulevard Denis SASSOU-NGUESSO
+          et l'Avenue Charles de Gaulle,
+          <strong>Brazzaville, République du Congo</strong>
+        </p>
+      </div>
+      <div class="contact-info-card">
+        <div class="contact-info-icon">📱</div>
+        <h3 class="contact-info-title">Réseaux sociaux</h3>
+        <p class="contact-info-text">
+          <strong>Facebook :</strong> AssembleeNationale.cg<br>
+          <strong>YouTube :</strong> Assemblée Nationale Congo<br><br>
+          Suivez-nous pour les dernières actualités parlementaires.
+        </p>
+      </div>
+      <div class="contact-info-card">
+        <div class="contact-info-icon">📺</div>
+        <h3 class="contact-info-title">Séances en direct</h3>
+        <p class="contact-info-text">
+          Assistez aux séances plénières en streaming sur notre chaîne YouTube officielle.
+          Retrouvez également les archives des débats parlementaires.
+        </p>
+      </div>
+    </div>
+
+    <!-- Formulaire + Carte -->
+    <div class="contact-main-grid">
+
+      <div>
+        <h2 class="section-title">Formulaire de contact</h2>
+        <p style="color: var(--gris-m); margin-bottom: 28px; font-size: 0.9rem;">
+          Vous pouvez nous adresser vos questions, suggestions ou demandes d'information
+          via ce formulaire. Nous vous répondrons dans les meilleurs délais.
+        </p>
+
+        <form class="contact-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nom">Nom <span style="color:var(--rouge)">*</span></label>
+              <input class="form-input" type="text" id="nom" name="nom" placeholder="Votre nom" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prenom">Prénom <span style="color:var(--rouge)">*</span></label>
+              <input class="form-input" type="text" id="prenom" name="prenom" placeholder="Votre prénom" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Adresse e-mail <span style="color:var(--rouge)">*</span></label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="exemple@domaine.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sujet">Sujet <span style="color:var(--rouge)">*</span></label>
+            <input class="form-input" type="text" id="sujet" name="sujet" placeholder="Objet de votre message" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Message <span style="color:var(--rouge)">*</span></label>
+            <textarea class="form-textarea" id="message" name="message" placeholder="Rédigez votre message ici..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-vert" style="padding: 13px 32px; font-size: 0.95rem;">
+            Envoyer le message
+          </button>
+        </form>
+      </div>
+
+      <div>
+        <h2 class="section-title">Notre localisation</h2>
+        <p style="color: var(--gris-m); margin-bottom: 20px; font-size: 0.9rem;">
+          L'Assemblée nationale est située au cœur de Brazzaville, capitale de la République du Congo.
+        </p>
+
+        <div class="map-placeholder">
+          <span>🗺️</span>
+          <strong>Assemblée Nationale</strong>
+          <p>Rond-point de la place de la République<br>Brazzaville, République du Congo</p>
+        </div>
+
+        <div style="margin-top: 28px; padding: 20px; background: var(--gris-c); border-radius: 8px; border-left: 4px solid var(--vert);">
+          <h4 style="font-family: var(--font-h); margin-bottom: 12px; color: var(--noir);">Accès</h4>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+            <li style="font-size: 0.85rem; color: var(--gris-m); display: flex; gap: 8px; align-items: flex-start;">
+              <span>🚗</span> Boulevard Denis SASSOU-NGUESSO
+            </li>
+            <li style="font-size: 0.85rem; color: var(--gris-m); display: flex; gap: 8px; align-items: flex-start;">
+              <span>🚗</span> Avenue Charles de Gaulle
+            </li>
+            <li style="font-size: 0.85rem; color: var(--gris-m); display: flex; gap: 8px; align-items: flex-start;">
+              <span>📍</span> Rond-point de la place de la République (Ex CCF)
+            </li>
+          </ul>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" class="btn btn-vert" style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
+            Facebook
+          </a>
+          <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" class="btn btn-rouge" style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="footer-logo-emblem">🏛️</div>
+            <div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div>
+          </div>
+          <p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p>
+          <div class="footer-address"><span class="footer-address-icon">📍</span><span>Rond-point de la place de la République, Brazzaville, République du Congo</span></div>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Institutions</h4>
+          <ul class="footer-links">
+            <li><a href="https://senat.cg/" target="_blank" rel="noopener">Sénat</a></li>
+            <li><a href="https://presidence.cg/" target="_blank" rel="noopener">Présidence</a></li>
+            <li><a href="https://cour-constitutionnelle.cg/" target="_blank" rel="noopener">Cour Constitutionnelle</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Liens Rapides</h4>
+          <ul class="footer-links">
+            <li><a href="histoire.html">Notre histoire</a></li>
+            <li><a href="role.html">Rôle de l'Assemblée</a></li>
+            <li><a href="contact.html">Nous contacter</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Réseaux sociaux</h4>
+          <div class="footer-social">
+            <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a>
+            <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
+      <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
+    </div>
+  </div>
+</footer>
+
+<button class="scroll-top" title="Haut de page">↑</button>
+<script src="../js/main.js"></script>
+</body>
+</html>

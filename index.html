@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Site officiel de l'Assemblée nationale de la République du Congo. Unité – Travail – Progrès.">
+  <title>Assemblée Nationale – République du Congo | Unité – Travail – Progrès</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Bande tricolore -->
+<div class="tricolor-bar"></div>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date">Lundi 28 avril 2026</span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" title="YouTube">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" title="Facebook">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
+        </a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live">
+        <a href="#" title="Voir les séances en direct">
+          <span class="live-dot"></span>
+          EN DIRECT
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay mobile nav -->
+<div class="nav-overlay"></div>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="container">
+    <!-- Logo -->
+    <a href="index.html" class="site-logo">
+      <div class="logo-emblem">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Écu stylisé -->
+          <ellipse cx="50" cy="50" r="48" fill="#009A44"/>
+          <path d="M50 10 L70 28 L65 65 L50 78 L35 65 L30 28 Z" fill="#FBDE4A" opacity="0.9"/>
+          <path d="M50 18 L64 32 L60 62 L50 72 L40 62 L36 32 Z" fill="#DC241F" opacity="0.85"/>
+          <circle cx="50" cy="45" r="10" fill="#FFFFFF" opacity="0.9"/>
+          <path d="M44 45 L48 49 L57 40" stroke="#009A44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M30 80 Q50 90 70 80" stroke="#FBDE4A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-text__main">ASSEMBLÉE NATIONALE</div>
+        <div class="logo-text__sub">République du Congo</div>
+        <div class="logo-text__devise">Unité – Travail – Progrès</div>
+      </div>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="main-nav" role="navigation" aria-label="Navigation principale">
+      <ul class="nav-list">
+
+        <li class="nav-item">
+          <a href="index.html" class="nav-link">Accueil</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="pages/deputes.html" class="nav-link">
+            Les Députés <span class="arrow">▾</span>
+          </a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Les Députés</div>
+              <a href="pages/bureau.html" class="dropdown-link">Le Bureau</a>
+              <a href="pages/deputes.html" class="dropdown-link">151 Députés siégeant</a>
+              <a href="pages/conference-presidents.html" class="dropdown-link">Conférence des Présidents</a>
+              <a href="pages/groupes-parlementaires.html" class="dropdown-link">Groupes parlementaires</a>
+              <a href="pages/commissions.html" class="dropdown-link">Les Commissions permanentes</a>
+              <a href="pages/contact.html" class="dropdown-link">Contacter son député</a>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Commissions Permanentes</div>
+              <a href="pages/commission-ecofin.html" class="dropdown-link">Économie &amp; Finances</a>
+              <a href="pages/commission-juridique.html" class="dropdown-link">Affaires Juridiques</a>
+              <a href="pages/commission-affaires-etrangeres.html" class="dropdown-link">Affaires Étrangères</a>
+              <a href="pages/commission-defense.html" class="dropdown-link">Défense &amp; Sécurité</a>
+              <a href="pages/commission-education.html" class="dropdown-link">Éducation &amp; Culture</a>
+              <a href="pages/commission-sante.html" class="dropdown-link">Santé &amp; Affaires Sociales</a>
+              <a href="pages/commission-plan.html" class="dropdown-link">Plan &amp; Aménagement</a>
+              <a href="pages/commission-environnement.html" class="dropdown-link">Environnement</a>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#travaux" class="nav-link">
+            Travaux Parlementaires <span class="arrow">▾</span>
+          </a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Agenda</div>
+              <a href="#" class="dropdown-link">Calendrier des sessions</a>
+              <a href="#" class="dropdown-link">Ordre du jour</a>
+              <a href="#" class="dropdown-link">Séances plénières</a>
+              <a href="#" class="dropdown-link">Le Congrès</a>
+              <a href="#" class="dropdown-link">Assister à une séance</a>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Documents</div>
+              <a href="#" class="dropdown-link">Lois votées</a>
+              <a href="#" class="dropdown-link">Textes réglementaires</a>
+              <a href="#" class="dropdown-link">Synthèse des travaux</a>
+              <a href="#" class="dropdown-link">Rapports d'enquêtes</a>
+              <a href="#" class="dropdown-link">Rapports législatifs</a>
+              <a href="#" class="dropdown-link">Journaux des débats</a>
+              <a href="#" class="dropdown-link">Interpellations</a>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            Coopération <span class="arrow">▾</span>
+          </a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <a href="#" class="dropdown-link">Diplomatie parlementaire</a>
+              <a href="#" class="dropdown-link">Groupes d'amitié</a>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="pages/role.html" class="nav-link">
+            Découvrir <span class="arrow">▾</span>
+          </a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <a href="pages/role.html" class="dropdown-link">Rôle de l'Assemblée nationale</a>
+              <a href="pages/histoire.html" class="dropdown-link">Notre histoire</a>
+              <a href="#" class="dropdown-link">Patrimoine</a>
+              <a href="#" class="dropdown-link">Secrétariat général</a>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="pages/contact.html" class="nav-link">Contact</a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <button class="hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ==============================
+     CARROUSEL HERO
+     ============================== -->
+<section class="hero-slider" aria-label="Actualités récentes">
+
+  <div class="slide active">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #0a3d1f 0%, #1a6b36 50%, #0d5a28 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Plénière</span>
+      <h2 class="slide-title">Clôture de la 10ᵉ Session Ordinaire Budgétaire : Un Bilan Positif</h2>
+      <p class="slide-date">📅 30 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #1a0a0a 0%, #5a1a1a 50%, #3d0d0d 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Actualité</span>
+      <h2 class="slide-title">Réorganisation stratégique de deux commissions à l'Assemblée nationale</h2>
+      <p class="slide-date">📅 27 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #0a1a3d 0%, #1a3d6b 50%, #0d2858 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Actualité</span>
+      <h2 class="slide-title">Bilan du quinquennat (2021-2026) : l'Assemblée nationale fait le point</h2>
+      <p class="slide-date">📅 22 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #3d2a00 0%, #6b5000 50%, #4a3a00 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Plénière</span>
+      <h2 class="slide-title">Consolidation des textes législatifs — Session de décembre 2025</h2>
+      <p class="slide-date">📅 20 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #0a2a1a 0%, #1a5a3a 50%, #0d3d28 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Plénière</span>
+      <h2 class="slide-title">Élargissement du cadre législatif dans les domaines de l'environnement, de l'énergie et de la diplomatie</h2>
+      <p class="slide-date">📅 19 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #1a0a2a 0%, #3a1a5a 50%, #28104a 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Plénière</span>
+      <h2 class="slide-title">Séance Plénière à l'Assemblée Nationale — Décembre 2025</h2>
+      <p class="slide-date">📅 16 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background: linear-gradient(135deg, #001a3d 0%, #003a6b 50%, #002858 100%);"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Audience</span>
+      <h2 class="slide-title">La santé au cœur des préoccupations législatives : L'Assemblée Nationale réaffirme son Engagement avec le Fonds Mondial</h2>
+      <p class="slide-date">📅 12 décembre 2025</p>
+    </div>
+  </div>
+
+  <!-- Contrôles -->
+  <div class="slider-dots">
+    <span class="slider-dot active"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+  </div>
+  <div class="slider-controls">
+    <button class="slider-btn prev" aria-label="Précédent">&#8249;</button>
+    <button class="slider-btn next" aria-label="Suivant">&#8250;</button>
+  </div>
+</section>
+
+<!-- ==============================
+     BANDEAU OFFICIEL
+     ============================== -->
+<div class="official-banner">
+  <div class="container">
+    <div class="official-banner__text">
+      <strong>SITE OFFICIEL DE L'ASSEMBLÉE NATIONALE</strong>
+      <span>République du Congo – Unité · Travail · Progrès</span>
+    </div>
+    <a href="#" class="live-btn">
+      <span class="live-dot"></span>
+      EN DIRECT
+    </a>
+  </div>
+</div>
+
+<!-- ==============================
+     PRÉSIDENT
+     ============================== -->
+<section class="president-section" id="presidence">
+  <div class="container">
+    <div class="president-grid">
+      <div class="president-photo">
+        <div class="president-photo__frame">
+          <div class="president-photo__placeholder">🏛️</div>
+        </div>
+      </div>
+      <div class="president-content">
+        <p class="president-role">Président de l'Assemblée Nationale</p>
+        <h2 class="president-name">L'Honorable<br>Isidore MVOUBA</h2>
+        <p class="president-bio">
+          L'Honorable Isidore MVOUBA est le Président de l'Assemblée nationale, réélu le 16 août 2022,
+          lors de la session inaugurale de la 15ᵉ législature, avec 142 voix sur 148 inscrits.
+          Il incarne la continuité institutionnelle et œuvre au renforcement du rôle du pouvoir législatif
+          dans la démocratie congolaise.
+        </p>
+        <ul class="president-facts">
+          <li>Né le 15 avril 1949 à Brazzaville, marié, père de trois enfants</li>
+          <li>Ingénieur en chef des chemins de fer, formé en ex-URSS</li>
+          <li>Président de l'Assemblée nationale depuis le 19 août 2017</li>
+          <li>Ancien Premier Ministre du Congo (2005–2009)</li>
+          <li>Ancien Ministre d'État (2009–2016)</li>
+          <li>Membre du Bureau Politique du Parti Congolais du Travail (PCT)</li>
+        </ul>
+        <a href="pages/presidence.html" class="btn btn-vert">Lire la suite</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     BUREAU
+     ============================== -->
+<section class="bureau-section" id="bureau">
+  <div class="container">
+    <h2 class="section-title">Le Bureau</h2>
+    <p style="color: var(--gris-m); max-width: 680px; margin-bottom: 8px;">
+      Le Bureau a tous les pouvoirs pour diriger les travaux, appliquer et faire appliquer
+      les Règlements de l'Assemblée nationale — 15ᵉ législature.
+    </p>
+
+    <div class="bureau-grid">
+      <div class="bureau-card president">
+        <div class="bureau-avatar">🏛️</div>
+        <p class="bureau-role">Président</p>
+        <p class="bureau-name">Isidore MVOUBA</p>
+      </div>
+      <div class="bureau-card">
+        <div class="bureau-avatar">👤</div>
+        <p class="bureau-role">1ᵉʳ Vice-président</p>
+        <p class="bureau-name">Léon Alfred OPIMBAT</p>
+      </div>
+      <div class="bureau-card">
+        <div class="bureau-avatar">👤</div>
+        <p class="bureau-role">2ᵉ Vice-président</p>
+        <p class="bureau-name">Roland BOUITY VIAUDO</p>
+      </div>
+      <div class="bureau-card">
+        <div class="bureau-avatar">👤</div>
+        <p class="bureau-role">1ᵉʳ Secrétaire</p>
+        <p class="bureau-name">Fernand SABAYE</p>
+      </div>
+      <div class="bureau-card">
+        <div class="bureau-avatar">👤</div>
+        <p class="bureau-role">2ᵉ Secrétaire</p>
+        <p class="bureau-name">KIGNOUMBI KIA MBOUNGOU</p>
+      </div>
+      <div class="bureau-card">
+        <div class="bureau-avatar">👤</div>
+        <p class="bureau-role">1ᵉʳ Questeur</p>
+        <p class="bureau-name">Abel Joël OWASSA</p>
+      </div>
+      <div class="bureau-card">
+        <div class="bureau-avatar">👤</div>
+        <p class="bureau-role">2ᵉ Questeur</p>
+        <p class="bureau-name">Destinée DOUKAGA</p>
+      </div>
+    </div>
+
+    <a href="pages/bureau.html" class="btn btn-outline">Lire la suite</a>
+  </div>
+</section>
+
+<!-- ==============================
+     DÉPUTÉS & COMPOSITION
+     ============================== -->
+<section class="deputes-section" id="deputes">
+  <div class="container">
+    <div class="deputes-content">
+      <div>
+        <h2 class="section-title">Les Députés</h2>
+        <p style="color: var(--gris-m); line-height: 1.8; margin-bottom: 20px;">
+          151 députés ont été élus au suffrage universel direct, pour cinq (5) ans.
+          Chaque député est élu dans une circonscription électorale au scrutin uninominal
+          majoritaire à deux tours.
+        </p>
+        <a href="pages/deputes.html" class="btn btn-vert">Voir les 151 députés</a>
+      </div>
+      <div class="deputes-stats">
+        <div class="stat-card">
+          <div class="stat-num">151</div>
+          <div class="stat-label">Députés élus</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">5</div>
+          <div class="stat-label">Ans de mandat</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Commissions permanentes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">15ᵉ</div>
+          <div class="stat-label">Législature en cours</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     COMPOSITION & FONCTIONNEMENT
+     ============================== -->
+<section class="composition-section" id="composition">
+  <div class="container">
+    <h2 class="section-title">Composition de l'Assemblée</h2>
+    <div class="composition-grid">
+      <div>
+        <h3 class="composition-group__title">Organes directeurs</h3>
+        <ul class="composition-list">
+          <li><a href="pages/bureau.html">Le Bureau</a></li>
+          <li><a href="#">La Conférence des Présidents</a></li>
+        </ul>
+
+        <h3 class="composition-group__title" style="margin-top: 28px;">Fonctionnement – Sessions</h3>
+        <ul class="composition-list">
+          <li><a href="#">Les sessions</a></li>
+          <li><a href="#">Les séances plénières</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="composition-group__title">Organes internes</h3>
+        <ul class="composition-list">
+          <li><a href="pages/commissions.html">Les Commissions permanentes</a></li>
+          <li><a href="#">Les Groupes parlementaires</a></li>
+          <li><a href="#">Les Commissions Ad hoc</a></li>
+          <li><a href="#">Les Commissions d'enquête et de contrôle</a></li>
+          <li><a href="#">Le Comité de Coordination</a></li>
+          <li><a href="#">Le Secrétariat Général</a></li>
+        </ul>
+
+        <h3 class="composition-group__title" style="margin-top: 28px;">Contrôle du gouvernement</h3>
+        <ul class="composition-list">
+          <li><a href="#">Les interpellations</a></li>
+          <li><a href="#">Les questions (écrites, orales, d'actualité)</a></li>
+          <li><a href="#">Les auditions en commission</a></li>
+          <li><a href="#">Les enquêtes parlementaires</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     COMMISSIONS PERMANENTES
+     ============================== -->
+<section class="commissions-section" id="commissions">
+  <div class="container">
+    <h2 class="section-title centered">Les Commissions Permanentes</h2>
+    <p style="text-align: center; color: var(--gris-m); margin-bottom: 8px;">
+      8 commissions spécialisées au service du travail législatif
+    </p>
+
+    <div class="commissions-grid">
+      <a href="pages/commission-ecofin.html" class="commission-card">
+        <div class="commission-icon">💰</div>
+        <p class="commission-name">Économie, Finances et Contrôle de l'Exécution du Budget</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-juridique.html" class="commission-card">
+        <div class="commission-icon">⚖️</div>
+        <p class="commission-name">Affaires Juridiques et Administratives, Décentralisation et Contrôle des Lois</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-affaires-etrangeres.html" class="commission-card">
+        <div class="commission-icon">🌍</div>
+        <p class="commission-name">Affaires Étrangères, Coopération et Congolais de l'Étranger</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-defense.html" class="commission-card">
+        <div class="commission-icon">🛡️</div>
+        <p class="commission-name">Défense et Sécurité</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-education.html" class="commission-card">
+        <div class="commission-icon">🎓</div>
+        <p class="commission-name">Éducation, Culture, Sciences et Technologie</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-sante.html" class="commission-card">
+        <div class="commission-icon">🏥</div>
+        <p class="commission-name">Santé, Affaires Sociales, Familles et Genre</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-plan.html" class="commission-card">
+        <div class="commission-icon">🏗️</div>
+        <p class="commission-name">Plan, Aménagement du Territoire, Infrastructures et Développement Local</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+      <a href="pages/commission-environnement.html" class="commission-card">
+        <div class="commission-icon">🌿</div>
+        <p class="commission-name">Environnement, Sécurité Alimentaire et Développement Durable</p>
+        <span class="commission-link">Voir la commission →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     AGENDA / COUNTDOWN
+     ============================== -->
+<section class="agenda-section" id="agenda">
+  <div class="container">
+    <h2 class="section-title">Agenda Institutionnel</h2>
+    <p style="color: rgba(255,255,255,0.6); margin-bottom: 8px;">Prochaines sessions et événements parlementaires</p>
+
+    <div class="agenda-grid">
+      <div class="agenda-card">
+        <p class="agenda-date">📅 Mardi 08 Octobre 2024</p>
+        <h3 class="agenda-title">Conférence des Présidents</h3>
+        <p class="agenda-desc">
+          Examen et adoption du dossier de la (7ème) session ordinaire (Budgétaire)
+          du 15 octobre au 23 décembre.
+        </p>
+        <div class="countdown" id="countdown1">
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Jours</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Heures</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Min</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Sec</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agenda-card">
+        <p class="agenda-date">📅 Mardi 15 Octobre 2024</p>
+        <h3 class="agenda-title">Ouverture de la 7ᵉ Session Ordinaire (Budgétaire)</h3>
+        <p class="agenda-desc">
+          Ouverture solennelle de la (7ème) session ordinaire (budgétaire)
+          du 15 octobre au 23 décembre 2024.
+        </p>
+        <div class="countdown" id="countdown2">
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Jours</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Heures</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Min</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num">00</span>
+            <span class="countdown-label">Sec</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     ACTUALITÉS
+     ============================== -->
+<section class="news-section" id="actualites">
+  <div class="container">
+    <h2 class="section-title">Actualités</h2>
+
+    <!-- Filtres -->
+    <div class="news-filters" role="group" aria-label="Filtrer par catégorie">
+      <button class="filter-btn active" data-cat="tout">Tout</button>
+      <button class="filter-btn" data-cat="actualite">Actualité</button>
+      <button class="filter-btn" data-cat="audience">Audience</button>
+      <button class="filter-btn" data-cat="audition">Audition</button>
+      <button class="filter-btn" data-cat="conference-presidents">Conférence des Présidents</button>
+      <button class="filter-btn" data-cat="congres">Congrès</button>
+      <button class="filter-btn" data-cat="interpellation">Interpellation</button>
+      <button class="filter-btn" data-cat="pleniere">Plénière</button>
+      <button class="filter-btn" data-cat="presidence">Présidence</button>
+    </div>
+
+    <!-- Grille actualités -->
+    <div class="news-grid">
+
+      <article class="news-card" data-cat="pleniere">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a3d1f,#1a6b36);">
+          <span>🏛️</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-vert">Plénière</span>
+            <span class="news-card__date">30 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">Clôture de la 10ᵉ Session Ordinaire Budgétaire : Un Bilan Positif</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="actualite">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a1a3d,#1a3d6b);">
+          <span>📋</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-gris">Actualité</span>
+            <span class="news-card__date">27 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">Réorganisation stratégique de deux commissions à l'Assemblée nationale</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="actualite">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#3d2a00,#6b5000);">
+          <span>📊</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-gris">Actualité</span>
+            <span class="news-card__date">22 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">Bilan du quinquennat (2021-2026) : l'Assemblée nationale fait le point</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="pleniere">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#1a0a2a,#3a1a5a);">
+          <span>📜</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-vert">Plénière</span>
+            <span class="news-card__date">20 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">CONSOLIDATION DES TEXTES LÉGISLATIFS</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="pleniere">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a2a1a,#1a5a3a);">
+          <span>🌱</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-vert">Plénière</span>
+            <span class="news-card__date">19 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">Élargissement du cadre législatif dans les domaines de l'environnement, de l'énergie et de la diplomatie</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="pleniere">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#001a3d,#003a6b);">
+          <span>🎙️</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-vert">Plénière</span>
+            <span class="news-card__date">17 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">Séance Plénière à l'Assemblée Nationale</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="audience">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#1a0a0a,#4a1a1a);">
+          <span>🏥</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Audience</span>
+            <span class="news-card__date">14 déc. 2025</span>
+          </div>
+          <h3 class="news-card__title">La santé au cœur des préoccupations législatives : Engagement avec le Fonds Mondial</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="actualite">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#2a0a3d,#5a1a6b);">
+          <span>🎉</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-gris">Actualité</span>
+            <span class="news-card__date">29 nov. 2025</span>
+          </div>
+          <h3 class="news-card__title">67ᵉ anniversaire de la Proclamation de la République du Congo</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="audience">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a1a0a,#1a4a1a);">
+          <span>🤝</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Audience</span>
+            <span class="news-card__date">21 nov. 2025</span>
+          </div>
+          <h3 class="news-card__title">Le Président du Parlement de la CEMAC présente le bilan à l'Assemblée nationale</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="audience">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#1a1a0a,#4a4a1a);">
+          <span>🏢</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Audience</span>
+            <span class="news-card__date">13 nov. 2025</span>
+          </div>
+          <h3 class="news-card__title">Rencontre au Sommet : L'Assemblée nationale et le CSLC renforcent leur collaboration</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="audience">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#001a2a,#003a5a);">
+          <span>🌐</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Audience</span>
+            <span class="news-card__date">29 oct. 2025</span>
+          </div>
+          <h3 class="news-card__title">Renforcement de la Coopération PNUD-République du Congo</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="audience">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a1a3d,#1a3d6b);">
+          <span>📱</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Audience</span>
+            <span class="news-card__date">6 oct. 2025</span>
+          </div>
+          <h3 class="news-card__title">L'Honorable Président reçoit le DG de MTN Congo : échange autour du numérique</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="pleniere">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#1a0a0a,#5a1a00);">
+          <span>📢</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-vert">Plénière</span>
+            <span class="news-card__date">27 fév. 2025</span>
+          </div>
+          <h3 class="news-card__title">Questions d'actualité et séance plénière sous la férule de l'Honorable Isidore MVOUBA</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="actualite">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a2a0a,#1a5a1a);">
+          <span>🗓️</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-gris">Actualité</span>
+            <span class="news-card__date">27 jan. 2025</span>
+          </div>
+          <h3 class="news-card__title">Assemblée nationale : préparatifs de la 8ᵉ Session ordinaire administrative</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="conference-presidents">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#2a0a1a,#5a1a3a);">
+          <span>🏛️</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-jaune">Conférence</span>
+            <span class="news-card__date">8 oct. 2024</span>
+          </div>
+          <h3 class="news-card__title">CONFÉRENCE DES PRÉSIDENTS – Octobre 2024</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="interpellation">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#3d0a0a,#6b1a1a);">
+          <span>⚡</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Interpellation</span>
+            <span class="news-card__date">20 oct. 2024</span>
+          </div>
+          <h3 class="news-card__title">Tensions autour des secteurs du carburant, de l'électricité et de la gestion des déchets</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="congres">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#0a0a3d,#1a1a6b);">
+          <span>⚖️</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-gris">Congrès</span>
+            <span class="news-card__date">3 mai 2024</span>
+          </div>
+          <h3 class="news-card__title">Prestation de serment des membres de la Haute Cour de Justice</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-cat="interpellation">
+        <div class="news-card__img" style="background: linear-gradient(135deg,#1a2a0a,#3a5a1a);">
+          <span>🎤</span>
+        </div>
+        <div class="news-card__body">
+          <div class="news-card__meta">
+            <span class="badge badge-rouge">Interpellation</span>
+            <span class="news-card__date">28 juin 2023</span>
+          </div>
+          <h3 class="news-card__title">Question d'actualité : interpellation du Ministre de la jeunesse, Hugues NGOUOLONDELE</h3>
+          <a href="#" class="news-card__link">Lire la suite →</a>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="news-more">
+      <a href="#" class="btn btn-outline">Voir toutes les actualités</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     FOOTER
+     ============================== -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Colonne 1 : Brand -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="footer-logo-emblem">🏛️</div>
+            <div class="footer-logo-text">
+              <strong>ASSEMBLÉE NATIONALE</strong>
+              <span>République du Congo</span>
+            </div>
+          </div>
+          <p class="footer-desc">
+            L'Assemblée nationale est la chambre basse du Parlement de la République du Congo.
+            Elle vote la loi, contrôle l'action du Gouvernement et participe à la défense
+            des causes nationales.
+          </p>
+          <div class="footer-address">
+            <span class="footer-address-icon">📍</span>
+            <span>Rond-point de la place de la République (Ex CCF), entre le boulevard Denis SASSOU-NGUESSO et l'Avenue Charles de Gaulle, Brazzaville, République du Congo</span>
+          </div>
+          <div class="footer-social" style="margin-top: 20px;">
+            <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" title="YouTube">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" title="Facebook">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Colonne 2 : Liens utiles -->
+        <div class="footer-col">
+          <h4 class="footer-col__title">Institutions Partenaires</h4>
+          <ul class="footer-links">
+            <li><a href="https://senat.cg/" target="_blank" rel="noopener">Sénat de la République</a></li>
+            <li><a href="https://presidence.cg/" target="_blank" rel="noopener">Présidence de la République</a></li>
+            <li><a href="https://cour-constitutionnelle.cg/" target="_blank" rel="noopener">Cour Constitutionnelle</a></li>
+            <li><a href="https://apf-francophonie.org/" target="_blank" rel="noopener">Assemblée Parlementaire de la Francophonie</a></li>
+            <li><a href="https://www.an-ecofin-cg.net/" target="_blank" rel="noopener">Commission ÉCOFIN</a></li>
+          </ul>
+        </div>
+
+        <!-- Colonne 3 : Liens rapides -->
+        <div class="footer-col">
+          <h4 class="footer-col__title">Liens Rapides</h4>
+          <ul class="footer-links">
+            <li><a href="pages/histoire.html">Notre histoire</a></li>
+            <li><a href="pages/role.html">Rôle de l'Assemblée nationale</a></li>
+            <li><a href="#">Lois votées</a></li>
+            <li><a href="#">Bienvenue à l'Assemblée</a></li>
+            <li><a href="#">Diplomatie Parlementaire</a></li>
+            <li><a href="#">Séances plénières</a></li>
+            <li><a href="#">Journaux des débats</a></li>
+          </ul>
+        </div>
+
+        <!-- Colonne 4 : Navigation -->
+        <div class="footer-col">
+          <h4 class="footer-col__title">Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="pages/presidence.html">Le Président</a></li>
+            <li><a href="pages/bureau.html">Le Bureau</a></li>
+            <li><a href="pages/deputes.html">Les Députés</a></li>
+            <li><a href="pages/commissions.html">Les Commissions</a></li>
+            <li><a href="pages/role.html">Découvrir l'Assemblée</a></li>
+            <li><a href="pages/contact.html">Nous contacter</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés. — Unité · Travail · Progrès</p>
+      <div class="footer-tricolor">
+        <span class="ft-v"></span>
+        <span class="ft-j"></span>
+        <span class="ft-r"></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button class="scroll-top" title="Haut de page" aria-label="Retour en haut">↑</button>
+
+<script src="js/main.js"></script>
+</body>
+</html>
