@@ -10,67 +10,138 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    .bureau-members {
+    /* ── Grille principale ── */
+    .bureau-page-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
       margin: 40px 0;
     }
-    .member-card {
-      background: var(--blanc);
-      border-radius: 10px;
+
+    /* ── Carte membre ── */
+    .bpg-card {
+      background: #fff;
+      border-radius: 12px;
       overflow: hidden;
-      border: 1px solid var(--gris-b);
-      box-shadow: 0 2px 12px var(--ombre);
-      transition: all var(--trans);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      transition: transform .22s ease, box-shadow .22s ease;
     }
-    .member-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px var(--ombre); }
-    .member-card__header {
-      padding: 28px 20px 20px;
-      text-align: center;
-      background: linear-gradient(135deg, var(--gris-c), var(--gris-b));
+    .bpg-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 36px rgba(0,0,0,.13);
+    }
+
+    /* ── Photo ── */
+    .bpg-photo {
+      height: 280px;
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      overflow: hidden;
       position: relative;
     }
-    .member-card.president-card .member-card__header {
-      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    .bpg-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
     }
-    .member-card__header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 4px;
-      background: var(--vert);
-    }
-    .member-card.president-card .member-card__header::after {
-      background: linear-gradient(to right, var(--vert), var(--jaune), var(--rouge));
-    }
-    .member-avatar {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: var(--blanc);
-      border: 4px solid var(--blanc);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    .bpg-no-photo {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
-      margin: 0 auto 14px;
+      font-size: 5rem;
+      color: #94a3b8;
     }
-    .member-card.president-card .member-avatar { border-color: var(--jaune); }
-    .member-card__body { padding: 16px 20px 20px; text-align: center; }
-    .member-role {
-      font-size: 0.7rem;
+
+    /* ── Corps de carte ── */
+    .bpg-body {
+      padding: 18px 20px 22px;
+      border-top: 3px solid #009A44;
+    }
+    .bpg-role {
+      display: inline-block;
+      font-size: .68rem;
       font-weight: 700;
       letter-spacing: 1.2px;
       text-transform: uppercase;
-      color: var(--vert);
-      margin-bottom: 8px;
+      color: #fff;
+      background: #009A44;
+      border-radius: 4px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
     }
-    .member-name {
-      font-family: var(--font-h);
-      font-size: 1rem;
-      color: var(--noir);
+    .bpg-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
       line-height: 1.3;
+      color: #1a1a2e;
+      margin: 0;
+    }
+
+    /* ── Carte Président (format horizontal pleine largeur) ── */
+    .bpg-president {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      align-items: stretch;
+    }
+    .bpg-president .bpg-photo {
+      height: 100%;
+      min-height: 340px;
+    }
+    .bpg-president .bpg-photo::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(to right, #009A44, #FBDE4A, #DC241F);
+    }
+    .bpg-president .bpg-body {
+      padding: 40px 44px;
+      border-top: none;
+      border-left: 4px solid #FBDE4A;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+    }
+    .bpg-president .bpg-role {
+      font-size: .75rem;
+      padding: 5px 14px;
+      margin-bottom: 16px;
+    }
+    .bpg-president .bpg-name {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .bpg-tricolor {
+      display: flex;
+      height: 5px;
+      width: 64px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bpg-tricolor span { flex: 1; }
+    .bpg-tricolor span:nth-child(1) { background: #009A44; }
+    .bpg-tricolor span:nth-child(2) { background: #FBDE4A; }
+    .bpg-tricolor span:nth-child(3) { background: #DC241F; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .bureau-page-grid { grid-template-columns: repeat(2, 1fr); }
+      .bpg-president { grid-template-columns: 240px 1fr; }
+      .bpg-president .bpg-body { padding: 28px 28px; }
+      .bpg-president .bpg-name { font-size: 1.5rem; }
+    }
+    @media (max-width: 600px) {
+      .bureau-page-grid { grid-template-columns: 1fr; }
+      .bpg-president { grid-template-columns: 1fr; }
+      .bpg-president .bpg-photo { min-height: 260px; height: 260px; }
+      .bpg-president .bpg-body { border-left: none; border-top: 4px solid #FBDE4A; padding: 24px; }
     }
   </style>
 </head>
@@ -172,7 +243,7 @@
           </ul>
         </div>
 
-        <div class="bureau-grid bureau-members">
+        <div class="bureau-page-grid">
           <div class="member-card president-card">
             <div class="member-card__header">
               <div class="member-avatar">🏛️</div>

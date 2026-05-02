@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadCMSSlides(),
     loadCMSActualites(),
     loadCMSBureau(),
+    loadCMSBureauPage(),
     loadCMSPresident(),
     loadCMSParametres(),
   ]);
@@ -164,6 +165,38 @@ async function loadCMSBureau() {
       <p class="bureau-role">${esc(m.role_title)}</p>
       <p class="bureau-name">${esc(m.name)}</p>
     </div>`).join('');
+}
+
+// =========================================
+// BUREAU — PAGE DÉDIÉE (grandes photos)
+// =========================================
+async function loadCMSBureauPage() {
+  const grid = document.querySelector('.bureau-page-grid');
+  if (!grid) return;
+
+  const { data, error } = await cms
+    .from('bureau')
+    .select('*')
+    .eq('active', true)
+    .order('display_order');
+
+  if (error || !data?.length) return;
+
+  grid.innerHTML = data.map((m, i) => {
+    const isPresident = i === 0;
+    const photoHTML = m.photo_url
+      ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy">`
+      : `<div class="bpg-no-photo">👤</div>`;
+    return `
+      <div class="bpg-card${isPresident ? ' bpg-president' : ''}">
+        <div class="bpg-photo">${photoHTML}</div>
+        <div class="bpg-body">
+          <span class="bpg-role">${esc(m.role_title)}</span>
+          <h3 class="bpg-name">${esc(m.name)}</h3>
+          ${isPresident ? '<div class="bpg-tricolor"><span></span><span></span><span></span></div>' : ''}
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // =========================================
