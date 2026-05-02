@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — CMS Assemblée Nationale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- ======== SIDEBAR ======== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🏛️</div>
+      <div class="sidebar-logo-text">
+        <strong>ASSEMBLÉE NATIONALE</strong>
+        <span>Panneau d'administration</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Tableau de bord</div>
+      <button class="nav-item active" data-section="accueil">
+        <span class="nav-icon">🏠</span> Accueil
+      </button>
+
+      <div class="sidebar-section-label">Contenu du site</div>
+      <button class="nav-item" data-section="slides">
+        <span class="nav-icon">🖼️</span> Carrousel / Bannières
+        <span class="nav-badge" id="badge-slides">—</span>
+      </button>
+      <button class="nav-item" data-section="actualites">
+        <span class="nav-icon">📰</span> Actualités
+        <span class="nav-badge" id="badge-actualites">—</span>
+      </button>
+      <button class="nav-item" data-section="agenda">
+        <span class="nav-icon">📅</span> Agenda
+        <span class="nav-badge" id="badge-agenda">—</span>
+      </button>
+
+      <div class="sidebar-section-label">Personnalités</div>
+      <button class="nav-item" data-section="president">
+        <span class="nav-icon">👤</span> Le Président
+      </button>
+      <button class="nav-item" data-section="bureau">
+        <span class="nav-icon">👥</span> Le Bureau
+        <span class="nav-badge" id="badge-bureau">—</span>
+      </button>
+
+      <div class="sidebar-section-label">Configuration</div>
+      <button class="nav-item" data-section="parametres">
+        <span class="nav-icon">⚙️</span> Paramètres généraux
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="userInitial">A</div>
+        <div class="user-info">
+          <span class="user-email" id="userEmail">admin@site.cg</span>
+        </div>
+        <button class="btn-logout" id="btnLogout" title="Déconnexion">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======== MAIN ======== -->
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1 class="page-title" id="pageTitle">Tableau de bord</h1>
+      <div class="header-actions">
+        <a href="../index.html" target="_blank" class="btn btn-ghost">
+          🔗 Voir le site
+        </a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ==== ACCUEIL ==== -->
+      <div id="section-accueil" class="section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🖼️</div>
+            <div><div class="stat-num" id="stat-slides">—</div><div class="stat-label">Slides carrousel</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📰</div>
+            <div><div class="stat-num" id="stat-actualites">—</div><div class="stat-label">Actualités</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div><div class="stat-num" id="stat-bureau">—</div><div class="stat-label">Membres du Bureau</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div><div class="stat-num" id="stat-agenda">—</div><div class="stat-label">Événements agenda</div></div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🚀 Guide rapide</div>
+          </div>
+          <div style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 16px;">
+            <div style="background:var(--primary-light);border-radius:8px;padding:18px;border-left:4px solid var(--primary);">
+              <div style="font-size:1.5rem;margin-bottom:8px;">🖼️</div>
+              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Changer le carrousel</h4>
+              <p style="font-size:.8rem;color:var(--muted);">Ajoutez, modifiez ou supprimez les images de la bannière principale.</p>
+            </div>
+            <div style="background:#eff6ff;border-radius:8px;padding:18px;border-left:4px solid #3b82f6;">
+              <div style="font-size:1.5rem;margin-bottom:8px;">📰</div>
+              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Publier une actualité</h4>
+              <p style="font-size:.8rem;color:var(--muted);">Créez et gérez les articles d'actualité avec photos.</p>
+            </div>
+            <div style="background:#fffbeb;border-radius:8px;padding:18px;border-left:4px solid #f59e0b;">
+              <div style="font-size:1.5rem;margin-bottom:8px;">👤</div>
+              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Mettre à jour le Président</h4>
+              <p style="font-size:.8rem;color:var(--muted);">Changez la photo et la biographie du Président.</p>
+            </div>
+            <div style="background:#fef2f2;border-radius:8px;padding:18px;border-left:4px solid var(--danger);">
+              <div style="font-size:1.5rem;margin-bottom:8px;">👥</div>
+              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Gérer le Bureau</h4>
+              <p style="font-size:.8rem;color:var(--muted);">Mettez à jour les membres et photos du Bureau.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== SLIDES ==== -->
+      <div id="section-slides" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🖼️ Carrousel — Slides</div>
+            <button class="btn btn-primary" onclick="openModal('slide')">+ Ajouter un slide</button>
+          </div>
+          <div id="slides-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== ACTUALITÉS ==== -->
+      <div id="section-actualites" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">📰 Actualités</div>
+            <button class="btn btn-primary" onclick="openModal('actu')">+ Ajouter une actualité</button>
+          </div>
+          <div id="actualites-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== PRÉSIDENT ==== -->
+      <div id="section-president" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">👤 Le Président</div>
+            <button class="btn btn-primary" onclick="savePresident()">💾 Enregistrer</button>
+          </div>
+          <div style="padding: 24px;">
+            <div class="president-form-grid">
+              <!-- Photo -->
+              <div>
+                <label class="field-label">Photo officielle</label>
+                <div class="president-photo-upload upload-zone" id="presidentPhotoZone" onclick="document.getElementById('presidentPhotoFile').click()">
+                  <div class="upload-placeholder" id="presidentPhotoPlaceholder">
+                    <div class="up-icon">📷</div>
+                    <p>Cliquer pour changer la photo</p>
+                    <small>JPG, PNG – max 5 Mo</small>
+                  </div>
+                  <img id="presidentPhotoPreview" class="upload-preview-img" style="display:none;width:100%;height:100%;object-fit:cover;" alt="Photo Président">
+                  <div class="upload-overlay">📷 Changer la photo</div>
+                  <div class="upload-spinner" id="presidentPhotoSpinner"><div class="spinner"></div></div>
+                </div>
+                <input type="file" id="presidentPhotoFile" accept="image/*" hidden onchange="handlePhotoUpload('president_photo', 'presidentPhotoFile', 'presidentPhotoPreview', 'presidentPhotoPlaceholder', 'presidentPhotoSpinner')">
+                <input type="hidden" id="president_photo" value="">
+              </div>
+
+              <!-- Infos -->
+              <div>
+                <div class="field-group">
+                  <label class="field-label">Nom complet <span class="req">*</span></label>
+                  <input class="field-input" id="president_name" placeholder="L'Honorable Isidore MVOUBA">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Titre / Rôle</label>
+                  <input class="field-input" id="president_role" placeholder="Président de l'Assemblée Nationale">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Biographie</label>
+                  <textarea class="field-textarea" id="president_bio" rows="5" placeholder="Texte de présentation..."></textarea>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Points biographiques</label>
+                  <small style="color:var(--muted);display:block;margin-bottom:8px;">Séparer chaque point par le caractère <code>|</code></small>
+                  <textarea class="field-textarea" id="president_facts" rows="4" placeholder="Né le 15 avril 1949...|Ancien Premier Ministre..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== BUREAU ==== -->
+      <div id="section-bureau" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">👥 Le Bureau — Membres</div>
+            <button class="btn btn-primary" onclick="openModal('bureau')">+ Ajouter un membre</button>
+          </div>
+          <div id="bureau-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== AGENDA ==== -->
+      <div id="section-agenda" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">📅 Agenda institutionnel</div>
+            <button class="btn btn-primary" onclick="openModal('agenda')">+ Ajouter un événement</button>
+          </div>
+          <div id="agenda-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== PARAMÈTRES ==== -->
+      <div id="section-parametres" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">⚙️ Paramètres généraux</div>
+            <button class="btn btn-primary" onclick="saveParametres()">💾 Enregistrer</button>
+          </div>
+          <div class="param-list">
+            <div class="param-item">
+              <div>
+                <div class="param-key">Adresse du site</div>
+                <small style="color:var(--muted);font-size:.75rem;">Affiché dans le footer</small>
+              </div>
+              <textarea class="field-textarea" id="param-site_address" rows="2" style="height:auto;"></textarea>
+            </div>
+            <div class="param-item">
+              <div>
+                <div class="param-key">Lien streaming (EN DIRECT)</div>
+                <small style="color:var(--muted);font-size:.75rem;">URL YouTube ou autre</small>
+              </div>
+              <input class="field-input" id="param-live_url" placeholder="https://youtube.com/...">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+</div><!-- /admin-wrapper -->
+
+<!-- ======== MODAL ======== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Ajouter</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" id="modalSaveBtn" onclick="saveModal()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TOAST ======== -->
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
