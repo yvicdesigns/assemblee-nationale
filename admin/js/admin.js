@@ -549,6 +549,7 @@ async function saveModal() {
         date_text:     getValue('m_date_text'),
         image_url:     getValue('m_image_url') || null,
         display_order: parseInt(getValue('m_display_order')) || 0,
+        ...(editingId ? {} : { active: true }),
       };
     } else if (modalType === 'actu') {
       table = 'actualites';
@@ -561,6 +562,7 @@ async function saveModal() {
         category:  getValue('m_category'),
         image_url: getValue('m_image_url') || null,
         content:   getValue('m_content') || null,
+        ...(editingId ? {} : { active: true }),
       };
     } else if (modalType === 'bureau') {
       table = 'bureau';
@@ -582,6 +584,7 @@ async function saveModal() {
         title,
         date_text:   date,
         description: getValue('m_description') || null,
+        ...(editingId ? {} : { active: true }),
       };
     }
 
@@ -595,7 +598,10 @@ async function saveModal() {
     if (error) throw error;
 
     document.getElementById('modalOverlay').classList.remove('open');
-    toast(`✓ ${editingId ? 'Modifié' : 'Ajouté'} avec succès`, 'success');
+    const wasEditing = !!editingId;
+    modalType = null;
+    editingId = null;
+    toast(`✓ ${wasEditing ? 'Modifié' : 'Ajouté'} avec succès`, 'success');
     await loadSection(currentSection);
     await loadStats();
 
@@ -604,8 +610,6 @@ async function saveModal() {
   } finally {
     saveBtn.disabled = false;
     saveBtn.textContent = 'Enregistrer';
-    modalType = null;
-    editingId = null;
   }
 }
 
@@ -678,7 +682,7 @@ function esc(str) {
 }
 function thumbHTML(url) {
   return url
-    ? `<div class="thumb"><img src="${esc(url)}" alt="thumb"></div>`
+    ? `<div class="thumb"><img src="${esc(url)}" alt="thumb" loading="lazy"></div>`
     : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;">🖼️</div>`;
 }
 function loadingHTML() {
