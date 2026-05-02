@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Le Président – Isidore MVOUBA – Assemblée Nationale</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
@@ -89,14 +90,14 @@
         <!-- Photo + présentation -->
         <div style="display: grid; grid-template-columns: 220px 1fr; gap: 36px; margin-bottom: 40px; align-items: start;">
           <div>
-            <div style="background: linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius: 8px; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; font-size: 4rem; border: 4px solid var(--jaune); position: relative; overflow: hidden;">
+            <div class="president-photo__frame" style="background: linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius: 8px; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; font-size: 4rem; border: 4px solid var(--jaune); position: relative; overflow: hidden;">
               🏛️
               <div style="position:absolute;bottom:0;left:0;right:0;height:5px;background:linear-gradient(to right,#009A44,#FBDE4A,#DC241F);"></div>
             </div>
           </div>
           <div>
-            <p style="font-size:0.8rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--vert);margin-bottom:8px;">Président de l'Assemblée Nationale</p>
-            <h2 style="font-family:var(--font-h);font-size:2rem;margin-bottom:16px;line-height:1.2;">L'Honorable<br>Isidore MVOUBA</h2>
+            <p class="president-role" style="font-size:0.8rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--vert);margin-bottom:8px;">Président de l'Assemblée Nationale</p>
+            <h2 class="president-name" style="font-family:var(--font-h);font-size:2rem;margin-bottom:16px;line-height:1.2;">L'Honorable Isidore MVOUBA</h2>
 
             <div style="display:flex;flex-direction:column;gap:8px;padding:16px;background:var(--gris-c);border-left:4px solid var(--vert);border-radius:0 4px 4px 0;margin-bottom:20px;">
               <div style="display:flex;gap:10px;font-size:0.875rem;color:var(--gris-m);">
@@ -232,6 +233,8 @@
 </footer>
 
 <button class="scroll-top" title="Haut de page">↑</button>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
+<script src="../js/cms.js"></script>
 </body>
 </html>
