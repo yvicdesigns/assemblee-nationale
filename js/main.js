@@ -51,43 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---- Carrousel Hero ----
-  const slides    = document.querySelectorAll('.slide');
-  const dots      = document.querySelectorAll('.slider-dot');
-  const prevBtn   = document.querySelector('.slider-btn.prev');
-  const nextBtn   = document.querySelector('.slider-btn.next');
-  let current     = 0;
-  let autoTimer   = null;
-
-  function goTo(idx) {
-    slides[current]?.classList.remove('active');
-    dots[current]?.classList.remove('active');
-    current = (idx + slides.length) % slides.length;
-    slides[current]?.classList.add('active');
-    dots[current]?.classList.add('active');
-  }
-
-  function startAuto() {
-    clearInterval(autoTimer);
-    autoTimer = setInterval(() => goTo(current + 1), 5000);
-  }
-
-  if (slides.length > 0) {
-    goTo(0);
-    startAuto();
-    prevBtn?.addEventListener('click', () => { goTo(current - 1); startAuto(); });
-    nextBtn?.addEventListener('click', () => { goTo(current + 1); startAuto(); });
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => { goTo(i); startAuto(); });
-    });
-    // Swipe
-    let touchStartX = 0;
-    const slider = document.querySelector('.hero-slider');
-    slider?.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    slider?.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(dx) > 50) { dx < 0 ? goTo(current + 1) : goTo(current - 1); startAuto(); }
-    });
-  }
+  initSlider();
 
   // ---- Filtres actualités ----
   const filterBtns = document.querySelectorAll('.filter-btn');
@@ -188,6 +152,61 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+// =========================================
+// SLIDER — fonction globale réutilisable
+// Appelée par main.js au load ET par cms.js
+// après remplacement dynamique des slides.
+// =========================================
+let _sliderTimer = null;
+
+function initSlider() {
+  const slides  = document.querySelectorAll('.slide');
+  const dots    = document.querySelectorAll('.slider-dot');
+  let current   = 0;
+
+  if (!slides.length) return;
+
+  // Cloner les boutons pour supprimer les anciens listeners
+  const prevOld = document.querySelector('.slider-btn.prev');
+  const nextOld = document.querySelector('.slider-btn.next');
+  const prevBtn = prevOld?.cloneNode(true);
+  const nextBtn = nextOld?.cloneNode(true);
+  if (prevOld && prevBtn) prevOld.parentNode.replaceChild(prevBtn, prevOld);
+  if (nextOld && nextBtn) nextOld.parentNode.replaceChild(nextBtn, nextOld);
+
+  function goTo(idx) {
+    slides[current]?.classList.remove('active');
+    dots[current]?.classList.remove('active');
+    current = (idx + slides.length) % slides.length;
+    slides[current]?.classList.add('active');
+    dots[current]?.classList.add('active');
+  }
+
+  function startAuto() {
+    clearInterval(_sliderTimer);
+    _sliderTimer = setInterval(() => goTo(current + 1), 5000);
+  }
+
+  goTo(0);
+  startAuto();
+
+  prevBtn?.addEventListener('click', () => { goTo(current - 1); startAuto(); });
+  nextBtn?.addEventListener('click', () => { goTo(current + 1); startAuto(); });
+  dots.forEach((dot, i) => dot.addEventListener('click', () => { goTo(i); startAuto(); }));
+
+  // Swipe tactile — remplacer la zone pour éviter les doublons
+  const sliderEl = document.querySelector('.hero-slider');
+  if (sliderEl && !sliderEl.dataset.swipeReady) {
+    sliderEl.dataset.swipeReady = '1';
+    let touchStartX = 0;
+    sliderEl.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    sliderEl.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(dx) > 50) { dx < 0 ? goTo(current + 1) : goTo(current - 1); startAuto(); }
+    });
+  }
+}
 
 // Inject CSS animation
 const style = document.createElement('style');

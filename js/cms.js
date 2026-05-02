@@ -158,7 +158,7 @@ async function loadCMSBureau() {
     <div class="bureau-card${i === 0 ? ' president' : ''}">
       <div class="bureau-avatar">
         ${m.photo_url
-          ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+          ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
           : '👤'}
       </div>
       <p class="bureau-role">${esc(m.role_title)}</p>
