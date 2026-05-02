@@ -242,6 +242,32 @@
             <button class="btn btn-primary" onclick="saveParametres()">💾 Enregistrer</button>
           </div>
           <div class="param-list">
+
+            <!-- LOGO -->
+            <div class="param-item" style="align-items:flex-start;gap:24px;">
+              <div style="min-width:180px;">
+                <div class="param-key">Logo du site</div>
+                <small style="color:var(--muted);font-size:.75rem;">Remplace l'emblème dans l'entête du site public. PNG ou SVG avec fond transparent recommandé.</small>
+              </div>
+              <div>
+                <div class="upload-zone" id="logoUploadZone" onclick="document.getElementById('logoFile').click()"
+                  style="width:220px;height:90px;cursor:pointer;justify-content:center;align-items:center;">
+                  <div class="upload-placeholder" id="logoPlaceholder" style="text-align:center;">
+                    <div class="up-icon" style="font-size:1.4rem;">🖼️</div>
+                    <p style="font-size:.78rem;">Cliquer pour uploader</p>
+                    <small>PNG, SVG — fond transparent</small>
+                  </div>
+                  <img id="logoPreview" class="upload-preview-img"
+                    style="display:none;max-height:76px;width:auto;object-fit:contain;padding:8px;" alt="Logo">
+                  <div class="upload-overlay" style="font-size:.75rem;">📷 Changer le logo</div>
+                  <div class="upload-spinner" id="logoSpinner"><div class="spinner"></div></div>
+                </div>
+                <input type="file" id="logoFile" accept="image/*,.svg" hidden onchange="handleLogoUpload()">
+                <input type="hidden" id="param-site_logo" value="">
+              </div>
+            </div>
+
+            <!-- ADRESSE -->
             <div class="param-item">
               <div>
                 <div class="param-key">Adresse du site</div>
@@ -249,6 +275,8 @@
               </div>
               <textarea class="field-textarea" id="param-site_address" rows="2" style="height:auto;"></textarea>
             </div>
+
+            <!-- STREAMING -->
             <div class="param-item">
               <div>
                 <div class="param-key">Lien streaming (EN DIRECT)</div>
@@ -256,6 +284,7 @@
               </div>
               <input class="field-input" id="param-live_url" placeholder="https://youtube.com/...">
             </div>
+
           </div>
         </div>
       </div>

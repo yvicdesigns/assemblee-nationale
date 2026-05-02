@@ -289,15 +289,52 @@ async function savePresident() {
 // PARAMÈTRES
 // =========================================
 async function loadParametres() {
-  const { data } = await db.from('parametres').select('*').in('key', ['site_address', 'live_url']);
+  const { data } = await db.from('parametres').select('*').in('key', ['site_address', 'live_url', 'site_logo']);
   data?.forEach(p => {
     const el = document.getElementById(`param-${p.key}`);
     if (el) el.value = p.value || '';
+    if (p.key === 'site_logo' && p.value) {
+      const preview = document.getElementById('logoPreview');
+      if (preview) {
+        preview.src = p.value;
+        preview.style.display = 'block';
+        document.getElementById('logoPlaceholder').style.display = 'none';
+        document.getElementById('logoUploadZone').classList.add('has-image');
+      }
+    }
   });
 }
 
+async function handleLogoUpload() {
+  const file = document.getElementById('logoFile')?.files[0];
+  if (!file) return;
+
+  document.getElementById('logoSpinner').classList.add('show');
+  try {
+    const ext = file.name.split('.').pop();
+    const path = `general/logo-${Date.now()}.${ext}`;
+    const { error } = await db.storage.from(BUCKET).upload(path, file, { upsert: true });
+    if (error) throw error;
+
+    const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
+    document.getElementById('param-site_logo').value = publicUrl;
+
+    const preview = document.getElementById('logoPreview');
+    preview.src = publicUrl;
+    preview.style.display = 'block';
+    document.getElementById('logoPlaceholder').style.display = 'none';
+    document.getElementById('logoUploadZone').classList.add('has-image');
+
+    toast('✓ Logo uploadé — cliquez sur Enregistrer pour sauvegarder', 'success');
+  } catch (err) {
+    toast('Erreur upload logo : ' + err.message, 'error');
+  } finally {
+    document.getElementById('logoSpinner').classList.remove('show');
+  }
+}
+
 async function saveParametres() {
-  const keys = ['site_address', 'live_url'];
+  const keys = ['site_address', 'live_url', 'site_logo'];
   const updates = keys.map(key => {
     const el = document.getElementById(`param-${key}`);
     return { key, value: el ? el.value : '', updated_at: new Date().toISOString() };

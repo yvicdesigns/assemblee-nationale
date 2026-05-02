@@ -212,7 +212,7 @@ async function loadCMSParametres() {
   const { data, error } = await cms
     .from('parametres')
     .select('*')
-    .in('key', ['site_address', 'live_url']);
+    .in('key', ['site_address', 'live_url', 'site_logo']);
 
   if (error || !data?.length) return;
 
@@ -231,6 +231,13 @@ async function loadCMSParametres() {
       el.target = '_blank';
       el.rel = 'noopener';
     });
+  }
+
+  if (map.site_logo) {
+    const emblem = document.querySelector('.logo-emblem');
+    if (emblem) {
+      emblem.innerHTML = `<img src="${esc(map.site_logo)}" alt="Logo Assemblée Nationale" style="height:64px;width:auto;object-fit:contain;">`;
+    }
   }
 }
 
