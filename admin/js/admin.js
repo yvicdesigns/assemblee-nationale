@@ -12,7 +12,9 @@ const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentSection = 'accueil';
 let modalType = null;
 let editingId = null;
+let quillEditor = null;
 const CATEGORIES_ACTU = ['Actualité','Audience','Audition','Conférence des Présidents','Congrès','Interpellation','Plénière','Présidence'];
+const CATEGORIES_ART  = ['Publication','Communiqué','Discours','Rapport','Plénière','Actualité','Audition','Présidence'];
 
 // =========================================
 // INIT
@@ -42,12 +44,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 // NAVIGATION
 // =========================================
 const TITLES = {
-  accueil: '🏠 Tableau de bord',
-  slides: '🖼️ Carrousel — Bannières',
+  accueil:    '🏠 Tableau de bord',
+  articles:   '✍️ Articles & Publications',
+  'cms-pages':'📄 Pages personnalisées',
+  slides:     '🖼️ Carrousel — Bannières',
   actualites: '📰 Actualités',
-  president: '👤 Le Président',
-  bureau: '👥 Le Bureau',
-  agenda: '📅 Agenda',
+  president:  '👤 Le Président',
+  bureau:     '👥 Le Bureau',
+  agenda:     '📅 Agenda',
   parametres: '⚙️ Paramètres généraux',
 };
 
@@ -62,13 +66,15 @@ function goTo(name) {
 
 async function loadSection(name) {
   switch (name) {
-    case 'accueil':    await loadStats(); break;
-    case 'slides':     await loadSlides(); break;
-    case 'actualites': await loadActualites(); break;
-    case 'bureau':     await loadBureau(); break;
-    case 'president':  await loadPresident(); break;
-    case 'agenda':     await loadAgenda(); break;
-    case 'parametres': await loadParametres(); break;
+    case 'accueil':     await loadStats(); break;
+    case 'articles':    await loadArticles(); break;
+    case 'cms-pages':   await loadCmsPages(); break;
+    case 'slides':      await loadSlides(); break;
+    case 'actualites':  await loadActualites(); break;
+    case 'bureau':      await loadBureau(); break;
+    case 'president':   await loadPresident(); break;
+    case 'agenda':      await loadAgenda(); break;
+    case 'parametres':  await loadParametres(); break;
   }
 }
 
@@ -76,11 +82,13 @@ async function loadSection(name) {
 // STATS
 // =========================================
 async function loadStats() {
-  const [s, a, b, ag] = await Promise.all([
+  const [s, a, b, ag, art, pg] = await Promise.all([
     db.from('slides').select('id', { count: 'exact', head: true }),
     db.from('actualites').select('id', { count: 'exact', head: true }),
     db.from('bureau').select('id', { count: 'exact', head: true }),
     db.from('agenda').select('id', { count: 'exact', head: true }),
+    db.from('articles').select('id', { count: 'exact', head: true }),
+    db.from('pages').select('id', { count: 'exact', head: true }),
   ]);
   const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n ?? '—'; };
   set('stat-slides', s.count);
@@ -91,6 +99,82 @@ async function loadStats() {
   set('badge-actualites', a.count);
   set('badge-bureau', b.count);
   set('badge-agenda', ag.count);
+  set('badge-articles', art.count);
+  set('badge-cms-pages', pg.count);
+}
+
+// =========================================
+// ARTICLES
+// =========================================
+async function loadArticles() {
+  const el = document.getElementById('articles-list');
+  el.innerHTML = loadingHTML();
+  const { data, error } = await db.from('articles').select('*').order('created_at', { ascending: false });
+  if (error) { el.innerHTML = errorHTML(error.message); return; }
+  if (!data.length) { el.innerHTML = emptyHTML('Aucun article. Créez votre premier article.'); return; }
+
+  el.innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        <th style="width:72px">Image</th>
+        <th>Titre</th>
+        <th>Catégorie</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody>
+        ${data.map(a => `
+          <tr>
+            <td>${thumbHTML(a.featured_image)}</td>
+            <td style="max-width:240px;">
+              <span style="font-weight:600;font-size:.85rem;">${esc(a.title)}</span><br>
+              <span style="font-size:.75rem;color:var(--muted);">/${esc(a.slug)}</span>
+            </td>
+            <td><span class="badge badge-blue">${esc(a.category)}</span></td>
+            <td><span class="status-badge ${a.status === 'published' ? 'status-published' : 'status-draft'}">${a.status === 'published' ? '✓ Publié' : '✎ Brouillon'}</span></td>
+            <td style="font-size:.8rem;color:var(--muted);">${esc(a.published_at ? a.published_at.slice(0,10) : '—')}</td>
+            <td><div class="actions">
+              <button class="btn btn-ghost btn-icon btn-sm" onclick="openModal('article','${a.id}')" title="Modifier">✏️</button>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="deleteItem('articles','${a.id}')" title="Supprimer">🗑️</button>
+            </div></td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// =========================================
+// PAGES CMS
+// =========================================
+async function loadCmsPages() {
+  const el = document.getElementById('cms-pages-list');
+  el.innerHTML = loadingHTML();
+  const { data, error } = await db.from('pages').select('*').order('created_at', { ascending: false });
+  if (error) { el.innerHTML = errorHTML(error.message); return; }
+  if (!data.length) { el.innerHTML = emptyHTML('Aucune page. Créez votre première page.'); return; }
+
+  el.innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        <th>Titre</th>
+        <th>Slug (URL)</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody>
+        ${data.map(p => `
+          <tr>
+            <td style="font-weight:600;">${esc(p.title)}</td>
+            <td><code style="font-size:.78rem;background:var(--bg);padding:2px 8px;border-radius:4px;">pages/page.html?slug=${esc(p.slug)}</code></td>
+            <td><span class="status-badge ${p.status === 'published' ? 'status-published' : 'status-draft'}">${p.status === 'published' ? '✓ Publiée' : '✎ Brouillon'}</span></td>
+            <td><div class="actions">
+              <button class="btn btn-ghost btn-icon btn-sm" onclick="openModal('cms-page','${p.id}')" title="Modifier">✏️</button>
+              <a href="../pages/page.html?slug=${esc(p.slug)}" target="_blank" class="btn btn-ghost btn-icon btn-sm" title="Voir">🔗</a>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="deleteItem('pages','${p.id}')" title="Supprimer">🗑️</button>
+            </div></td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
 }
 
 // =========================================
@@ -361,19 +445,134 @@ async function openModal(type, id = null) {
 
   const overlay = document.getElementById('modalOverlay');
   document.getElementById('modalTitle').textContent = id ? `Modifier — ${type}` : `Ajouter — ${type}`;
+  document.getElementById('modalTitle').textContent = id
+    ? `Modifier — ${type === 'cms-page' ? 'Page' : type}`
+    : `Créer — ${type === 'cms-page' ? 'Page' : type}`;
   document.getElementById('modalBody').innerHTML = getModalForm(type, data);
   overlay.classList.add('open');
+
+  // Init Quill for article/page types
+  if (type === 'article' || type === 'cms-page') {
+    quillEditor = new Quill('#quill-editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          ['blockquote'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link', 'image'],
+          [{ align: [] }],
+          ['clean'],
+        ],
+      },
+    });
+    if (data?.content) quillEditor.root.innerHTML = data.content;
+  } else {
+    quillEditor = null;
+  }
 
   // Setup file input handlers after DOM insertion
   setupModalUploads(type, data);
 }
 
 function getModalForm(type, data) {
-  if (type === 'slide') return slideForm(data);
-  if (type === 'actu')  return actuForm(data);
-  if (type === 'bureau') return bureauForm(data);
-  if (type === 'agenda') return agendaForm(data);
+  if (type === 'slide')    return slideForm(data);
+  if (type === 'actu')     return actuForm(data);
+  if (type === 'bureau')   return bureauForm(data);
+  if (type === 'agenda')   return agendaForm(data);
+  if (type === 'article')  return articleForm(data);
+  if (type === 'cms-page') return cmsPageForm(data);
   return '';
+}
+
+function articleForm(d) {
+  return `
+    <div class="field-group">
+      <label class="field-label">Image à la une</label>
+      <div class="upload-zone ${d?.featured_image ? 'has-image' : ''}" id="mUploadZone" onclick="document.getElementById('mFileInput').click()" style="cursor:pointer;height:160px;">
+        <div class="upload-placeholder" id="mUploadPlaceholder" ${d?.featured_image ? 'style="display:none"' : ''}>
+          <div class="up-icon">🖼️</div><p>Image principale de l'article</p><small>Recommandé : 1200×630 px</small>
+        </div>
+        ${d?.featured_image ? `<img src="${esc(d.featured_image)}" class="upload-preview-img" id="mPreviewImg" alt="Preview">` : `<img id="mPreviewImg" class="upload-preview-img" style="display:none" alt="Preview">`}
+        <div class="upload-overlay">📷 Changer l'image</div>
+        <div class="upload-spinner" id="mSpinner"><div class="spinner"></div></div>
+      </div>
+      <input type="file" id="mFileInput" accept="image/*" hidden>
+      <input type="hidden" id="m_featured_image" value="${esc(d?.featured_image || '')}">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Titre <span class="req">*</span></label>
+      <input class="field-input" id="m_title" value="${esc(d?.title || '')}" placeholder="Titre de l'article..." oninput="autoSlug('m_title','m_slug')">
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Slug (URL) <span class="req">*</span></label>
+        <div class="slug-row">
+          <span class="slug-prefix">article.html?slug=</span>
+          <input class="field-input" id="m_slug" value="${esc(d?.slug || '')}" placeholder="mon-article" style="flex:1;">
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Catégorie</label>
+        <select class="field-select" id="m_category">
+          ${CATEGORIES_ART.map(c => `<option value="${c}" ${d?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Auteur</label>
+        <input class="field-input" id="m_author" value="${esc(d?.author || 'Assemblée Nationale')}" placeholder="Assemblée Nationale">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Statut</label>
+        <select class="field-select" id="m_status">
+          <option value="draft" ${d?.status !== 'published' ? 'selected' : ''}>✎ Brouillon</option>
+          <option value="published" ${d?.status === 'published' ? 'selected' : ''}>✓ Publié</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Résumé (extrait)</label>
+      <textarea class="field-textarea" id="m_excerpt" rows="2" placeholder="Court résumé affiché dans les listes...">${esc(d?.excerpt || '')}</textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Contenu de l'article <span class="req">*</span></label>
+      <div id="quill-editor" style="background:#fff;">${d?.content || ''}</div>
+    </div>`;
+}
+
+function cmsPageForm(d) {
+  return `
+    <div class="field-group">
+      <label class="field-label">Titre de la page <span class="req">*</span></label>
+      <input class="field-input" id="m_title" value="${esc(d?.title || '')}" placeholder="Titre de la page..." oninput="autoSlug('m_title','m_slug')">
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Slug (URL) <span class="req">*</span></label>
+        <div class="slug-row">
+          <span class="slug-prefix">page.html?slug=</span>
+          <input class="field-input" id="m_slug" value="${esc(d?.slug || '')}" placeholder="ma-page" style="flex:1;">
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Statut</label>
+        <select class="field-select" id="m_status">
+          <option value="draft" ${d?.status !== 'published' ? 'selected' : ''}>✎ Brouillon</option>
+          <option value="published" ${d?.status === 'published' ? 'selected' : ''}>✓ Publiée</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Description SEO</label>
+      <input class="field-input" id="m_meta_description" value="${esc(d?.meta_description || '')}" placeholder="Résumé pour les moteurs de recherche...">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Contenu de la page <span class="req">*</span></label>
+      <div id="quill-editor" style="background:#fff;">${d?.content || ''}</div>
+    </div>`;
 }
 
 function slideForm(d) {
@@ -525,7 +724,9 @@ function setupModalUploads(type, data) {
 
       const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
 
-      const urlField = document.getElementById(type === 'bureau' ? 'm_photo_url' : 'm_image_url');
+      const urlField = document.getElementById(
+        type === 'bureau' ? 'm_photo_url' : type === 'article' ? 'm_featured_image' : 'm_image_url'
+      );
       if (urlField) urlField.value = publicUrl;
 
       preview.src = publicUrl;
@@ -623,6 +824,37 @@ async function saveModal() {
         description: getValue('m_description') || null,
         ...(editingId ? {} : { active: true }),
       };
+    } else if (modalType === 'article') {
+      table = 'articles';
+      const title = getValue('m_title');
+      const slug  = getValue('m_slug');
+      if (!title || !slug) { toast('Titre et slug obligatoires', 'error'); return; }
+      payload = {
+        title,
+        slug,
+        category:       getValue('m_category'),
+        author:         getValue('m_author') || 'Assemblée Nationale',
+        excerpt:        getValue('m_excerpt') || null,
+        featured_image: getValue('m_featured_image') || null,
+        status:         getValue('m_status'),
+        content:        quillEditor ? quillEditor.root.innerHTML : '',
+        updated_at:     new Date().toISOString(),
+        ...(editingId ? {} : { active: true, published_at: new Date().toISOString() }),
+      };
+    } else if (modalType === 'cms-page') {
+      table = 'pages';
+      const title = getValue('m_title');
+      const slug  = getValue('m_slug');
+      if (!title || !slug) { toast('Titre et slug obligatoires', 'error'); return; }
+      payload = {
+        title,
+        slug,
+        meta_description: getValue('m_meta_description') || null,
+        status:           getValue('m_status'),
+        content:          quillEditor ? quillEditor.root.innerHTML : '',
+        updated_at:       new Date().toISOString(),
+        ...(editingId ? {} : { active: true }),
+      };
     }
 
     let error;
@@ -705,6 +937,16 @@ async function handlePhotoUpload(fieldId, fileInputId, previewId, placeholderId,
 // =========================================
 // HELPERS
 // =========================================
+function autoSlug(titleId, slugId) {
+  const slugEl = document.getElementById(slugId);
+  if (!slugEl || slugEl.dataset.manual === '1') return;
+  const title = document.getElementById(titleId)?.value || '';
+  slugEl.value = title.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+}
+
 function getValue(id) {
   const el = document.getElementById(id);
   return el ? el.value.trim() : '';

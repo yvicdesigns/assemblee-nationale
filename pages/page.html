@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page – Assemblée Nationale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-dyn-content { font-size:1rem; line-height:1.85; color:#334155; }
+    .page-dyn-content h1,.page-dyn-content h2,.page-dyn-content h3 { font-family:'Playfair Display',serif; color:#1a1a2e; margin:28px 0 12px; }
+    .page-dyn-content h2 { font-size:1.5rem; }
+    .page-dyn-content h3 { font-size:1.2rem; }
+    .page-dyn-content p { margin-bottom:16px; }
+    .page-dyn-content ul,.page-dyn-content ol { margin:0 0 16px 24px; }
+    .page-dyn-content li { margin-bottom:6px; }
+    .page-dyn-content img { max-width:100%; border-radius:8px; margin:16px 0; }
+    .page-dyn-content blockquote { border-left:4px solid var(--vert); padding:12px 20px; background:#f0fdf4; border-radius:0 8px 8px 0; margin:20px 0; font-style:italic; color:#166534; }
+    .page-dyn-content a { color:var(--vert); text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date"></span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live"><a href="#"><span class="live-dot"></span> EN DIRECT</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo">
+      <div class="logo-emblem">
+        <svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="50" r="48" fill="#009A44"/><path d="M50 10 L70 28 L65 65 L50 78 L35 65 L30 28 Z" fill="#FBDE4A" opacity="0.9"/><path d="M50 18 L64 32 L60 62 L50 72 L40 62 L36 32 Z" fill="#DC241F" opacity="0.85"/><circle cx="50" cy="45" r="10" fill="#FFFFFF" opacity="0.9"/><path d="M44 45 L48 49 L57 40" stroke="#009A44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-text__main">ASSEMBLÉE NATIONALE</div>
+        <div class="logo-text__sub">République du Congo</div>
+        <div class="logo-text__devise">Unité – Travail – Progrès</div>
+      </div>
+    </a>
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item"><a href="blog.html" class="nav-link">Publications</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-hero" id="pageHero" style="display:none;">
+  <div class="container">
+    <div class="page-hero__breadcrumb">
+      <a href="../index.html">Accueil</a><span>›</span><span id="pageBreadcrumb">Page</span>
+    </div>
+    <h1 class="page-hero__title" id="pageHeroTitle"></h1>
+  </div>
+</div>
+
+<div class="page-content" style="padding-top:48px;">
+  <div class="container">
+    <div class="page-layout">
+      <main class="page-main" id="pageMain">
+        <div style="text-align:center;padding:60px 20px;color:#64748b;">
+          <div style="font-size:2rem;margin-bottom:12px;">⏳</div>
+          <p>Chargement…</p>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2026 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
+      <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
+    </div>
+  </div>
+</footer>
+
+<button class="scroll-top" title="Haut de page">↑</button>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/main.js"></script>
+<script src="../js/cms.js"></script>
+<script>
+const SB_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const main = document.getElementById('pageMain');
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+
+  if (!slug) { show404(main); return; }
+
+  const sb = supabase.createClient(SB_URL, SB_KEY);
+  const { data, error } = await sb
+    .from('pages')
+    .select('*')
+    .eq('slug', slug)
+    .eq('active', true)
+    .single();
+
+  if (error || !data) { show404(main); return; }
+
+  document.title = data.title + ' – Assemblée Nationale';
+  document.getElementById('pageHeroTitle').textContent = data.title;
+  document.getElementById('pageBreadcrumb').textContent = data.title;
+  document.getElementById('pageHero').style.display = '';
+
+  if (data.meta_description) {
+    const m = document.createElement('meta');
+    m.name = 'description'; m.content = data.meta_description;
+    document.head.appendChild(m);
+  }
+
+  main.innerHTML = `<div class="page-prose page-dyn-content">${data.content || '<p>Contenu non disponible.</p>'}</div>`;
+});
+
+function show404(el) {
+  el.innerHTML = `
+    <div style="text-align:center;padding:60px 20px;">
+      <div style="font-size:3rem;margin-bottom:16px;">🔍</div>
+      <h2>Page introuvable</h2>
+      <p style="color:#64748b;margin:12px 0 24px;">Cette page n'existe pas ou a été supprimée.</p>
+      <a href="../index.html" style="color:var(--vert);font-weight:600;">← Retour à l'accueil</a>
+    </div>`;
+}
+</script>
+</body>
+</html>
