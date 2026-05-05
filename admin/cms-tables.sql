@@ -20,13 +20,26 @@ CREATE TABLE IF NOT EXISTS articles (
   updated_at     TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Index pour recherche rapide par slug et filtrage
+CREATE INDEX IF NOT EXISTS articles_slug_idx   ON articles (slug);
+CREATE INDEX IF NOT EXISTS articles_status_idx ON articles (status, active);
+
 ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read articles" ON articles
-  FOR SELECT USING (true);
+-- Visiteurs anonymes : uniquement les articles publiés et actifs
+CREATE POLICY "Anon read published articles" ON articles
+  FOR SELECT TO anon
+  USING (status = 'published' AND active = true);
 
+-- Admin connecté : tout lire (y compris brouillons)
+CREATE POLICY "Auth read all articles" ON articles
+  FOR SELECT TO authenticated
+  USING (true);
+
+-- Admin connecté : créer, modifier, supprimer
 CREATE POLICY "Auth manage articles" ON articles
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL TO authenticated
+  USING (true);
 
 -- ── Pages personnalisées ─────────────────────────────
 CREATE TABLE IF NOT EXISTS pages (
@@ -41,10 +54,42 @@ CREATE TABLE IF NOT EXISTS pages (
   updated_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Index pour recherche rapide par slug
+CREATE INDEX IF NOT EXISTS pages_slug_idx   ON pages (slug);
+CREATE INDEX IF NOT EXISTS pages_status_idx ON pages (status, active);
+
 ALTER TABLE pages ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read pages" ON pages
-  FOR SELECT USING (true);
+-- Visiteurs anonymes : uniquement les pages publiées et actives
+CREATE POLICY "Anon read published pages" ON pages
+  FOR SELECT TO anon
+  USING (status = 'published' AND active = true);
 
+-- Admin connecté : tout lire
+CREATE POLICY "Auth read all pages" ON pages
+  FOR SELECT TO authenticated
+  USING (true);
+
+-- Admin connecté : créer, modifier, supprimer
 CREATE POLICY "Auth manage pages" ON pages
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL TO authenticated
+  USING (true);
+
+-- ── Trigger updated_at automatique ──────────────────
+-- Met à jour updated_at à chaque modification de ligne
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER articles_updated_at
+  BEFORE UPDATE ON articles
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER pages_updated_at
+  BEFORE UPDATE ON pages
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
