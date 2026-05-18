@@ -183,6 +183,8 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   max-width: none !important;
   max-height: none !important;
   display: block;
+  transform: scale(0.78);
+  transform-origin: left center;
 }
 
 /* =========================================
