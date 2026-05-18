@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page introuvable — Assemblée Nationale</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; }
+    .tricolor { height: 4px; display: flex; }
+    .tricolor span { flex: 1; }
+    .tricolor .v { background: #009A44; }
+    .tricolor .j { background: #FBDE4A; }
+    .tricolor .r { background: #DC241F; }
+    .wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .card { max-width: 520px; width: 100%; text-align: center; }
+    .num { font-family: 'Playfair Display', serif; font-size: 7rem; font-weight: 700; color: #009A44; line-height: 1; margin-bottom: 8px; }
+    .title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #1a1a2e; margin-bottom: 16px; }
+    .text { color: #64748b; line-height: 1.7; margin-bottom: 36px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: #009A44; color: #fff; font-weight: 600; font-size: .95rem; padding: 13px 32px; border-radius: 8px; text-decoration: none; transition: background .2s; }
+    .btn:hover { background: #007a36; }
+    .links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+    .links a { color: #009A44; font-size: .88rem; font-weight: 600; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+    .footer { padding: 20px; text-align: center; font-size: .78rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="tricolor"><span class="v"></span><span class="j"></span><span class="r"></span></div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="num">404</div>
+      <h1 class="title">Page introuvable</h1>
+      <p class="text">La page que vous recherchez n'existe pas ou a été déplacée.<br>Vérifiez l'adresse ou retournez à l'accueil.</p>
+      <a href="/" class="btn">← Retour à l'accueil</a>
+      <div class="links">
+        <a href="/pages/blog.html">Publications</a>
+        <a href="/pages/deputes.html">Les Députés</a>
+        <a href="/pages/contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 Assemblée Nationale de la République du Congo</div>
+</body>
+</html>

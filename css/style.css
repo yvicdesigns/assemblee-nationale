@@ -157,11 +157,11 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
    ========================================= */
 .site-header {
   background: var(--gris-f);
-  padding: 16px 0;
+  padding: 12px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
 }
 .site-header .container {
   display: flex;
@@ -174,41 +174,15 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .site-logo {
   display: flex;
   align-items: center;
-  gap: 14px;
   flex-shrink: 0;
+  text-decoration: none;
 }
-.logo-emblem {
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  background: var(--blanc);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-  border: 3px solid var(--jaune);
-}
-.logo-emblem svg { width: 48px; height: 48px; }
-.logo-text { color: var(--blanc); }
-.logo-text__main {
-  font-family: var(--font-h);
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.5px;
-}
-.logo-text__sub {
-  font-size: 0.7rem;
-  color: var(--jaune);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-top: 2px;
-}
-.logo-text__devise {
-  font-size: 0.65rem;
-  color: rgba(255,255,255,0.6);
-  font-style: italic;
-  margin-top: 3px;
+.site-logo__img {
+  height: 100px !important;
+  width: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block;
 }
 
 /* =========================================
@@ -226,7 +200,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   align-items: center;
   gap: 5px;
   padding: 10px 14px;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.92);
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -235,7 +209,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   transition: all var(--trans);
 }
 .nav-link:hover,
-.nav-item:hover > .nav-link { background: var(--vert); color: var(--blanc); }
+.nav-item:hover > .nav-link { background: rgba(0,0,0,0.18); color: var(--blanc); }
 .nav-link .arrow {
   font-size: 0.65rem;
   transition: transform var(--trans);
@@ -736,8 +710,9 @@ section:nth-child(even) { background: var(--gris-c); }
    SECTION AGENDA / COUNTDOWN
    ========================================= */
 .agenda-section { background: var(--gris-f); color: var(--blanc); }
-.agenda-section .section-title { color: var(--blanc); }
+.agenda-section .section-title { color: var(--noir); }
 .agenda-section .section-title::after { background: var(--jaune); }
+.agenda-section .section-sub { color: var(--gris-m); }
 .agenda-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -745,17 +720,17 @@ section:nth-child(even) { background: var(--gris-c); }
   margin-top: 32px;
 }
 .agenda-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 28px;
   border-top: 4px solid var(--jaune);
   transition: all var(--trans);
 }
-.agenda-card:hover { background: rgba(255,255,255,0.08); }
+.agenda-card:hover { background: #f8fafc; }
 .agenda-date {
   font-size: 0.8rem;
-  color: var(--jaune);
+  color: #b45309;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -764,13 +739,13 @@ section:nth-child(even) { background: var(--gris-c); }
 .agenda-title {
   font-family: var(--font-h);
   font-size: 1.1rem;
-  color: var(--blanc);
+  color: var(--noir);
   margin-bottom: 12px;
   line-height: 1.3;
 }
 .agenda-desc {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.65);
+  color: var(--gris-m);
   line-height: 1.7;
 }
 .countdown {

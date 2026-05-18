@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /gate.html
+
+Sitemap: https://assemblee-nationale-nu.vercel.app/sitemap.xml

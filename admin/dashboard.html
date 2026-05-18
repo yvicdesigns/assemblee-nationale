@@ -7,17 +7,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/admin.css">
-  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
   <style>
-    .ql-container { font-family: 'Inter', sans-serif; font-size: .9rem; }
-    .ql-editor { min-height: 260px; max-height: 480px; overflow-y: auto; }
-    .ql-toolbar { border-radius: 6px 6px 0 0 !important; border-color: var(--border) !important; }
-    .ql-container { border-radius: 0 0 6px 6px !important; border-color: var(--border) !important; }
     .status-badge { display:inline-block;padding:2px 10px;border-radius:12px;font-size:.72rem;font-weight:700; }
     .status-published { background:#dcfce7;color:#166534; }
     .status-draft { background:#fef9c3;color:#854d0e; }
     .slug-row { display:flex;align-items:center;gap:8px; }
     .slug-prefix { font-size:.8rem;color:var(--muted);white-space:nowrap; }
+    /* EditorJS overrides */
+    #editorjs { font-family:'Inter',sans-serif; }
+    .ce-paragraph { font-size:.9rem; line-height:1.65; }
+    .cdx-block { font-size:.9rem; }
+    .ce-toolbar__plus, .ce-toolbar__settings-btn { color:var(--primary) !important; }
+    .ce-toolbar { left:0 !important; }
+    .ce-inline-tool--active { color:var(--primary) !important; }
+    .ce-inline-toolbar { z-index:10000 !important; }
+    .ce-block__content { max-width:100% !important; margin:0 !important; }
+    .ce-toolbar__content { max-width:100% !important; }
+    .cdx-simple-image__picture img { max-width:100%; border-radius:6px; }
+    .cdx-warning { background:#fffbeb; border-left:4px solid #f59e0b; border-radius:0 6px 6px 0; }
+    .tc-table { border-collapse:collapse; }
+    .tc-table td { border:1px solid var(--border); padding:6px 10px; font-size:.85rem; }
+    /* Modal doit permettre le scroll sans couper l'éditeur */
+    .modal { overflow-y:auto; max-height:90vh; }
   </style>
 </head>
 <body>
@@ -71,6 +82,21 @@
       <button class="nav-item" data-section="bureau">
         <span class="nav-icon">👥</span> Le Bureau
         <span class="nav-badge" id="badge-bureau">—</span>
+      </button>
+
+      <div class="sidebar-section-label">Assemblée</div>
+      <button class="nav-item" data-section="deputes">
+        <span class="nav-icon">🏛️</span> Les Députés
+        <span class="nav-badge" id="badge-deputes">—</span>
+      </button>
+      <button class="nav-item" data-section="messages">
+        <span class="nav-icon">✉️</span> Messages reçus
+        <span class="nav-badge" id="badge-messages">—</span>
+      </button>
+
+      <div class="sidebar-section-label">Médias</div>
+      <button class="nav-item" data-section="media">
+        <span class="nav-icon">🖼️</span> Médiathèque
       </button>
 
       <div class="sidebar-section-label">Configuration</div>
@@ -285,6 +311,49 @@
         </div>
       </div>
 
+      <!-- ==== DÉPUTÉS ==== -->
+      <div id="section-deputes" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🏛️ Les Députés</div>
+            <button class="btn btn-primary" onclick="openModal('depute')">+ Ajouter un député</button>
+          </div>
+          <div style="padding:16px 20px 8px;background:#eff6ff;border-bottom:1px solid var(--border);font-size:.82rem;color:#1e40af;">
+            💡 Les modifications sont visibles immédiatement sur <strong>pages/deputes.html</strong>
+          </div>
+          <div id="deputes-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== MESSAGES ==== -->
+      <div id="section-messages" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">✉️ Messages reçus</div>
+          </div>
+          <div id="messages-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== MÉDIATHÈQUE ==== -->
+      <div id="section-media" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🖼️ Médiathèque</div>
+          </div>
+          <div style="padding:16px 20px 8px;background:#eff6ff;border-bottom:1px solid var(--border);font-size:.82rem;color:#1e40af;">
+            💡 Toutes les images uploadées via les formulaires sont listées ici. Copiez l'URL pour l'insérer dans vos articles.
+          </div>
+          <div id="media-list">
+            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+
       <!-- ==== PARAMÈTRES ==== -->
       <div id="section-parametres" class="section hidden">
         <div class="section-card">
@@ -363,7 +432,20 @@
 <div id="toast-container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<!-- EditorJS core + plugins (versions épinglées) -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.28.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.9.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@1.6.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@2.7.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@2.3.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@1.4.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@1.4.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@1.5.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@2.5.0"></script>
 <script src="js/admin.js"></script>
 </body>
 </html>

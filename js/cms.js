@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadCMSBureauPage(),
     loadCMSPresident(),
     loadCMSParametres(),
+    loadCMSAgenda(),
   ]);
 });
 
@@ -131,7 +132,7 @@ async function loadCMSActualites() {
             <span class="news-card__date">${esc(a.date_text)}</span>
           </div>
           <h3 class="news-card__title">${esc(a.title)}</h3>
-          <a href="#" class="news-card__link">Lire la suite →</a>
+          <a href="pages/blog.html" class="news-card__link">Lire la suite →</a>
         </div>
       </article>`;
   }).join('');
@@ -193,6 +194,8 @@ async function loadCMSBureauPage() {
         <div class="bpg-body">
           <span class="bpg-role">${esc(m.role_title)}</span>
           <h3 class="bpg-name">${esc(m.name)}</h3>
+          ${m.constituency ? `<p class="bpg-constituency">📍 ${esc(m.constituency)}</p>` : ''}
+          ${m.biography ? `<p class="bpg-bio">${esc(m.biography)}</p>` : ''}
           ${isPresident ? '<div class="bpg-tricolor"><span></span><span></span><span></span></div>' : ''}
         </div>
       </div>`;
@@ -272,6 +275,30 @@ async function loadCMSParametres() {
       emblem.innerHTML = `<img src="${esc(map.site_logo)}" alt="Logo Assemblée Nationale" style="height:64px;width:auto;object-fit:contain;">`;
     }
   }
+}
+
+// =========================================
+// AGENDA
+// =========================================
+async function loadCMSAgenda() {
+  const grid = document.querySelector('.agenda-grid');
+  if (!grid) return;
+
+  const { data, error } = await cms
+    .from('agenda')
+    .select('*')
+    .eq('active', true)
+    .order('created_at', { ascending: false })
+    .limit(4);
+
+  if (error || !data?.length) return;
+
+  grid.innerHTML = data.map(ev => `
+    <div class="agenda-card">
+      <p class="agenda-date">📅 ${esc(ev.date_text)}</p>
+      <h3 class="agenda-title">${esc(ev.title)}</h3>
+      ${ev.description ? `<p class="agenda-desc">${esc(ev.description)}</p>` : ''}
+    </div>`).join('');
 }
 
 // =========================================

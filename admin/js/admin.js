@@ -12,7 +12,9 @@ const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentSection = 'accueil';
 let modalType = null;
 let editingId = null;
-let quillEditor = null;
+let editorInstance = null;
+let deputesData = [];
+let messagesData = [];
 const CATEGORIES_ACTU = ['Actualité','Audience','Audition','Conférence des Présidents','Congrès','Interpellation','Plénière','Présidence'];
 const CATEGORIES_ART  = ['Publication','Communiqué','Discours','Rapport','Plénière','Actualité','Audition','Présidence'];
 
@@ -52,6 +54,9 @@ const TITLES = {
   president:  '👤 Le Président',
   bureau:     '👥 Le Bureau',
   agenda:     '📅 Agenda',
+  deputes:    '🏛️ Les Députés',
+  messages:   '✉️ Messages reçus',
+  media:      '🖼️ Médiathèque',
   parametres: '⚙️ Paramètres généraux',
 };
 
@@ -74,6 +79,9 @@ async function loadSection(name) {
     case 'bureau':      await loadBureau(); break;
     case 'president':   await loadPresident(); break;
     case 'agenda':      await loadAgenda(); break;
+    case 'deputes':     await loadDeputes(); break;
+    case 'messages':    await loadMessages(); break;
+    case 'media':       await loadMediaLibrary(); break;
     case 'parametres':  await loadParametres(); break;
   }
 }
@@ -82,13 +90,15 @@ async function loadSection(name) {
 // STATS
 // =========================================
 async function loadStats() {
-  const [s, a, b, ag, art, pg] = await Promise.all([
+  const [s, a, b, ag, art, pg, dep, msg] = await Promise.all([
     db.from('slides').select('id', { count: 'exact', head: true }),
     db.from('actualites').select('id', { count: 'exact', head: true }),
     db.from('bureau').select('id', { count: 'exact', head: true }),
     db.from('agenda').select('id', { count: 'exact', head: true }),
     db.from('articles').select('id', { count: 'exact', head: true }),
     db.from('pages').select('id', { count: 'exact', head: true }),
+    db.from('deputes').select('id', { count: 'exact', head: true }),
+    db.from('contact_messages').select('id', { count: 'exact', head: true }).eq('lu', false),
   ]);
   const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n ?? '—'; };
   set('stat-slides', s.count);
@@ -101,6 +111,35 @@ async function loadStats() {
   set('badge-agenda', ag.count);
   set('badge-articles', art.count);
   set('badge-cms-pages', pg.count);
+  set('badge-deputes', dep.count);
+  set('badge-messages', msg.count ?? 0);
+}
+
+// =========================================
+// SEARCH HELPER
+// =========================================
+function attachTableSearch(inputId, tbodyId) {
+  const input = document.getElementById(inputId);
+  const tbody = document.getElementById(tbodyId);
+  if (!input || !tbody) return;
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase();
+    let visible = 0;
+    tbody.querySelectorAll('tr').forEach(row => {
+      const match = row.textContent.toLowerCase().includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    const counter = document.getElementById(inputId + '-count');
+    if (counter) counter.textContent = visible;
+  });
+}
+
+function searchBarHTML(inputId, placeholder, extraButtons = '') {
+  return `<div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <input id="${inputId}" type="search" placeholder="🔍 ${placeholder}" style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;">
+    ${extraButtons}
+  </div>`;
 }
 
 // =========================================
@@ -113,7 +152,7 @@ async function loadArticles() {
   if (error) { el.innerHTML = errorHTML(error.message); return; }
   if (!data.length) { el.innerHTML = emptyHTML('Aucun article. Créez votre premier article.'); return; }
 
-  el.innerHTML = `
+  el.innerHTML = searchBarHTML('search-articles', 'Rechercher un article…') + `
     <table class="data-table">
       <thead><tr>
         <th style="width:72px">Image</th>
@@ -123,7 +162,7 @@ async function loadArticles() {
         <th>Date</th>
         <th>Actions</th>
       </tr></thead>
-      <tbody>
+      <tbody id="tbody-articles">
         ${data.map(a => `
           <tr>
             <td>${thumbHTML(a.featured_image)}</td>
@@ -136,11 +175,32 @@ async function loadArticles() {
             <td style="font-size:.8rem;color:var(--muted);">${esc(a.published_at ? a.published_at.slice(0,10) : '—')}</td>
             <td><div class="actions">
               <button class="btn btn-ghost btn-icon btn-sm" onclick="openModal('article','${a.id}')" title="Modifier">✏️</button>
+              <a href="../pages/article.html?slug=${esc(a.slug)}" target="_blank" class="btn btn-ghost btn-icon btn-sm" title="Voir">🔗</a>
+              <button class="btn btn-ghost btn-icon btn-sm" onclick="duplicateArticle('${a.id}')" title="Dupliquer">📋</button>
               <button class="btn btn-danger btn-icon btn-sm" onclick="deleteItem('articles','${a.id}')" title="Supprimer">🗑️</button>
             </div></td>
           </tr>`).join('')}
       </tbody>
     </table>`;
+  attachTableSearch('search-articles', 'tbody-articles');
+}
+
+async function duplicateArticle(id) {
+  const { data, error } = await db.from('articles').select('*').eq('id', id).single();
+  if (error || !data) { toast('Impossible de dupliquer cet article', 'error'); return; }
+  const { id: _id, created_at, updated_at, ...rest } = data;
+  const copy = {
+    ...rest,
+    title:        data.title + ' (copie)',
+    slug:         data.slug + '-copie-' + Date.now().toString().slice(-4),
+    status:       'draft',
+    active:       false,
+    updated_at:   new Date().toISOString(),
+  };
+  const { error: err } = await db.from('articles').insert(copy);
+  if (err) { toast('Erreur duplication : ' + err.message, 'error'); return; }
+  toast('✓ Article dupliqué en brouillon', 'success');
+  await loadArticles();
 }
 
 // =========================================
@@ -153,7 +213,7 @@ async function loadCmsPages() {
   if (error) { el.innerHTML = errorHTML(error.message); return; }
   if (!data.length) { el.innerHTML = emptyHTML('Aucune page. Créez votre première page.'); return; }
 
-  el.innerHTML = `
+  el.innerHTML = searchBarHTML('search-pages', 'Rechercher une page…') + `
     <table class="data-table">
       <thead><tr>
         <th>Titre</th>
@@ -161,7 +221,7 @@ async function loadCmsPages() {
         <th>Statut</th>
         <th>Actions</th>
       </tr></thead>
-      <tbody>
+      <tbody id="tbody-pages">
         ${data.map(p => `
           <tr>
             <td style="font-weight:600;">${esc(p.title)}</td>
@@ -175,6 +235,7 @@ async function loadCmsPages() {
           </tr>`).join('')}
       </tbody>
     </table>`;
+  attachTableSearch('search-pages', 'tbody-pages');
 }
 
 // =========================================
@@ -227,7 +288,7 @@ async function loadActualites() {
   if (error) { el.innerHTML = errorHTML(error.message); return; }
   if (!data.length) { el.innerHTML = emptyHTML('Aucune actualité. Publiez votre premier article.'); return; }
 
-  el.innerHTML = `
+  el.innerHTML = searchBarHTML('search-actualites', 'Rechercher une actualité…') + `
     <table class="data-table">
       <thead><tr>
         <th style="width:72px">Image</th>
@@ -237,7 +298,7 @@ async function loadActualites() {
         <th>Actif</th>
         <th>Actions</th>
       </tr></thead>
-      <tbody>
+      <tbody id="tbody-actualites">
         ${data.map(a => `
           <tr>
             <td>${thumbHTML(a.image_url)}</td>
@@ -253,6 +314,7 @@ async function loadActualites() {
         `).join('')}
       </tbody>
     </table>`;
+  attachTableSearch('search-actualites', 'tbody-actualites');
 }
 
 // =========================================
@@ -265,7 +327,7 @@ async function loadBureau() {
   if (error) { el.innerHTML = errorHTML(error.message); return; }
   if (!data.length) { el.innerHTML = emptyHTML('Aucun membre. Ajoutez les membres du Bureau.'); return; }
 
-  el.innerHTML = `
+  el.innerHTML = searchBarHTML('search-bureau', 'Rechercher un membre…') + `
     <table class="data-table">
       <thead><tr>
         <th style="width:60px">Photo</th>
@@ -274,7 +336,7 @@ async function loadBureau() {
         <th>Ordre</th>
         <th>Actions</th>
       </tr></thead>
-      <tbody>
+      <tbody id="tbody-bureau">
         ${data.map(m => `
           <tr>
             <td>
@@ -295,6 +357,7 @@ async function loadBureau() {
         `).join('')}
       </tbody>
     </table>`;
+  attachTableSearch('search-bureau', 'tbody-bureau');
 }
 
 // =========================================
@@ -307,7 +370,7 @@ async function loadAgenda() {
   if (error) { el.innerHTML = errorHTML(error.message); return; }
   if (!data.length) { el.innerHTML = emptyHTML('Aucun événement. Ajoutez votre premier événement agenda.'); return; }
 
-  el.innerHTML = `
+  el.innerHTML = searchBarHTML('search-agenda', 'Rechercher un événement…') + `
     <table class="data-table">
       <thead><tr>
         <th>Titre</th>
@@ -316,7 +379,7 @@ async function loadAgenda() {
         <th>Actif</th>
         <th>Actions</th>
       </tr></thead>
-      <tbody>
+      <tbody id="tbody-agenda">
         ${data.map(ev => `
           <tr>
             <td style="font-weight:600;max-width:200px;">${esc(ev.title)}</td>
@@ -331,6 +394,7 @@ async function loadAgenda() {
         `).join('')}
       </tbody>
     </table>`;
+  attachTableSearch('search-agenda', 'tbody-agenda');
 }
 
 // =========================================
@@ -438,7 +502,7 @@ async function openModal(type, id = null) {
 
   let data = null;
   if (id) {
-    const table = type === 'slide' ? 'slides' : type === 'actu' ? 'actualites' : type === 'bureau' ? 'bureau' : 'agenda';
+    const table = type === 'slide' ? 'slides' : type === 'actu' ? 'actualites' : type === 'bureau' ? 'bureau' : type === 'article' ? 'articles' : type === 'cms-page' ? 'pages' : type === 'depute' ? 'deputes' : 'agenda';
     const { data: row } = await db.from(table).select('*').eq('id', id).single();
     data = row;
   }
@@ -451,25 +515,50 @@ async function openModal(type, id = null) {
   document.getElementById('modalBody').innerHTML = getModalForm(type, data);
   overlay.classList.add('open');
 
-  // Init Quill for article/page types
+  // Init EditorJS for article/page types
   if (type === 'article' || type === 'cms-page') {
-    quillEditor = new Quill('#quill-editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          ['blockquote'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['link', 'image'],
-          [{ align: [] }],
-          ['clean'],
-        ],
-      },
-    });
-    if (data?.content) quillEditor.root.innerHTML = data.content;
+    let initialData = {};
+    if (data?.content) {
+      try {
+        const parsed = JSON.parse(data.content);
+        if (parsed.blocks) initialData = parsed;
+      } catch {
+        initialData = { blocks: [{ type: 'raw', data: { html: data.content } }] };
+      }
+    }
+    // Attendre que le modal soit complètement rendu dans le DOM
+    await new Promise(r => setTimeout(r, 80));
+    const holder = document.getElementById('editorjs');
+    if (!holder) { editorInstance = null; }
+    else {
+      try {
+        editorInstance = new EditorJS({
+          holder: 'editorjs',
+          tools: {
+            header:     { class: Header, inlineToolbar: true },
+            list:       { class: List,   inlineToolbar: true },
+            image:      SimpleImage,
+            quote:      { class: Quote,  inlineToolbar: true },
+            delimiter:  Delimiter,
+            table:      { class: Table,  inlineToolbar: true },
+            code:       CodeTool,
+            warning:    Warning,
+            embed:      Embed,
+            marker:     Marker,
+            inlineCode: InlineCode,
+            raw:        RawTool,
+          },
+          data: initialData,
+          placeholder: 'Cliquez ici pour commencer à écrire…',
+          minHeight: 200,
+        });
+      } catch(err) {
+        console.error('EditorJS init error:', err);
+        editorInstance = null;
+      }
+    }
   } else {
-    quillEditor = null;
+    editorInstance = null;
   }
 
   // Setup file input handlers after DOM insertion
@@ -483,6 +572,7 @@ function getModalForm(type, data) {
   if (type === 'agenda')   return agendaForm(data);
   if (type === 'article')  return articleForm(data);
   if (type === 'cms-page') return cmsPageForm(data);
+  if (type === 'depute')   return deputeForm(data);
   return '';
 }
 
@@ -526,12 +616,16 @@ function articleForm(d) {
         <input class="field-input" id="m_author" value="${esc(d?.author || 'Assemblée Nationale')}" placeholder="Assemblée Nationale">
       </div>
       <div class="field-group">
-        <label class="field-label">Statut</label>
-        <select class="field-select" id="m_status">
-          <option value="draft" ${d?.status !== 'published' ? 'selected' : ''}>✎ Brouillon</option>
-          <option value="published" ${d?.status === 'published' ? 'selected' : ''}>✓ Publié</option>
-        </select>
+        <label class="field-label">Date de publication</label>
+        <input class="field-input" type="date" id="m_published_at" value="${d?.published_at ? d.published_at.slice(0,10) : new Date().toISOString().slice(0,10)}">
       </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Statut</label>
+      <select class="field-select" id="m_status">
+        <option value="draft" ${d?.status !== 'published' ? 'selected' : ''}>✎ Brouillon</option>
+        <option value="published" ${d?.status === 'published' ? 'selected' : ''}>✓ Publié</option>
+      </select>
     </div>
     <div class="field-group">
       <label class="field-label">Résumé (extrait)</label>
@@ -539,7 +633,8 @@ function articleForm(d) {
     </div>
     <div class="field-group">
       <label class="field-label">Contenu de l'article <span class="req">*</span></label>
-      <div id="quill-editor" style="background:#fff;">${d?.content || ''}</div>
+      <div id="editorjs" style="border:1px solid var(--border);border-radius:6px;min-height:280px;padding:12px 56px 12px 56px;cursor:text;background:#fff;position:relative;"></div>
+      <p style="font-size:.73rem;color:var(--muted);margin-top:6px;">💡 Cliquez dans la zone pour écrire. Utilisez le bouton <strong>+</strong> pour insérer un bloc (image, titre, liste, tableau, embed YouTube…)</p>
     </div>`;
 }
 
@@ -571,7 +666,8 @@ function cmsPageForm(d) {
     </div>
     <div class="field-group">
       <label class="field-label">Contenu de la page <span class="req">*</span></label>
-      <div id="quill-editor" style="background:#fff;">${d?.content || ''}</div>
+      <div id="editorjs" style="border:1px solid var(--border);border-radius:6px;min-height:280px;padding:12px 56px 12px 56px;cursor:text;background:#fff;position:relative;"></div>
+      <p style="font-size:.73rem;color:var(--muted);margin-top:6px;">💡 Cliquez dans la zone pour écrire. Utilisez le bouton <strong>+</strong> pour insérer un bloc (image, titre, liste, tableau, embed YouTube…)</p>
     </div>`;
 }
 
@@ -678,6 +774,14 @@ function bureauForm(d) {
       <input class="field-input" id="m_role_title" value="${esc(d?.role_title || '')}" placeholder="ex: Président, 1ᵉʳ Vice-président...">
     </div>
     <div class="field-group">
+      <label class="field-label">Biographie / Présentation</label>
+      <textarea class="field-textarea" id="m_biography" rows="3" placeholder="Courte biographie ou présentation du membre...">${esc(d?.biography || '')}</textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Circonscription / Département</label>
+      <input class="field-input" id="m_constituency" value="${esc(d?.constituency || '')}" placeholder="ex: Brazzaville I, Pool, Bouenza...">
+    </div>
+    <div class="field-group">
       <label class="field-label">Ordre d'affichage</label>
       <input class="field-input" type="number" id="m_display_order" value="${d?.display_order ?? 0}" min="0">
     </div>`;
@@ -715,7 +819,7 @@ function setupModalUploads(type, data) {
     spinner.classList.add('show');
 
     try {
-      const folder = type === 'slide' ? 'slides' : type === 'actu' ? 'actualites' : type === 'bureau' ? 'bureau' : 'general';
+      const folder = type === 'slide' ? 'slides' : type === 'actu' ? 'actualites' : type === 'bureau' ? 'bureau' : type === 'depute' ? 'deputes' : 'general';
       const ext = file.name.split('.').pop();
       const path = `${folder}/${Date.now()}.${ext}`;
 
@@ -725,7 +829,7 @@ function setupModalUploads(type, data) {
       const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
 
       const urlField = document.getElementById(
-        type === 'bureau' ? 'm_photo_url' : type === 'article' ? 'm_featured_image' : 'm_image_url'
+        type === 'bureau' || type === 'depute' ? 'm_photo_url' : type === 'article' ? 'm_featured_image' : 'm_image_url'
       );
       if (urlField) urlField.value = publicUrl;
 
@@ -763,6 +867,7 @@ function setupModalUploads(type, data) {
 
 function closeModal(e) {
   if (e && e.target !== document.getElementById('modalOverlay')) return;
+  if (editorInstance) { try { editorInstance.destroy(); } catch(_) {} editorInstance = null; }
   document.getElementById('modalOverlay').classList.remove('open');
   modalType = null;
   editingId = null;
@@ -811,6 +916,8 @@ async function saveModal() {
         name,
         role_title:    role,
         photo_url:     getValue('m_photo_url') || null,
+        biography:     getValue('m_biography') || null,
+        constituency:  getValue('m_constituency') || null,
         display_order: parseInt(getValue('m_display_order')) || 0,
       };
     } else if (modalType === 'agenda') {
@@ -837,9 +944,23 @@ async function saveModal() {
         excerpt:        getValue('m_excerpt') || null,
         featured_image: getValue('m_featured_image') || null,
         status:         getValue('m_status'),
-        content:        quillEditor ? quillEditor.root.innerHTML : '',
+        content:        editorInstance ? JSON.stringify(await editorInstance.save()) : '',
+        published_at:   getValue('m_published_at') || new Date().toISOString(),
         updated_at:     new Date().toISOString(),
-        ...(editingId ? {} : { active: true, published_at: new Date().toISOString() }),
+        ...(editingId ? {} : { active: true }),
+      };
+    } else if (modalType === 'depute') {
+      table = 'deputes';
+      const name = getValue('m_name');
+      if (!name) { toast('Le nom est obligatoire', 'error'); return; }
+      payload = {
+        num:          parseInt(getValue('m_num')) || null,
+        name,
+        department:   getValue('m_department') || null,
+        constituency: getValue('m_constituency') || null,
+        groupe:       getValue('m_groupe') || 'PCT',
+        photo_url:    getValue('m_photo_url') || null,
+        ...(editingId ? {} : { active: true }),
       };
     } else if (modalType === 'cms-page') {
       table = 'pages';
@@ -851,7 +972,7 @@ async function saveModal() {
         slug,
         meta_description: getValue('m_meta_description') || null,
         status:           getValue('m_status'),
-        content:          quillEditor ? quillEditor.root.innerHTML : '',
+        content:          editorInstance ? JSON.stringify(await editorInstance.save()) : '',
         updated_at:       new Date().toISOString(),
         ...(editingId ? {} : { active: true }),
       };
@@ -974,6 +1095,140 @@ function errorHTML(msg) {
   return `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Erreur : ${esc(msg)}</p></div>`;
 }
 
+// =========================================
+// DÉPUTÉS
+// =========================================
+async function loadDeputes() {
+  const el = document.getElementById('deputes-list');
+  el.innerHTML = loadingHTML();
+  const { data, error } = await db.from('deputes').select('*').order('num', { ascending: true, nullsFirst: false });
+  if (error) { el.innerHTML = errorHTML(error.message); return; }
+  if (!data.length) { el.innerHTML = emptyHTML('Aucun député. Ajoutez les membres ou importez la liste.'); return; }
+
+  deputesData = data;
+  const exportBtn = `<button onclick="exportDeputesCSV()" class="btn btn-ghost btn-sm" style="white-space:nowrap;font-size:.8rem;">📥 CSV</button>`;
+
+  el.innerHTML = searchBarHTML('search-deputes', 'Rechercher un député…', exportBtn) + `
+    <table class="data-table">
+      <thead><tr>
+        <th style="width:44px">#</th>
+        <th>Nom</th>
+        <th>Département</th>
+        <th>Circonscription</th>
+        <th>Groupe</th>
+        <th>Actif</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody id="tbody-deputes">
+        ${data.map(d => `
+          <tr>
+            <td style="color:var(--muted);font-size:.8rem;">${d.num ?? '—'}</td>
+            <td style="font-weight:600;font-size:.85rem;">${esc(d.name)}</td>
+            <td style="font-size:.82rem;">${esc(d.department || '—')}</td>
+            <td style="font-size:.82rem;">${esc(d.constituency || '—')}</td>
+            <td><span class="badge badge-blue">${esc(d.groupe || '—')}</span></td>
+            <td><label class="toggle"><input type="checkbox" ${d.active ? 'checked' : ''} onchange="toggleActive('deputes','${d.id}',this.checked)"><span class="toggle-slider"></span></label></td>
+            <td><div class="actions">
+              <button class="btn btn-ghost btn-icon btn-sm" onclick="openModal('depute','${d.id}')" title="Modifier">✏️</button>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="deleteItem('deputes','${d.id}')" title="Supprimer">🗑️</button>
+            </div></td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+  attachTableSearch('search-deputes', 'tbody-deputes');
+}
+
+function deputeForm(d) {
+  const GROUPES = ['PCT','MCDDI','UPADS','RDD','MAR','Indépendant','Autre'];
+  return `
+    <div class="field-row">
+      <div class="field-group" style="flex:0 0 80px;">
+        <label class="field-label">N°</label>
+        <input class="field-input" type="number" id="m_num" value="${d?.num ?? ''}" placeholder="1">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Nom complet <span class="req">*</span></label>
+        <input class="field-input" id="m_name" value="${esc(d?.name || '')}" placeholder="Prénom NOM">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Département</label>
+        <input class="field-input" id="m_department" value="${esc(d?.department || '')}" placeholder="ex: Brazzaville">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Circonscription</label>
+        <input class="field-input" id="m_constituency" value="${esc(d?.constituency || '')}" placeholder="ex: Poto-Poto">
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Groupe parlementaire</label>
+      <select class="field-select" id="m_groupe">
+        ${GROUPES.map(g => `<option value="${g}" ${d?.groupe === g ? 'selected' : ''}>${g}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Photo officielle</label>
+      <div class="upload-zone ${d?.photo_url ? 'has-image' : ''}" id="mUploadZone" onclick="document.getElementById('mFileInput').click()" style="cursor:pointer;max-width:140px;aspect-ratio:1;">
+        <div class="upload-placeholder" id="mUploadPlaceholder" ${d?.photo_url ? 'style="display:none"' : ''}>
+          <div class="up-icon">👤</div>
+          <p>Photo</p>
+        </div>
+        ${d?.photo_url ? `<img src="${esc(d.photo_url)}" class="upload-preview-img" id="mPreviewImg" style="height:140px;" alt="Photo">` : `<img id="mPreviewImg" class="upload-preview-img" style="display:none;height:140px;" alt="Photo">`}
+        <div class="upload-overlay">📷 Changer</div>
+        <div class="upload-spinner" id="mSpinner"><div class="spinner"></div></div>
+      </div>
+      <input type="file" id="mFileInput" accept="image/*" hidden>
+      <input type="hidden" id="m_photo_url" value="${esc(d?.photo_url || '')}">
+    </div>`;
+}
+
+// =========================================
+// MESSAGES DE CONTACT
+// =========================================
+async function loadMessages() {
+  const el = document.getElementById('messages-list');
+  el.innerHTML = loadingHTML();
+  const { data, error } = await db.from('contact_messages').select('*').order('created_at', { ascending: false });
+  if (error) { el.innerHTML = errorHTML(error.message); return; }
+  if (!data.length) { el.innerHTML = emptyHTML('Aucun message reçu pour le moment.'); return; }
+
+  messagesData = data;
+  const exportBtn = `<button onclick="exportMessagesCSV()" class="btn btn-ghost btn-sm" style="white-space:nowrap;font-size:.8rem;">📥 CSV</button>`;
+
+  el.innerHTML = searchBarHTML('search-messages', 'Rechercher un message…', exportBtn) + `
+    <table class="data-table">
+      <thead><tr>
+        <th>Date</th>
+        <th>Expéditeur</th>
+        <th>Email</th>
+        <th>Sujet</th>
+        <th>Message</th>
+        <th>Lu</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody id="tbody-messages">
+        ${data.map(m => `
+          <tr style="${!m.lu ? 'font-weight:600;background:#f0fdf4;' : ''}">
+            <td style="font-size:.78rem;color:var(--muted);white-space:nowrap;">${m.created_at ? m.created_at.slice(0,10) : '—'}</td>
+            <td>${esc(m.prenom ? m.prenom + ' ' + m.nom : m.nom)}</td>
+            <td style="font-size:.8rem;"><a href="mailto:${esc(m.email)}" style="color:var(--primary);">${esc(m.email)}</a></td>
+            <td style="max-width:160px;font-size:.82rem;">${esc(m.sujet)}</td>
+            <td style="max-width:240px;font-size:.8rem;color:var(--muted);">${esc((m.message || '').substring(0,80))}${(m.message||'').length > 80 ? '…' : ''}</td>
+            <td><label class="toggle"><input type="checkbox" ${m.lu ? 'checked' : ''} onchange="markMessageRead('${m.id}',this.checked)"><span class="toggle-slider"></span></label></td>
+            <td><button class="btn btn-danger btn-icon btn-sm" onclick="deleteItem('contact_messages','${m.id}')" title="Supprimer">🗑️</button></td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+  attachTableSearch('search-messages', 'tbody-messages');
+}
+
+async function markMessageRead(id, lu) {
+  const { error } = await db.from('contact_messages').update({ lu }).eq('id', id);
+  if (error) toast('Erreur : ' + error.message, 'error');
+  else { toast(lu ? '✓ Marqué comme lu' : 'Marqué non lu', 'success'); await loadStats(); }
+}
+
 function toast(msg, type = 'success') {
   const container = document.getElementById('toast-container');
   const el = document.createElement('div');
@@ -981,4 +1236,91 @@ function toast(msg, type = 'success') {
   el.textContent = msg;
   container.appendChild(el);
   setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(20px)'; el.style.transition = '.3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// =========================================
+// EXPORT CSV
+// =========================================
+function exportCSV(data, filename) {
+  if (!data || !data.length) { toast('Aucune donnée à exporter', 'error'); return; }
+  const cols = Object.keys(data[0]);
+  const rows = [
+    cols.join(','),
+    ...data.map(row => cols.map(c => `"${String(row[c] ?? '').replace(/"/g, '""')}"`).join(',')),
+  ];
+  const blob = new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function exportDeputesCSV() {
+  exportCSV(
+    deputesData.map(d => ({ num: d.num, nom: d.name, departement: d.department, circonscription: d.constituency, groupe: d.groupe, actif: d.active ? 'Oui' : 'Non' })),
+    `deputes-${new Date().toISOString().slice(0,10)}.csv`
+  );
+}
+
+function exportMessagesCSV() {
+  exportCSV(
+    messagesData.map(m => ({ date: m.created_at?.slice(0,10), prenom: m.prenom, nom: m.nom, email: m.email, sujet: m.sujet, message: m.message, lu: m.lu ? 'Oui' : 'Non' })),
+    `messages-${new Date().toISOString().slice(0,10)}.csv`
+  );
+}
+
+// =========================================
+// MÉDIATHÈQUE
+// =========================================
+async function loadMediaLibrary() {
+  const el = document.getElementById('media-list');
+  if (!el) return;
+  el.innerHTML = loadingHTML();
+
+  const folders = ['slides', 'actualites', 'bureau', 'general'];
+  const allFiles = [];
+
+  for (const folder of folders) {
+    const { data, error } = await db.storage.from(BUCKET).list(folder, {
+      limit: 100,
+      sortBy: { column: 'created_at', order: 'desc' },
+    });
+    if (!error && data) {
+      data.filter(f => f.name && !f.name.startsWith('.')).forEach(f => {
+        const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(`${folder}/${f.name}`);
+        allFiles.push({ ...f, folder, publicUrl });
+      });
+    }
+  }
+
+  if (!allFiles.length) {
+    el.innerHTML = emptyHTML('Aucun fichier dans la médiathèque. Uploadez des images via les formulaires.');
+    return;
+  }
+
+  el.innerHTML = `
+    <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:#fafafa;">
+      <span style="font-size:.85rem;color:var(--muted);">${allFiles.length} fichier(s)</span>
+      <span style="font-size:.75rem;color:#94a3b8;">Cliquez sur « Copier URL » pour insérer une image dans un article.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;padding:20px;">
+      ${allFiles.map(f => `
+        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;">
+          <div style="height:120px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <img src="${esc(f.publicUrl)}" alt="${esc(f.name)}" style="max-width:100%;max-height:120px;object-fit:cover;" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='🖼️'">
+          </div>
+          <div style="padding:8px;">
+            <p style="font-size:.7rem;color:var(--muted);margin:0 0 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.name)}">${esc(f.name)}</p>
+            <p style="font-size:.68rem;color:#94a3b8;margin:0 0 8px;">📁 ${f.folder}</p>
+            <button onclick="copyToClipboard('${esc(f.publicUrl)}')" class="btn btn-ghost btn-sm" style="width:100%;font-size:.72rem;padding:5px;">📋 Copier URL</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text)
+    .then(() => toast('✓ URL copiée dans le presse-papier !', 'success'))
+    .catch(() => toast('Impossible de copier — vérifiez les permissions', 'error'));
 }

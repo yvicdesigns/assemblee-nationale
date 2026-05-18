@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <script src="../js/gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page – Assemblée Nationale</title>
@@ -21,6 +22,27 @@
     .page-dyn-content img { max-width:100%; border-radius:8px; margin:16px 0; }
     .page-dyn-content blockquote { border-left:4px solid var(--vert); padding:12px 20px; background:#f0fdf4; border-radius:0 8px 8px 0; margin:20px 0; font-style:italic; color:#166534; }
     .page-dyn-content a { color:var(--vert); text-decoration:underline; }
+    /* Blocs EditorJS */
+    .page-dyn-content .ejr-figure { margin:20px 0; }
+    .page-dyn-content .ejr-figure img { max-width:100%; border-radius:8px; display:block; }
+    .page-dyn-content .ejr-figure figcaption { text-align:center; font-size:.82rem; color:#64748b; margin-top:8px; font-style:italic; }
+    .page-dyn-content .ejr-quote { border-left:4px solid var(--vert); padding:14px 20px; background:#f0fdf4; border-radius:0 8px 8px 0; margin:24px 0; }
+    .page-dyn-content .ejr-quote p { margin:0; font-style:italic; color:#166534; }
+    .page-dyn-content .ejr-quote cite { display:block; margin-top:8px; font-size:.82rem; color:#64748b; font-style:normal; }
+    .page-dyn-content .ejr-delimiter { border:none; border-top:2px solid #e2e8f0; margin:32px 0; }
+    .page-dyn-content .ejr-table-wrap { overflow-x:auto; margin:20px 0; }
+    .page-dyn-content .ejr-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+    .page-dyn-content .ejr-table td, .page-dyn-content .ejr-table th { border:1px solid #e2e8f0; padding:8px 12px; }
+    .page-dyn-content .ejr-table th { background:#f8fafc; font-weight:700; }
+    .page-dyn-content .ejr-code { background:#1e293b; color:#e2e8f0; padding:20px; border-radius:8px; overflow-x:auto; margin:20px 0; font-size:.85rem; }
+    .page-dyn-content .ejr-warning { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:16px 20px; margin:20px 0; }
+    .page-dyn-content .ejr-warning strong { color:#92400e; display:block; margin-bottom:4px; }
+    .page-dyn-content .ejr-warning p { margin:0; color:#78350f; }
+    .page-dyn-content .ejr-embed { position:relative; padding-bottom:56.25%; height:0; margin:24px 0; overflow:hidden; border-radius:8px; }
+    .page-dyn-content .ejr-embed iframe { position:absolute; top:0; left:0; width:100%; height:100%; }
+    .page-dyn-content .ejr-checklist { list-style:none; padding:0; margin:16px 0; }
+    .page-dyn-content .ejr-checklist li { display:flex; gap:10px; padding:4px 0; }
+    .page-dyn-content .ejr-check-icon { color:var(--vert); font-weight:700; }
   </style>
 </head>
 <body>
@@ -48,15 +70,8 @@
 <header class="site-header">
   <div class="container">
     <a href="../index.html" class="site-logo">
-      <div class="logo-emblem">
-        <svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="50" r="48" fill="#009A44"/><path d="M50 10 L70 28 L65 65 L50 78 L35 65 L30 28 Z" fill="#FBDE4A" opacity="0.9"/><path d="M50 18 L64 32 L60 62 L50 72 L40 62 L36 32 Z" fill="#DC241F" opacity="0.85"/><circle cx="50" cy="45" r="10" fill="#FFFFFF" opacity="0.9"/><path d="M44 45 L48 49 L57 40" stroke="#009A44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      </div>
-      <div class="logo-text">
-        <div class="logo-text__main">ASSEMBLÉE NATIONALE</div>
-        <div class="logo-text__sub">République du Congo</div>
-        <div class="logo-text__devise">Unité – Travail – Progrès</div>
-      </div>
-    </a>
+      <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale — République du Congo" class="site-logo__img">
+    </a>
     <nav class="main-nav">
       <ul class="nav-list">
         <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
@@ -104,6 +119,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
 <script src="../js/cms.js"></script>
+<script src="../js/editorjs-renderer.js"></script>
 <script>
 const SB_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
@@ -136,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.head.appendChild(m);
   }
 
-  main.innerHTML = `<div class="page-prose page-dyn-content">${data.content || '<p>Contenu non disponible.</p>'}</div>`;
+  main.innerHTML = `<div class="page-prose page-dyn-content">${renderEditorContent(data.content)}</div>`;
 });
 
 function show404(el) {

@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <script src="../js/gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Les 151 Députés – Assemblée Nationale – République du Congo</title>
@@ -35,6 +36,54 @@
       margin-bottom: 16px;
     }
     .deputes-count strong { color: var(--vert); }
+
+    /* Avatar circle */
+    .deputy-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #009A44;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,154,68,.12);
+    }
+    .deputy-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .deputy-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .deputy-name-text { font-weight: 600; }
+
+    /* Groupe badge */
+    .groupe-badge {
+      display: inline-block;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .groupe-badge.indep {
+      background: #f8fafc;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
   </style>
 </head>
 <body>
@@ -63,15 +112,8 @@
 <header class="site-header">
   <div class="container">
     <a href="../index.html" class="site-logo">
-      <div class="logo-emblem">
-        <svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="50" r="48" fill="#009A44"/><path d="M50 10 L70 28 L65 65 L50 78 L35 65 L30 28 Z" fill="#FBDE4A" opacity="0.9"/><path d="M50 18 L64 32 L60 62 L50 72 L40 62 L36 32 Z" fill="#DC241F" opacity="0.85"/><circle cx="50" cy="45" r="10" fill="#FFFFFF" opacity="0.9"/><path d="M44 45 L48 49 L57 40" stroke="#009A44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      </div>
-      <div class="logo-text">
-        <div class="logo-text__main">ASSEMBLÉE NATIONALE</div>
-        <div class="logo-text__sub">République du Congo</div>
-        <div class="logo-text__devise">Unité – Travail – Progrès</div>
-      </div>
-    </a>
+      <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale — République du Congo" class="site-logo__img">
+    </a>
     <nav class="main-nav">
       <ul class="nav-list">
         <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
@@ -83,8 +125,8 @@
             <a href="contact.html" class="dropdown-link">Contacter son député</a>
           </div></div>
         </li>
-        <li class="nav-item"><a href="#" class="nav-link">Travaux Parlementaires <span class="arrow">▾</span></a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Coopération <span class="arrow">▾</span></a></li>
+        <li class="nav-item"><a href="en-construction.html" class="nav-link">Travaux Parlementaires <span class="arrow">▾</span></a></li>
+        <li class="nav-item"><a href="en-construction.html" class="nav-link">Coopération <span class="arrow">▾</span></a></li>
         <li class="nav-item"><a href="role.html" class="nav-link">Découvrir <span class="arrow">▾</span></a>
           <div class="dropdown"><div class="dropdown-section">
             <a href="role.html" class="dropdown-link">Rôle de l'Assemblée nationale</a>
@@ -113,7 +155,7 @@
 <div class="page-content">
   <div class="container">
 
-    <!-- Info & Stats -->
+    <!-- Stats -->
     <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 40px;">
       <div class="stat-card">
         <div class="stat-num">151</div>
@@ -145,76 +187,32 @@
 
     <!-- Recherche -->
     <div class="search-bar">
-      <input type="text" class="search-input" id="deputeSearch" placeholder="Rechercher un député par nom, département..." oninput="filterDeputes()">
-      <select class="search-input" id="departFilter" style="max-width: 200px;" onchange="filterDeputes()">
+      <input type="text" class="search-input" id="deputeSearch" placeholder="Rechercher un député par nom, circonscription..." oninput="filterDeputes()">
+      <select class="search-input" id="departFilter" style="max-width: 220px;" onchange="filterDeputes()">
         <option value="">Tous les départements</option>
-        <option>Brazzaville</option>
-        <option>Pointe-Noire</option>
-        <option>Bouenza</option>
-        <option>Cuvette</option>
-        <option>Cuvette-Ouest</option>
-        <option>Kouilou</option>
-        <option>Lékoumou</option>
-        <option>Likouala</option>
-        <option>Niari</option>
-        <option>Plateaux</option>
-        <option>Pool</option>
-        <option>Sangha</option>
       </select>
     </div>
 
     <p class="deputes-count">Affichage de <strong id="deputeCount">151</strong> député(s)</p>
 
-    <!-- Tableau des Députés (sélection représentative) -->
+    <!-- Tableau -->
     <div style="overflow-x: auto;">
       <table class="deputes-table" id="deputesTable">
         <thead>
           <tr>
             <th>N°</th>
-            <th>Nom &amp; Prénom</th>
+            <th>Député</th>
             <th>Département</th>
             <th>Circonscription</th>
-            <th>Groupe parlementaire</th>
+            <th>Formation politique</th>
           </tr>
         </thead>
         <tbody id="deputesTbody">
-          <tr><td>1</td><td>Isidore MVOUBA</td><td>Cuvette</td><td>Owando</td><td>PCT</td></tr>
-          <tr><td>2</td><td>Léon Alfred OPIMBAT</td><td>Brazzaville</td><td>Poto-Poto</td><td>PCT</td></tr>
-          <tr><td>3</td><td>Roland BOUITY VIAUDO</td><td>Niari</td><td>Nkayi</td><td>PCT</td></tr>
-          <tr><td>4</td><td>Fernand SABAYE</td><td>Bouenza</td><td>Madingou</td><td>PCT</td></tr>
-          <tr><td>5</td><td>KIGNOUMBI KIA MBOUNGOU</td><td>Kouilou</td><td>Kouilou</td><td>PCT</td></tr>
-          <tr><td>6</td><td>Abel Joël OWASSA</td><td>Plateaux</td><td>Djambala</td><td>PCT</td></tr>
-          <tr><td>7</td><td>Destinée DOUKAGA</td><td>Sangha</td><td>Ouesso</td><td>PCT</td></tr>
-          <tr><td>8</td><td>Hugues NGOUOLONDELE</td><td>Brazzaville</td><td>Mfilou</td><td>PCT</td></tr>
-          <tr><td>9</td><td>Pierre MOUSSA</td><td>Niari</td><td>Dolisie</td><td>PCT</td></tr>
-          <tr><td>10</td><td>Serge ITOUA</td><td>Cuvette</td><td>Makoua</td><td>PCT</td></tr>
-          <tr><td>11</td><td>Bruno Jean-Richard ITOUA</td><td>Cuvette</td><td>Ewo</td><td>PCT</td></tr>
-          <tr><td>12</td><td>Martin PARFAIT AIMÉ COUSSOUD-MAVOUNGOU</td><td>Pointe-Noire</td><td>Pointe-Noire 1</td><td>PCT</td></tr>
-          <tr><td>13</td><td>Lucien PICHEDI</td><td>Bouenza</td><td>Sibiti</td><td>PCT</td></tr>
-          <tr><td>14</td><td>Marie-Thérèse AVEMEKA</td><td>Sangha</td><td>Sembé</td><td>PCT</td></tr>
-          <tr><td>15</td><td>Jean-Baptiste ONDAYE</td><td>Pool</td><td>Boko</td><td>PCT</td></tr>
-          <tr><td>16</td><td>Claudine MUNARI</td><td>Brazzaville</td><td>Makélékélé</td><td>PCT</td></tr>
-          <tr><td>17</td><td>Gilbert ONDONGO</td><td>Cuvette-Ouest</td><td>Ewo</td><td>PCT</td></tr>
-          <tr><td>18</td><td>Arlette SOUDAN-NONAULT</td><td>Brazzaville</td><td>Bacongo</td><td>PCT</td></tr>
-          <tr><td>19</td><td>Justin KOUMBA</td><td>Niari</td><td>Mossendjo</td><td>PCT</td></tr>
-          <tr><td>20</td><td>Antoinette DINGA-DZONDO</td><td>Likouala</td><td>Impfondo</td><td>PCT</td></tr>
-          <tr><td>21</td><td>Jean CLAUDE GAKOSSO</td><td>Bouenza</td><td>Loudima</td><td>PCT</td></tr>
-          <tr><td>22</td><td>Anatole Collinet MAKOSSO</td><td>Kouilou</td><td>Pointe-Noire</td><td>PCT</td></tr>
-          <tr><td>23</td><td>Henri DJOMBO</td><td>Cuvette</td><td>Mossaka</td><td>PCT</td></tr>
-          <tr><td>24</td><td>Nicolas SÉROPHIN</td><td>Lékoumou</td><td>Sibiti</td><td>PCT</td></tr>
-          <tr><td>25</td><td>Guy Brice PARFAIT KOLELAS</td><td>Pool</td><td>Kinkala</td><td>MCDDI</td></tr>
-          <tr><td>26</td><td>Pascal TSATY-MABIALA</td><td>Kouilou</td><td>Hinda</td><td>UPADS</td></tr>
-          <tr><td>27</td><td>Marie-Ange MAGNE</td><td>Pointe-Noire</td><td>Pointe-Noire 2</td><td>PCT</td></tr>
-          <tr><td>28</td><td>Jacques BAUDIN</td><td>Brazzaville</td><td>Talangaï</td><td>PCT</td></tr>
-          <tr><td>29</td><td>Emmanuel YOKA</td><td>Brazzaville</td><td>Moungali</td><td>PCT</td></tr>
-          <tr><td>30</td><td>Emilienne RAOUL</td><td>Niari</td><td>Kibangou</td><td>PCT</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:40px;color:#64748b;">Chargement…</td></tr>
         </tbody>
       </table>
     </div>
 
-    <p style="color: var(--gris-m); font-size: 0.8rem; margin-top: 16px; text-align: center; font-style: italic;">
-      Liste représentative — la liste complète des 151 députés est disponible auprès du Secrétariat général de l'Assemblée nationale.
-    </p>
   </div>
 </div>
 
@@ -257,7 +255,7 @@
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
+      <p>© 2026 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
       <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
     </div>
   </div>
@@ -268,18 +266,257 @@
 <script src="../js/main.js"></script>
 <script src="../js/cms.js"></script>
 <script>
-function filterDeputes() {
-  const search = document.getElementById('deputeSearch').value.toLowerCase();
-  const dept   = document.getElementById('departFilter').value.toLowerCase();
-  const rows   = document.querySelectorAll('#deputesTbody tr');
-  let visible  = 0;
-  rows.forEach(row => {
-    const text = row.textContent.toLowerCase();
-    const match = (!search || text.includes(search)) && (!dept || text.includes(dept));
-    row.style.display = match ? '' : 'none';
-    if (match) visible++;
+const SB_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+
+// Liste complète statique (151 députés — Source: Secrétariat Général AN)
+const DEPUTES_STATIQUES = [
+  {num:1,  name:'AKOUALA GAMBOU Francis Rivelin',       constituency:'Ouenzé 1',              department:'Brazzaville',   groupe:'CLUB 2002 P.U.R'},
+  {num:2,  name:'AMBETO Blaise',                         constituency:'Ngoko',                 department:'Sangha',        groupe:'PCT'},
+  {num:3,  name:'ANDOMOUI Raphaël',                      constituency:'Mpouya',                department:'Plateaux',      groupe:'PCT'},
+  {num:4,  name:'AYESSA ITOUA Claude-Aimé',              constituency:'Makélékélé 4',          department:'Brazzaville',   groupe:'Indépendant'},
+  {num:5,  name:'AYO Mizere Davin',                      constituency:'Mbama',                 department:'Cuvette',       groupe:'PCT'},
+  {num:6,  name:'BADIABIO Joseph',                       constituency:'Makélékélé 2',          department:'Brazzaville',   groupe:'UDH-YUKI'},
+  {num:7,  name:'BAHAMBOULA Prince Bertrand',            constituency:'Mayama',                department:'Pool',          groupe:'PCT'},
+  {num:8,  name:'BAMBI GOMA Gérald Lone',                constituency:'Makélékélé 1',          department:'Brazzaville',   groupe:'UDH-YUKI'},
+  {num:9,  name:'BANIAKINA Antoine',                     constituency:'Ngoyo',                 department:'Pointe-Noire',  groupe:'PCT'},
+  {num:10, name:'BANTSIMBA Dieudonné',                   constituency:'Mfilou Ngamaba 2',      department:'Brazzaville',   groupe:'PCT'},
+  {num:11, name:'BATI Benoit',                           constituency:'District de Tsiaki',    department:'Bouenza',       groupe:'PCT'},
+  {num:12, name:'BAYENDISSA Brice Dimitri',              constituency:'Tié-Tié 2',             department:'Pointe-Noire',  groupe:'PCT'},
+  {num:13, name:'BAZOKOTO KABA Jacob Paulin',            constituency:'Mindouli 1',            department:'Pool',          groupe:'PCT'},
+  {num:14, name:'BIDIE BIA-MBEMBA Elbe Biscay',          constituency:'Louingui',              department:'Pool',          groupe:'RC'},
+  {num:15, name:'BIDOUNGA Alphonse',                     constituency:'Nkayi 1',               department:'Bouenza',       groupe:'UPADS'},
+  {num:16, name:'BINDOULA MILANDOU Auguste',             constituency:'Mbandza-Ndounga',       department:'Pool',          groupe:'A.P.C'},
+  {num:17, name:'BISSOUTA MABOUNDA Aloyse Devic',        constituency:'Lumumba 2',             department:'Brazzaville',   groupe:'PCT'},
+  {num:18, name:'BITSAMINA Silvère',                     constituency:'Komono',                department:'Lékoumou',      groupe:'Indépendant'},
+  {num:19, name:'BOBRO née KOUMBA Yacine Mfouma',        constituency:'Banda',                 department:'Likouala',      groupe:'PCT'},
+  {num:20, name:'BOCKO Martinien Régis Ulrich',          constituency:'Bacongo 2',             department:'Brazzaville',   groupe:'MCDDI'},
+  {num:21, name:'BOKAMBISSA Prudent',                    constituency:'Mossaka 1',             department:'Cuvette',       groupe:'PCT'},
+  {num:22, name:'BOKILO Rick Gerald',                    constituency:'Poto-Poto 1',           department:'Brazzaville',   groupe:'PCT'},
+  {num:23, name:'BOKOLOJOUE Antoine',                    constituency:'Kimba',                 department:'Plateaux',      groupe:'Indépendant'},
+  {num:24, name:'BOKOUMAKA Gabriel',                     constituency:'Bokoma',                department:'Cuvette',       groupe:'PCT'},
+  {num:25, name:'BONGO Emilon Patrick',                  constituency:'Mvou-Mvou 1',           department:'Pointe-Noire',  groupe:'RDPS'},
+  {num:26, name:'BONGO-SAMBY née IBOMBO Louise',         constituency:'Owando District',       department:'Cuvette',       groupe:'PCT'},
+  {num:27, name:'BOUITI-VIAUDO Roland',                  constituency:'District de Loango',    department:'Kouilou',       groupe:'MAR'},
+  {num:28, name:'BOSSA Fidèle',                          constituency:'Ollombo 1',             department:'Plateaux',      groupe:'PCT'},
+  {num:29, name:'CHISSO Adelaïde Rufine',                constituency:'District de Pikounda',  department:'Sangha',        groupe:'PCT'},
+  {num:30, name:'DAMBA NGOLO Octave',                    constituency:'Moungali 2',            department:'Brazzaville',   groupe:'PCT'},
+  {num:31, name:'DILOU NGOMA Samuel',                    constituency:'Nkayi 2',               department:'Bouenza',       groupe:'PCT'},
+  {num:32, name:'DJOMBO Henri',                          constituency:'Enyele',                department:'Likouala',      groupe:'PCT'},
+  {num:33, name:'DOLAMA Virginie Euphrasie',             constituency:'Impfondo District',     department:'Likouala',      groupe:'PCT'},
+  {num:34, name:'DOUKAGA Destinée Hermella',             constituency:'Nyanga',                department:'Niari',         groupe:'PCT'},
+  {num:35, name:'DZAMBA Bienvenu Victor',                constituency:'Kibangou',              department:'Niari',         groupe:'UPADS'},
+  {num:36, name:'ELENGA Faustin',                        constituency:'Talangaï 4',            department:'Brazzaville',   groupe:'PCT'},
+  {num:37, name:'ENGONDZO Brigida Jumael',               constituency:'Loukolela',             department:'Cuvette',       groupe:'PCT'},
+  {num:38, name:'ENGOUALI Bernard',                      constituency:'Ewo District',          department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:39, name:'ENKO MBALAWA Ernest Vianney',           constituency:'Ignie',                 department:'Sangha',        groupe:'PCT'},
+  {num:40, name:'ETOU Paul Carroph',                     constituency:'Gamboma 1',             department:'Plateaux',      groupe:'PCT'},
+  {num:41, name:'EYOBELE Gracia Desmet Dorel',           constituency:'Tchikapika',            department:'Plateaux',      groupe:'PCT'},
+  {num:42, name:'GANTSELE Alphonse',                     constituency:'Mbon',                  department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:43, name:'GASSACKYS Ferréol Constant Patrick',    constituency:'Poto-Poto 3',           department:'Brazzaville',   groupe:'PCT'},
+  {num:44, name:'GAVET Juste Bernardin',                 constituency:'Yaya',                  department:'Lékoumou',      groupe:'PCT'},
+  {num:45, name:'GAYAMA AHISSOU Esther',                 constituency:'Île Mbamou',            department:'Pool',          groupe:'PCT'},
+  {num:46, name:'GONDZIA Guy Patrick',                   constituency:'Dongou',                department:'Likouala',      groupe:'PCT'},
+  {num:47, name:'GONGARAD NKOUA Eric',                   constituency:'Ngo',                   department:'Plateaux',      groupe:'UPDP'},
+  {num:48, name:'GOUAMBA Ninon Pachel',                  constituency:'Ouenzé 4',              department:'Brazzaville',   groupe:'PCT'},
+  {num:49, name:'GOUEMO-GOUEMO née MOUKALA Barbe',       constituency:'Dolisie 2',             department:'Niari',         groupe:'UPADS'},
+  {num:50, name:'GUIMBI Michel',                         constituency:'Kimongo',               department:'Niari',         groupe:'PCT'},
+  {num:51, name:'HOBIE Thierry',                         constituency:'District de Kellé',     department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:52, name:'IBOVI Jean Claude',                     constituency:'Talangaï 2',            department:'Brazzaville',   groupe:'MDP'},
+  {num:53, name:'IKEMO Théodore',                        constituency:'Ntokou',                department:'Cuvette',       groupe:'PCT'},
+  {num:54, name:'IKIEMI Constant Bruno Serges',          constituency:'Oyo District',          department:'Cuvette',       groupe:'PCT'},
+  {num:55, name:'ILLOYE-GOUYA Daniel',                   constituency:'Ouenzé 2',              department:'Brazzaville',   groupe:'PCT'},
+  {num:56, name:'KABA-VELE née MPAN Suzanne',            constituency:'Loandjili 1',           department:'Pointe-Noire',  groupe:'PCT'},
+  {num:57, name:'KAKY Léonce Alban Oscar',               constituency:'Makélékélé 3',          department:'Brazzaville',   groupe:'Indépendant'},
+  {num:58, name:'KALLA Marcel',                          constituency:'District de Mabombo',   department:'Sangha',        groupe:'PCT'},
+  {num:59, name:'KANDO Jean François',                   constituency:'Mongo-Mpoukou',         department:'Pool',          groupe:'PCT'},
+  {num:60, name:'KANGA Jean Bruno',                      constituency:'Liranga',               department:'Likouala',      groupe:'PCT'},
+  {num:61, name:'KIBA Jean Paul',                        constituency:'Ollombo 2',             department:'Plateaux',      groupe:'PCT'},
+  {num:62, name:'KIGNOUMBI KIA MBOUNGOU Joseph',         constituency:'Sibiti District',       department:'Lékoumou',      groupe:'La Chaîne'},
+  {num:63, name:'KINZENZE Charles',                      constituency:'Mindouli 2',            department:'Pool',          groupe:'PCT'},
+  {num:64, name:'KOLELAS NTOUMI Juste Aurélien',         constituency:'Kinkala District',      department:'Pool',          groupe:'UDH-YUKI'},
+  {num:65, name:'KOUKA Jean',                            constituency:'District de Kayes',     department:'Niari',         groupe:'PCT'},
+  {num:66, name:'KOULA MIKIELEKO Fleury Edgard',         constituency:'Sembé',                 department:'Sangha',        groupe:'PCT'},
+  {num:67, name:'KOULOUMBOU Marie Jeanne',               constituency:'Boko',                  department:'Pool',          groupe:'PCT'},
+  {num:68, name:'LALISSINI BIKINDOU Justice Jerslin',    constituency:'Moutamba',              department:'Niari',         groupe:'PCT'},
+  {num:69, name:'LEKOUNDZOU Tsatsa Avanke',              constituency:'Boundji',               department:'Cuvette',       groupe:'PCT'},
+  {num:70, name:'LEYINDA Pascal Alain',                  constituency:'Mayoko',                department:'Niari',         groupe:'UPADS'},
+  {num:71, name:'LENGA Isidore',                         constituency:'Talangaï 5',            department:'Brazzaville',   groupe:'PCT'},
+  {num:72, name:'LISSOUBA Jérémy Sylvain Mehdi',         constituency:'Dolisie 1',             department:'Niari',         groupe:'UPADS'},
+  {num:73, name:'LOUSSILAHO MADZOKO Paul Florent',       constituency:'Loumo',                 department:'Niari',         groupe:'PCT'},
+  {num:74, name:'LOUVOUNOU Alphonse',                    constituency:'Mvouti 2',              department:'Kouilou',       groupe:'PCT'},
+  {num:75, name:'MABIALA Alexandre',                     constituency:'Kakamoeka',             department:'Kouilou',       groupe:'PCT'},
+  {num:76, name:'MABITA Jean Claude Stéphane',           constituency:'Moungoundou-Sud',       department:'Niari',         groupe:'MCDDI'},
+  {num:77, name:'MAKASSELA EWHAKOU Herdy Chryster',      constituency:'Epena 2',               department:'Likouala',      groupe:'PCT'},
+  {num:78, name:'MAKOSSO Christian Ernest',              constituency:'Tchiamba-Nzassi',       department:'Kouilou',       groupe:'PCT'},
+  {num:79, name:'MAKOSSO Serge Marvelh',                 constituency:'Madingo-Kayes',         department:'Kouilou',       groupe:'MAR'},
+  {num:80, name:'MALONGA Nicolas Jean Jacques Frédéric', constituency:'Madibou',               department:'Brazzaville',   groupe:'UDH-YUKI'},
+  {num:81, name:'MALONGA Jean Paul',                     constituency:'Kinkala Commune',       department:'Pool',          groupe:'PRL'},
+  {num:82, name:'MAMONA Ferdinand',                      constituency:'Loandjili 2',           department:'Pointe-Noire',  groupe:'PCT'},
+  {num:83, name:'MATOMBE Paul',                          constituency:'Mvouti 1',              department:'Kouilou',       groupe:'PCT'},
+  {num:84, name:'MATSIMA BIAYENDA Antignac Patience',    constituency:'Vindza',                department:'Pool',          groupe:'UDH-YUKI'},
+  {num:85, name:'MATSIMA KIMBEMBE Préférence Gérald',    constituency:'Bacongo 1',             department:'Brazzaville',   groupe:'UDH-YUKI'},
+  {num:86, name:'MAVOUNGOU Jean Aimé',                   constituency:'Louvakou',              department:'Niari',         groupe:'PCT'},
+  {num:87, name:'MAVOUNGOU Maurice',                     constituency:'Lumumba 3',             department:'Brazzaville',   groupe:'MAR'},
+  {num:88, name:'MBAMA Norbert',                         constituency:'Talangaï 1',            department:'Brazzaville',   groupe:'PCT'},
+  {num:89, name:'MBANI Marcel',                          constituency:'District de Zanaga',    department:'Lékoumou',      groupe:'PCT'},
+  {num:90, name:'MBANZOULOU Eugène',                     constituency:'Boko-Songho',           department:'Pool',          groupe:'PCT'},
+  {num:91, name:'MBOSSA Joseph',                         constituency:'Abala',                 department:'Plateaux',      groupe:'PCT'},
+  {num:92, name:'MBOUMA Albert',                         constituency:'Pokola',                department:'Sangha',        groupe:'PCT'},
+  {num:93, name:'MEDOUZEL EDEB Serge Roselin',           constituency:'District de Ngbala',    department:'Likouala',      groupe:'PCT'},
+  {num:94, name:'MFALI Mathurin',                        constituency:'Ewo Commune',           department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:95, name:'MISSATOU Louis Gabriel Leuisel',        constituency:'Lumumba 1',             department:'Brazzaville',   groupe:'CLUB 2002 PUR'},
+  {num:96, name:'MOBONDZO ENDZONGA Marien',              constituency:'Mossaka 2',             department:'Cuvette',       groupe:'PCT'},
+  {num:97, name:'MOKA Alain',                            constituency:'Impfondo Commune',      department:'Likouala',      groupe:'PCT'},
+  {num:98, name:'MOUAGNI Aimé Hydevert',                 constituency:'Moungali 1',            department:'Brazzaville',   groupe:'CPR'},
+  {num:99, name:'MOUANDZA Pierre',                       constituency:'Mbinda',                department:'Niari',         groupe:'PCT'},
+  {num:100,name:'MOUHOUMOUNOU Davy Benoît',              constituency:'Mayeye',                department:'Pool',          groupe:'PCT'},
+  {num:101,name:'MOUNDELE-NGOLLO EHOUROSSIA Yves F.',    constituency:'Ongogni',               department:'Plateaux',      groupe:'PCT'},
+  {num:102,name:'MOUNEA DIZANGUE AYA Gervine Mauger',    constituency:'Moungali 3',            department:'Brazzaville',   groupe:'PRL'},
+  {num:103,name:'MOUNGONDO Albert',                      constituency:'Madingou Commune',      department:'Bouenza',       groupe:'UPADS'},
+  {num:104,name:'MUNARI née MABONDZOT Claudine',         constituency:'Mouyondzi',             department:'Bouenza',       groupe:'MUST'},
+  {num:105,name:'MVOUBA Isidore',                        constituency:'Kindamba',              department:'Pool',          groupe:'PCT'},
+  {num:106,name:'NDINGA-MAKANDA Accel Arnaud',           constituency:'Ouesso 1',              department:'Sangha',        groupe:'PCT'},
+  {num:107,name:'NDOUMANGOYI Anicet',                    constituency:'Moungoundou Nord',      department:'Niari',         groupe:'URDC'},
+  {num:108,name:'NDOUNA François',                       constituency:'Mossendjo 1',           department:'Niari',         groupe:'PCT'},
+  {num:109,name:'NGABELET Auguste',                      constituency:'Madingou District',     department:'Bouenza',       groupe:'PCT'},
+  {num:110,name:'NGAMBILI IBAM Bersol Exaucé',           constituency:'Djiri 2',               department:'Brazzaville',   groupe:'PCT'},
+  {num:111,name:'NGANONGO Paul',                         constituency:'District de Ngabé',     department:'Pool',          groupe:'PCT'},
+  {num:112,name:"N'GOMA MBOUKOU Ulriche",                constituency:'District de Yamba',     department:'Likouala',      groupe:'PCT'},
+  {num:113,name:'NGOUALA Antoine',                       constituency:'Londela-Kayes',         department:'Niari',         groupe:'PCT'},
+  {num:114,name:'NGOULIFACE Boniface',                   constituency:'Djambala District',     department:'Plateaux',      groupe:'DRD'},
+  {num:115,name:"N'KAZI Didier",                         constituency:'Goma Tsé-Tsé',          department:'Pool',          groupe:'DRD'},
+  {num:116,name:'NKODIA KIND Gaétan',                    constituency:'Tié-Tié 1',             department:'Pointe-Noire',  groupe:'PCT'},
+  {num:117,name:'NKOUKA née MAGANGA-YOGO Marianne',      constituency:'Divénié',               department:'Niari',         groupe:'PCT'},
+  {num:118,name:'NKOUKOULI Norbert',                     constituency:'Djambala 1',            department:'Plateaux',      groupe:'PCT'},
+  {num:119,name:'NTSAMBA Léon Logan',                    constituency:'Makabana',              department:'Niari',         groupe:'PCT'},
+  {num:120,name:'NTSIBA NGOULOUBI Melly Florent',        constituency:'Lékana',                department:'Plateaux',      groupe:'PCT'},
+  {num:121,name:'NZOMONO Macaire',                       constituency:'Mfouati',               department:'Bouenza',       groupe:'PCT'},
+  {num:122,name:"OBAM'ONDON Antoine Bienaimé",           constituency:'Gamboma 2',             department:'Plateaux',      groupe:'PCT'},
+  {num:123,name:'OBAMBI Pierre',                         constituency:'Talangaï 3',            department:'Brazzaville',   groupe:'PCT'},
+  {num:124,name:'OKOKO née DOUKORO Angèle',              constituency:'Ouesso 2',              department:'Sangha',        groupe:'PCT'},
+  {num:125,name:'OKOUENI Michel',                        constituency:'District de Kabo',      department:'Sangha',        groupe:'PCT'},
+  {num:126,name:'OMVOUELET Francis Pépin',               constituency:'Etoumbi',               department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:127,name:'ONDZE née NGAMBOLO Bernadette',         constituency:'Makotipoko',            department:'Plateaux',      groupe:'PCT'},
+  {num:128,name:'OPENDZOBE Fulgence',                    constituency:'Mokeko',                department:'Sangha',        groupe:'PCT'},
+  {num:129,name:'OPIMBAT Léon Alfred',                   constituency:'Mbomo',                 department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:130,name:'OPIMBAT née MBOUNDZA MOKE EBOTIKAMBI Charlotte', constituency:'Poto-Poto 2', department:'Brazzaville',   groupe:'PCT'},
+  {num:131,name:'OSSEBI Jean Christian',                 constituency:'Allembe',               department:'Plateaux',      groupe:'PCT'},
+  {num:132,name:'OTSALEYOUA Saturnin',                   constituency:'Okoyo',                 department:'Cuvette-Ouest', groupe:'PCT'},
+  {num:133,name:'OWASSA YAUCKA Abel Joël',               constituency:'Owando Commune',        department:'Cuvette',       groupe:'PCT'},
+  {num:134,name:'OYO EMBOUNOU Romarick Jules Junior',    constituency:'Ouenzé 3',              department:'Brazzaville',   groupe:'PCT'},
+  {num:135,name:'POUOMOUO Albert',                       constituency:'Sibiti',                department:'Lékoumou',      groupe:'PCT'},
+  {num:136,name:'SABAYE Fernand',                        constituency:'Betou',                 department:'Likouala',      groupe:'PCT'},
+  {num:137,name:'SAMBA Sylvain',                         constituency:'Mfilou 1',              department:'Brazzaville',   groupe:'UDH-YUKI'},
+  {num:138,name:"SASSOU N'GUESSO Stella",                constituency:'Kintélé Commune',       department:'Brazzaville',   groupe:'PCT'},
+  {num:139,name:'SEKO Hyppolite',                        constituency:'Bouanela',              department:'Bouenza',       groupe:'PCT'},
+  {num:140,name:'SIBALY Jean',                           constituency:'Kingoué',               department:'Bouenza',       groupe:'PCT'},
+  {num:141,name:'SITOU Jean Baptiste',                   constituency:'Nzambi',                department:'Kouilou',       groupe:'MAR'},
+  {num:142,name:'SOUAKA Judes Wilfride',                 constituency:'Bambama',               department:'Lékoumou',      groupe:'Indépendant'},
+  {num:143,name:'SOUNDA Jean Aimé',                      constituency:'Hinda',                 department:'Kouilou',       groupe:'RDPS'},
+  {num:144,name:'TCHIGNOUMBA BOUMBA Gilbert Paul',       constituency:'Mvou-Mvou 2',           department:'Pointe-Noire',  groupe:'PCT'},
+  {num:145,name:'TIELE GAMBIA OLOU Antoinette',          constituency:'Djiri 1',               department:'Brazzaville',   groupe:'PCT'},
+  {num:146,name:'TONO Marie Louise',                     constituency:'Epena 1',               department:'Likouala',      groupe:'PCT'},
+  {num:147,name:'TSATY-MABIALA Pascal',                  constituency:'Loudima',               department:'Bouenza',       groupe:'UPADS'},
+  {num:148,name:'TSOUMOU Yves',                          constituency:'Mossendjo 2',           department:'Niari',         groupe:'PCT'},
+  {num:149,name:'YEKA Frédéric',                         constituency:'Makoua',                department:'Cuvette',       groupe:'PCT'},
+  {num:150,name:'YOKA Justin',                           constituency:'Oyo 1',                 department:'Cuvette',       groupe:'PCT'},
+  {num:151,name:'ZONIABA AYIMESSONE Henri',              constituency:'Souanké',               department:'Sangha',        groupe:'PCT'},
+];
+
+function getInitials(name) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function isIndep(groupe) {
+  return /ind[eé]p/i.test(groupe);
+}
+
+function avatarHTML(d) {
+  if (d.photo_url) {
+    return `<div class="deputy-avatar"><img src="${escHTML(d.photo_url)}" alt="${escHTML(d.name)}" loading="lazy"></div>`;
+  }
+  return `<div class="deputy-avatar">${getInitials(d.name)}</div>`;
+}
+
+function rowHTML(d) {
+  const indep = isIndep(d.groupe || '');
+  return `<tr>
+    <td style="color:#64748b;font-size:.85rem">${d.num}</td>
+    <td>
+      <div class="deputy-name-cell">
+        ${avatarHTML(d)}
+        <span class="deputy-name-text">${escHTML(d.name)}</span>
+      </div>
+    </td>
+    <td>${escHTML(d.department || '—')}</td>
+    <td>${escHTML(d.constituency || '—')}</td>
+    <td><span class="groupe-badge${indep ? ' indep' : ''}">${escHTML(d.groupe || '—')}</span></td>
+  </tr>`;
+}
+
+function escHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildDeptFilter(data) {
+  const select = document.getElementById('departFilter');
+  const depts = [...new Set(data.map(d => d.department).filter(Boolean))].sort();
+  depts.forEach(dept => {
+    const opt = document.createElement('option');
+    opt.value = dept.toLowerCase();
+    opt.textContent = dept;
+    select.appendChild(opt);
   });
-  document.getElementById('deputeCount').textContent = visible;
+}
+
+function renderTable(data) {
+  document.getElementById('deputesTbody').innerHTML = data.map(rowHTML).join('');
+  document.getElementById('deputeCount').textContent = data.length;
+}
+
+let allDeputes = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Afficher d'abord la liste statique immédiatement
+  allDeputes = DEPUTES_STATIQUES;
+  renderTable(allDeputes);
+  buildDeptFilter(allDeputes);
+
+  // Tenter de charger depuis Supabase (données enrichies / photos)
+  try {
+    const db = supabase.createClient(SB_URL, SB_KEY);
+    const { data, error } = await db
+      .from('deputes')
+      .select('*')
+      .eq('active', true)
+      .order('num', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      allDeputes = data;
+      // Réinitialiser le filtre département
+      const select = document.getElementById('departFilter');
+      while (select.options.length > 1) select.remove(1);
+      buildDeptFilter(allDeputes);
+      renderTable(allDeputes);
+    }
+  } catch (e) {
+    // On garde la liste statique
+  }
+});
+
+function filterDeputes() {
+  const search = document.getElementById('deputeSearch').value.toLowerCase().trim();
+  const dept   = document.getElementById('departFilter').value.toLowerCase();
+  const filtered = allDeputes.filter(d => {
+    const text = (d.name + ' ' + d.constituency + ' ' + d.department + ' ' + d.groupe).toLowerCase();
+    return (!search || text.includes(search)) && (!dept || (d.department || '').toLowerCase().includes(dept));
+  });
+  document.getElementById('deputesTbody').innerHTML = filtered.map(rowHTML).join('');
+  document.getElementById('deputeCount').textContent = filtered.length;
 }
 </script>
 </body>

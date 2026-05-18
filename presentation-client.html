@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Présentation Technique — Assemblée Nationale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 24px auto;
+      background: #fff;
+      padding: 0;
+      box-shadow: 0 4px 32px rgba(0,0,0,.12);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: #009A44;
+      color: #fff;
+      padding: 28px 36px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+    }
+    .header__flag {
+      display: flex;
+      height: 5px;
+      border-radius: 3px;
+      overflow: hidden;
+      width: 56px;
+      margin-bottom: 16px;
+    }
+    .header__flag span { flex: 1; }
+    .header__flag .v { background: #009A44; border: 1px solid rgba(255,255,255,.4); }
+    .header__flag .j { background: #FBDE4A; }
+    .header__flag .r { background: #DC241F; }
+    .header__top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .header__title { font-family: 'Playfair Display', serif; font-size: 1.55rem; line-height: 1.2; margin-bottom: 6px; }
+    .header__sub { font-size: .78rem; opacity: .85; letter-spacing: .03em; }
+    .header__badge {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 5px 14px;
+      white-space: nowrap;
+      letter-spacing: .04em;
+    }
+
+    /* ── BODY ── */
+    .body { padding: 24px 36px 28px; }
+
+    .intro {
+      font-size: .82rem;
+      color: #475569;
+      line-height: 1.65;
+      border-left: 3px solid #009A44;
+      padding-left: 14px;
+      margin-bottom: 22px;
+    }
+
+    /* ── SECTIONS ── */
+    .sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .section { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; }
+    .section.full { grid-column: 1 / -1; }
+    .section__header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .section__icon { font-size: 1rem; }
+    .section__title { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #1e293b; }
+    .section__title-bar { height: 2px; background: #009A44; width: 28px; margin-top: 4px; }
+
+    /* ── TECH STACK ── */
+    .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .tech-item { display: flex; align-items: flex-start; gap: 8px; }
+    .tech-dot { width: 6px; height: 6px; border-radius: 50%; background: #009A44; margin-top: 5px; flex-shrink: 0; }
+    .tech-name { font-size: .75rem; font-weight: 600; color: #1e293b; }
+    .tech-desc { font-size: .68rem; color: #64748b; }
+
+    /* ── SECURITY ── */
+    .sec-list { display: flex; flex-direction: column; gap: 6px; }
+    .sec-item { display: flex; align-items: flex-start; gap: 8px; }
+    .sec-badge {
+      font-size: .6rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 10px; white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+    }
+    .sec-badge.high { background: #fef2f2; color: #dc2626; }
+    .sec-badge.mid  { background: #fffbeb; color: #d97706; }
+    .sec-badge.low  { background: #f0fdf4; color: #16a34a; }
+    .sec-text { font-size: .73rem; color: #334155; line-height: 1.45; }
+
+    /* ── CMS TABLE ── */
+    .cms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .cms-chip {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: .7rem;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cms-chip span { font-size: .85rem; }
+
+    /* ── PERF ── */
+    .perf-row { display: flex; gap: 8px; }
+    .perf-item {
+      flex: 1;
+      text-align: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 6px;
+    }
+    .perf-value { font-size: 1.1rem; font-weight: 800; color: #009A44; }
+    .perf-label { font-size: .65rem; color: #64748b; margin-top: 2px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid #e2e8f0;
+      padding: 14px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer__left { font-size: .65rem; color: #94a3b8; }
+    .footer__tricolor { display: flex; height: 4px; width: 48px; border-radius: 3px; overflow: hidden; }
+    .footer__tricolor span { flex: 1; }
+    .ft-v { background: #009A44; }
+    .ft-j { background: #FBDE4A; }
+    .ft-r { background: #DC241F; }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; }
+      .page { margin: 0; box-shadow: none; border-radius: 0; width: 100%; min-height: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header__flag"><span class="v"></span><span class="j"></span><span class="r"></span></div>
+    <div class="header__top">
+      <div>
+        <div class="header__title">Assemblée Nationale<br>de la République du Congo</div>
+        <div class="header__sub">15ᵉ Législature · Site officiel institutionnel</div>
+      </div>
+      <div class="header__badge">RÉSUMÉ TECHNIQUE</div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <p class="intro">
+      Le site de l'Assemblée Nationale est une plateforme institutionnelle moderne, sécurisée et entièrement administrable sans compétences techniques. Il repose sur une architecture <strong>Jamstack</strong> (JavaScript + API + Markdown) hébergée sur un CDN mondial, garantissant rapidité, disponibilité et sécurité optimales.
+    </p>
+
+    <div class="sections">
+
+      <!-- TECHNOLOGIES -->
+      <div class="section">
+        <div class="section__header">
+          <div class="section__icon">⚙️</div>
+          <div>
+            <div class="section__title">Technologies utilisées</div>
+            <div class="section__title-bar"></div>
+          </div>
+        </div>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <div class="tech-dot"></div>
+            <div><div class="tech-name">HTML5 / CSS3 / JS</div><div class="tech-desc">Frontend statique, aucun serveur</div></div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-dot"></div>
+            <div><div class="tech-name">Supabase</div><div class="tech-desc">Base de données PostgreSQL + Auth</div></div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-dot"></div>
+            <div><div class="tech-name">Vercel</div><div class="tech-desc">Hébergement CDN mondial</div></div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-dot"></div>
+            <div><div class="tech-name">EditorJS</div><div class="tech-desc">Éditeur de pages par blocs</div></div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-dot"></div>
+            <div><div class="tech-name">Supabase Storage</div><div class="tech-desc">Stockage des photos & médias</div></div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-dot"></div>
+            <div><div class="tech-name">PostgreSQL RLS</div><div class="tech-desc">Sécurité au niveau base de données</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SÉCURITÉ -->
+      <div class="section">
+        <div class="section__header">
+          <div class="section__icon">🔒</div>
+          <div>
+            <div class="section__title">Sécurité — 6 niveaux</div>
+            <div class="section__title-bar"></div>
+          </div>
+        </div>
+        <div class="sec-list">
+          <div class="sec-item">
+            <span class="sec-badge high">CRITIQUE</span>
+            <div class="sec-text"><strong>HTTPS forcé</strong> — toutes les connexions chiffrées (HSTS 2 ans)</div>
+          </div>
+          <div class="sec-item">
+            <span class="sec-badge high">CRITIQUE</span>
+            <div class="sec-text"><strong>Auth JWT</strong> — accès admin par token signé, session expirable</div>
+          </div>
+          <div class="sec-item">
+            <span class="sec-badge high">CRITIQUE</span>
+            <div class="sec-text"><strong>RLS PostgreSQL</strong> — les visiteurs lisent uniquement le contenu publié</div>
+          </div>
+          <div class="sec-item">
+            <span class="sec-badge mid">ÉLEVÉ</span>
+            <div class="sec-text"><strong>En-têtes HTTP</strong> — anti-clickjacking, anti-XSS, anti-MIME injection</div>
+          </div>
+          <div class="sec-item">
+            <span class="sec-badge low">STANDARD</span>
+            <div class="sec-text"><strong>Robots.txt</strong> — /admin/ non indexé par les moteurs de recherche</div>
+          </div>
+          <div class="sec-item">
+            <span class="sec-badge low">STANDARD</span>
+            <div class="sec-text"><strong>Permissions-Policy</strong> — caméra, micro et géoloc désactivés</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CMS -->
+      <div class="section full">
+        <div class="section__header">
+          <div class="section__icon">🖥️</div>
+          <div>
+            <div class="section__title">CMS — Panneau d'administration</div>
+            <div class="section__title-bar"></div>
+          </div>
+        </div>
+        <div class="cms-grid">
+          <div class="cms-chip"><span>✍️</span> Articles & Blog</div>
+          <div class="cms-chip"><span>📄</span> Pages personnalisées</div>
+          <div class="cms-chip"><span>🖼️</span> Carrousel / Bannières</div>
+          <div class="cms-chip"><span>📰</span> Actualités</div>
+          <div class="cms-chip"><span>📅</span> Agenda institutionnel</div>
+          <div class="cms-chip"><span>👤</span> Profil du Président</div>
+          <div class="cms-chip"><span>👥</span> Bureau de l'Assemblée</div>
+          <div class="cms-chip"><span>🏛️</span> Liste des Députés</div>
+          <div class="cms-chip"><span>✉️</span> Messages de contact</div>
+          <div class="cms-chip"><span>🖼️</span> Médiathèque</div>
+          <div class="cms-chip"><span>📥</span> Export CSV</div>
+          <div class="cms-chip"><span>🔍</span> Recherche & filtres</div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCES -->
+      <div class="section full">
+        <div class="section__header">
+          <div class="section__icon">⚡</div>
+          <div>
+            <div class="section__title">Performances & disponibilité</div>
+            <div class="section__title-bar"></div>
+          </div>
+        </div>
+        <div class="perf-row">
+          <div class="perf-item">
+            <div class="perf-value">&lt; 1s</div>
+            <div class="perf-label">Temps de chargement</div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-value">99.9%</div>
+            <div class="perf-label">Disponibilité (SLA Vercel)</div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-value">CDN</div>
+            <div class="perf-label">Réseau mondial 100+ points</div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-value">0</div>
+            <div class="perf-label">Serveur à maintenir</div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-value">HTTPS</div>
+            <div class="perf-label">Certificat SSL automatique</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer__left">
+      Assemblée Nationale de la République du Congo · 15ᵉ Législature · 2026<br>
+      Développé par <strong>yvicdesigns</strong> · Hébergé sur Vercel · Base de données Supabase
+    </div>
+    <div class="footer__tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
+  </div>
+
+</div>
+</body>
+</html>
