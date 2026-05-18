@@ -178,7 +178,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   text-decoration: none;
 }
 .site-logo__img {
-  height: 100px !important;
+  height: 72px !important;
   width: auto !important;
   max-width: none !important;
   max-height: none !important;
