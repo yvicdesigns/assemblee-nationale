@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation Technique — Site Officiel Assemblée Nationale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vert: #0a3d1f;
+    --vert-moyen: #145a2e;
+    --vert-clair: #1e7a40;
+    --or: #c9a84c;
+    --or-clair: #e8c97a;
+    --rouge: #c0392b;
+    --blanc: #f9f6ef;
+    --gris-clair: #f0ece0;
+    --gris: #8a8070;
+    --texte: #1a1510;
+    --ligne: rgba(10,61,31,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--blanc);
+    color: var(--texte);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: var(--vert);
+    color: var(--blanc);
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 30%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 80% at 10% 80%, rgba(192,57,43,0.06) 0%, transparent 50%);
+  }
+
+  .cover-header {
+    padding: 2.5rem 3.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    position: relative;
+  }
+
+  .cover-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--or);
+    text-transform: uppercase;
+  }
+
+  .cover-confidential {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: rgba(249,246,239,0.4);
+    text-transform: uppercase;
+    border: 1px solid rgba(249,246,239,0.15);
+    padding: 0.35rem 0.8rem;
+    border-radius: 2px;
+  }
+
+  .cover-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3.5rem;
+    position: relative;
+  }
+
+  .cover-institution {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .cover-emblem {
+    width: 56px;
+    height: 56px;
+    border: 2px solid var(--or);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .cover-institution-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(249,246,239,0.5);
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 7vw, 6rem);
+    font-weight: 600;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .cover-title span {
+    color: var(--or);
+    font-style: italic;
+  }
+
+  .cover-subtitle {
+    font-size: 0.95rem;
+    color: rgba(249,246,239,0.55);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 3.5rem;
+    font-weight: 300;
+  }
+
+  .cover-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 4rem;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--or-clair);
+    border-radius: 2px;
+  }
+
+  .cover-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    padding-top: 2.5rem;
+    max-width: 600px;
+  }
+
+  .cover-stat {
+    padding-right: 2rem;
+  }
+
+  .cover-stat:not(:last-child) {
+    border-right: 1px solid rgba(249,246,239,0.1);
+    margin-right: 2rem;
+  }
+
+  .cover-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--or);
+    line-height: 1;
+  }
+
+  .cover-stat-label {
+    font-size: 0.7rem;
+    color: rgba(249,246,239,0.45);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .cover-footer {
+    padding: 1.5rem 3.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid rgba(249,246,239,0.08);
+    position: relative;
+  }
+
+  .cover-footer-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: rgba(249,246,239,0.3);
+    text-transform: uppercase;
+  }
+
+  .cover-footer-item span {
+    display: block;
+    color: rgba(249,246,239,0.6);
+    margin-top: 0.2rem;
+    font-size: 0.65rem;
+  }
+
+  /* ─── TABLE DES MATIÈRES ─── */
+  .toc-page {
+    background: var(--gris-clair);
+    padding: 5rem 3.5rem;
+    border-top: 4px solid var(--or);
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: var(--vert);
+    margin-bottom: 2.5rem;
+    line-height: 1.1;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--ligne);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toc-item:hover .toc-item-title { color: var(--vert-clair); }
+
+  .toc-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: rgba(10,61,31,0.12);
+    line-height: 1;
+    min-width: 2.2rem;
+    margin-top: 0.1rem;
+  }
+
+  .toc-item-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--vert);
+    transition: color 0.2s;
+  }
+
+  .toc-item-sub {
+    font-size: 0.78rem;
+    color: var(--gris);
+    margin-top: 0.2rem;
+    font-weight: 300;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 5rem 3.5rem;
+    border-top: 1px solid var(--ligne);
+  }
+
+  .section:nth-child(even) { background: var(--blanc); }
+  .section:nth-child(odd) { background: #f5f1e8; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--vert);
+  }
+
+  .section-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: rgba(10,61,31,0.06);
+    line-height: 1;
+    margin-top: -1rem;
+  }
+
+  .section-header-left { flex: 1; }
+
+  /* ─── CARDS ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-bottom: 2.5rem;
+  }
+
+  .card {
+    background: var(--blanc);
+    padding: 1.8rem;
+  }
+
+  .card-icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--vert);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.02em;
+  }
+
+  .card-text {
+    font-size: 0.82rem;
+    color: #4a4035;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ─── STATS ROW ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-top: 2.5rem;
+  }
+
+  .stat-cell {
+    background: var(--vert);
+    color: var(--blanc);
+    padding: 1.6rem 1rem;
+    text-align: center;
+  }
+
+  .stat-cell-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--or);
+    line-height: 1;
+  }
+
+  .stat-cell-label {
+    font-size: 0.62rem;
+    color: rgba(249,246,239,0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    line-height: 1.3;
+  }
+
+  /* ─── TECH STACK ─── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+  }
+
+  .stack-item {
+    background: var(--blanc);
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .stack-name {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--vert);
+  }
+
+  .stack-desc {
+    font-size: 0.72rem;
+    color: var(--gris);
+    font-weight: 300;
+  }
+
+  /* ─── PAGES LIST ─── */
+  .pages-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-bottom: 2.5rem;
+  }
+
+  .page-item {
+    background: var(--blanc);
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .page-icon { font-size: 1rem; min-width: 1.2rem; }
+
+  .page-name {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--vert);
+  }
+
+  .page-desc {
+    font-size: 0.72rem;
+    color: var(--gris);
+    font-weight: 300;
+  }
+
+  /* ─── FEATURES LIST ─── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.82rem;
+    padding: 0.5rem 0;
+    color: #3a3025;
+  }
+
+  .feature-check {
+    width: 18px;
+    height: 18px;
+    background: var(--vert);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--or);
+    font-size: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  /* ─── SECURITY ─── */
+  .security-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.4rem;
+    padding: 1.8rem;
+    border: 1px solid var(--ligne);
+    margin-bottom: 1px;
+    background: var(--blanc);
+    align-items: start;
+  }
+
+  .security-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin-top: 0.2rem;
+  }
+
+  .badge-critique { background: rgba(192,57,43,0.1); color: var(--rouge); border: 1px solid rgba(192,57,43,0.2); }
+  .badge-eleve { background: rgba(201,168,76,0.1); color: #8b6914; border: 1px solid rgba(201,168,76,0.3); }
+  .badge-standard { background: rgba(10,61,31,0.08); color: var(--vert-clair); border: 1px solid rgba(10,61,31,0.15); }
+
+  .security-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--vert);
+    margin-bottom: 0.4rem;
+  }
+
+  .security-text {
+    font-size: 0.8rem;
+    color: #4a4035;
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  /* ─── TABLE ─── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .comparison-table th {
+    background: var(--vert);
+    color: var(--blanc);
+    padding: 1rem 1.2rem;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .comparison-table th.highlight { background: var(--or); color: var(--vert); font-weight: 700; }
+
+  .comparison-table td {
+    padding: 0.85rem 1.2rem;
+    border-bottom: 1px solid var(--ligne);
+    vertical-align: top;
+  }
+
+  .comparison-table tr:nth-child(even) td { background: rgba(10,61,31,0.02); }
+
+  .comparison-table td.highlight {
+    color: var(--vert);
+    font-weight: 600;
+  }
+
+  .good { color: var(--vert-clair); font-weight: 500; }
+  .bad { color: var(--rouge); }
+
+  /* ─── ROADMAP ─── */
+  .roadmap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .roadmap-phase {
+    border: 1px solid var(--ligne);
+    background: var(--blanc);
+    overflow: hidden;
+  }
+
+  .roadmap-header {
+    background: var(--vert);
+    color: var(--blanc);
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .roadmap-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--or);
+    line-height: 1;
+  }
+
+  .roadmap-phase-title { font-weight: 600; font-size: 0.85rem; }
+  .roadmap-phase-period { font-size: 0.7rem; color: rgba(249,246,239,0.55); letter-spacing: 0.05em; }
+
+  .roadmap-items {
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .roadmap-item {
+    font-size: 0.78rem;
+    color: #3a3025;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .roadmap-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--or);
+    flex-shrink: 0;
+  }
+
+  /* ─── ENGAGEMENTS ─── */
+  .engagements-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-bottom: 2.5rem;
+  }
+
+  .engagement-item {
+    background: var(--blanc);
+    padding: 1.3rem 1.6rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .engagement-check {
+    width: 22px;
+    height: 22px;
+    background: var(--vert);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--or);
+    font-size: 0.65rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .engagement-title { font-weight: 600; font-size: 0.82rem; color: var(--vert); }
+  .engagement-desc { font-size: 0.75rem; color: var(--gris); font-weight: 300; margin-top: 0.15rem; }
+
+  /* ─── RÉCAP STATS ─── */
+  .recap-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-bottom: 2.5rem;
+  }
+
+  .recap-stat {
+    background: var(--vert);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .recap-stat:nth-child(2) { background: var(--vert-moyen); }
+  .recap-stat:nth-child(3) { background: var(--vert-clair); }
+  .recap-stat:nth-child(4) { background: #1a6b35; }
+  .recap-stat:nth-child(5) { background: #22803f; }
+  .recap-stat:nth-child(6) { background: #2a9651; }
+
+  .recap-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--or);
+    line-height: 1;
+  }
+
+  .recap-label {
+    font-size: 0.68rem;
+    color: rgba(249,246,239,0.6);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-card {
+    border: 1px solid var(--ligne);
+    background: var(--blanc);
+    padding: 2rem;
+  }
+
+  .contact-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 1rem;
+  }
+
+  .contact-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--vert);
+    margin-bottom: 0.3rem;
+  }
+
+  .contact-role { font-size: 0.8rem; color: var(--gris); margin-bottom: 1rem; font-weight: 300; }
+
+  .contact-email {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--vert-clair);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(30,122,64,0.3);
+    padding-bottom: 2px;
+  }
+
+  .next-steps { list-style: none; }
+  .next-steps li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 0;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--ligne);
+    color: #3a3025;
+  }
+
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--or);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--or);
+    flex-shrink: 0;
+  }
+
+  /* ─── COLOPHON ─── */
+  .colophon {
+    background: var(--vert);
+    color: var(--blanc);
+    padding: 3rem 3.5rem;
+    text-align: center;
+  }
+
+  .colophon-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(249,246,239,0.8);
+    max-width: 640px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.5;
+  }
+
+  .colophon-quote strong {
+    color: var(--or);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .colophon-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: rgba(249,246,239,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ─── SEPARATORS ─── */
+  .color-bar {
+    height: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .color-bar div:nth-child(1) { background: var(--vert); }
+  .color-bar div:nth-child(2) { background: var(--or); }
+  .color-bar div:nth-child(3) { background: var(--rouge); }
+
+  .divider {
+    height: 1px;
+    background: var(--ligne);
+    margin: 2rem 0;
+  }
+
+  /* ─── PAGE BREAK PAGES ─── */
+  .interpage {
+    background: var(--vert);
+    padding: 2rem 3.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .interpage-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: rgba(249,246,239,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ─── INTRO BLOCK ─── */
+  .intro-block {
+    border-left: 3px solid var(--or);
+    padding: 1.2rem 1.5rem;
+    background: rgba(201,168,76,0.05);
+    margin-bottom: 2.5rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #2a2015;
+  }
+
+  .intro-block strong { color: var(--vert); }
+
+  /* ─── DB TABLE ─── */
+  .db-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-top: 2rem;
+  }
+
+  .db-item {
+    background: var(--blanc);
+    padding: 1.2rem 1.4rem;
+  }
+
+  .db-table-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--vert);
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+
+  .db-fields {
+    font-size: 0.72rem;
+    color: var(--gris);
+    font-weight: 300;
+  }
+
+  /* ─── PERFORMANCE ─── */
+  .perf-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+    margin-top: 2.5rem;
+  }
+
+  .perf-cell {
+    background: var(--blanc);
+    padding: 1.6rem 1rem;
+    text-align: center;
+  }
+
+  .perf-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--vert);
+    line-height: 1;
+  }
+
+  .perf-label {
+    font-size: 0.65rem;
+    color: var(--gris);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 768px) {
+    .cover-header, .cover-body, .cover-footer, .section, .toc-page { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .cards-grid, .pages-grid, .features-grid, .engagements-grid, .contact-grid, .toc-grid, .roadmap { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .perf-row { grid-template-columns: repeat(3, 1fr); }
+    .cover-stats { grid-template-columns: 1fr 1fr; }
+    .recap-stats { grid-template-columns: repeat(2, 1fr); }
+    .stack-grid { grid-template-columns: 1fr 1fr; }
+    .db-grid { grid-template-columns: 1fr 1fr; }
+    .comparison-table { font-size: 0.7rem; }
+    .cover-title { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-badge">Documentation Officielle · Version 1.0 · Mai 2026</div>
+    <div class="cover-confidential">Confidentiel — Usage institutionnel</div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-institution">
+      <div class="cover-emblem">🏛</div>
+      <div class="cover-institution-text">
+        Assemblée Nationale<br>
+        République du Congo · 15ᵉ Législature
+      </div>
+    </div>
+
+    <h1 class="cover-title">
+      Site<br>
+      <span>Institutionnel</span><br>
+      Officiel
+    </h1>
+
+    <p class="cover-subtitle">
+      Documentation technique complète du portail officiel de la 15ᵉ Législature — architecture, fonctionnalités, sécurité, hébergement et feuille de route.
+    </p>
+
+    <div class="cover-tags">
+      <div class="tag">Jamstack Architecture</div>
+      <div class="tag">CMS Intégré</div>
+      <div class="tag">CDN Mondial</div>
+      <div class="tag">PostgreSQL</div>
+      <div class="tag">Sécurité 6 Niveaux</div>
+      <div class="tag">100% Administrable</div>
+    </div>
+
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="cover-stat-num">20+</div>
+        <div class="cover-stat-label">Pages institutionnelles</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-num">151</div>
+        <div class="cover-stat-label">Députés référencés</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-num">6</div>
+        <div class="cover-stat-label">Niveaux de sécurité</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-item">Maître d'Ouvrage<span>Assemblée Nationale R.C.</span></div>
+    <div class="cover-footer-item">Développeur<span>Olympe Consulting</span></div>
+    <div class="cover-footer-item">Législature<span>15ᵉ · 2026 – en cours</span></div>
+  </div>
+</div>
+
+<div class="color-bar"><div></div><div></div><div></div></div>
+
+<!-- ═══ TABLE DES MATIÈRES ═══ -->
+<div class="toc-page">
+  <div class="section-eyebrow">Sommaire</div>
+  <h2 class="section-title">Table des Matières</h2>
+
+  <div class="toc-grid">
+    <div class="toc-item">
+      <div class="toc-num">01</div>
+      <div>
+        <div class="toc-item-title">Résumé Exécutif & Architecture</div>
+        <div class="toc-item-sub">Vue d'ensemble, stack technologique, chiffres clés</div>
+      </div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">02</div>
+      <div>
+        <div class="toc-item-title">Pages & Fonctionnalités</div>
+        <div class="toc-item-sub">Structure complète du portail institutionnel</div>
+      </div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">03</div>
+      <div>
+        <div class="toc-item-title">Système CMS — Administration</div>
+        <div class="toc-item-sub">Modules, base de données, gestion de contenu</div>
+      </div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">04</div>
+      <div>
+        <div class="toc-item-title">Hébergement & Comparatif</div>
+        <div class="toc-item-sub">Solutions, recommandations, coûts</div>
+      </div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">05</div>
+      <div>
+        <div class="toc-item-title">Sécurité & Performance</div>
+        <div class="toc-item-sub">6 niveaux de protection, disponibilité, SLA</div>
+      </div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">06</div>
+      <div>
+        <div class="toc-item-title">Avantages Compétitifs & Roadmap</div>
+        <div class="toc-item-sub">Différenciateurs, feuille de route post-contrat</div>
+      </div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">07</div>
+      <div>
+        <div class="toc-item-title">Engagements & Contact</div>
+        <div class="toc-item-sub">Garanties qualité, prochaines étapes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 01 ═══ -->
+<div class="section" id="s01">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 01</div>
+      <h2 class="section-title">Résumé Exécutif<br>& Architecture Technique</h2>
+    </div>
+    <div class="section-number">01</div>
+  </div>
+
+  <div class="intro-block">
+    Le site de l'Assemblée Nationale de la République du Congo est un portail institutionnel de nouvelle génération, conçu selon les standards internationaux les plus élevés. Il offre une <strong>vitrine officielle, rapide et sécurisée</strong> pour la 15ᵉ Législature, entièrement administrable par les équipes internes sans aucune compétence technique requise.
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Architecture Jamstack</div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Frontend Statique</div>
+      <div class="card-text">Construit en HTML5 / CSS3 / JavaScript vanilla — sans framework lourd. Pages pré-rendues et distribuées via CDN mondial. Chargement en moins d'une seconde depuis n'importe quel pays du monde, sans serveur applicatif à maintenir.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗄</div>
+      <div class="card-title">Backend Cloud — Supabase</div>
+      <div class="card-text">Toutes les données (articles, députés, agenda, contacts) sont stockées dans une base PostgreSQL hébergée sur Supabase. Accès sécurisé par JWT et Row Level Security. Médias stockés dans Supabase Storage.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌍</div>
+      <div class="card-title">CDN Global — Vercel</div>
+      <div class="card-text">Hébergement assuré par Vercel, réseau de plus de 100 points de présence mondiaux. Le site est répliqué automatiquement sur tous les continents. Un visiteur à Brazzaville, Paris ou New York charge le site à la même vitesse.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔐</div>
+      <div class="card-title">Sécurité Multicouche</div>
+      <div class="card-text">HTTPS forcé avec HSTS 2 ans, authentification JWT pour l'admin, Row Level Security PostgreSQL, en-têtes HTTP anti-XSS et anti-clickjacking, robots.txt protégeant le panneau d'administration.</div>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Stack Technologique</div>
+  <div class="stack-grid">
+    <div class="stack-item"><div class="stack-name">HTML5 / CSS3 / JS</div><div class="stack-desc">Frontend léger, 0 dépendance</div></div>
+    <div class="stack-item"><div class="stack-name">Supabase PostgreSQL</div><div class="stack-desc">Base de données cloud, backups auto</div></div>
+    <div class="stack-item"><div class="stack-name">Supabase Storage</div><div class="stack-desc">Stockage médias — photos, images</div></div>
+    <div class="stack-item"><div class="stack-name">Vercel CDN</div><div class="stack-desc">Hébergement global, 99.99% uptime</div></div>
+    <div class="stack-item"><div class="stack-name">EditorJS</div><div class="stack-desc">Éditeur de contenu par blocs</div></div>
+    <div class="stack-item"><div class="stack-name">GitHub + Git</div><div class="stack-desc">Versioning, déploiement continu</div></div>
+  </div>
+
+  <div class="stats-row" style="margin-top:2.5rem;">
+    <div class="stat-cell"><div class="stat-cell-num">20+</div><div class="stat-cell-label">Pages institutionnelles</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">151</div><div class="stat-cell-label">Députés référencés</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">8</div><div class="stat-cell-label">Commissions permanentes</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">&lt;1s</div><div class="stat-cell-label">Temps de chargement</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">100%</div><div class="stat-cell-label">Administrable sans code</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">6</div><div class="stat-cell-label">Niveaux de sécurité</div></div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION 02 ═══ -->
+<div class="section" id="s02">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 02</div>
+      <h2 class="section-title">Pages & Fonctionnalités<br>du Site</h2>
+    </div>
+    <div class="section-number">02</div>
+  </div>
+
+  <div class="intro-block">
+    La page d'accueil comprend un <strong>carrousel hero dynamique</strong> (diapositives administrables), une barre d'information institutionnelle, une section actualités filtrables par catégorie, un bloc agenda des sessions parlementaires et une bannière officielle. Tout le contenu est chargé dynamiquement depuis la base de données.
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Pages Institutionnelles</div>
+  <div class="pages-grid">
+    <div class="page-item"><div class="page-icon">👤</div><div><div class="page-name">Présidence</div><div class="page-desc">Profil du Président de l'Assemblée</div></div></div>
+    <div class="page-item"><div class="page-icon">🏛</div><div><div class="page-name">Bureau de l'Assemblée</div><div class="page-desc">Vice-présidents, secrétaires, questeurs</div></div></div>
+    <div class="page-item"><div class="page-icon">👥</div><div><div class="page-name">Les 151 Députés</div><div class="page-desc">Recherche, filtres par département</div></div></div>
+    <div class="page-item"><div class="page-icon">🔬</div><div><div class="page-name">Commissions</div><div class="page-desc">Vue d'ensemble des 8 commissions</div></div></div>
+    <div class="page-item"><div class="page-icon">⚖️</div><div><div class="page-name">Commission Juridique</div><div class="page-desc">Lois, affaires constitutionnelles</div></div></div>
+    <div class="page-item"><div class="page-icon">💰</div><div><div class="page-name">Commission Éco-Fin</div><div class="page-desc">Économie, finances, budget</div></div></div>
+    <div class="page-item"><div class="page-icon">🌿</div><div><div class="page-name">Commission Environnement</div><div class="page-desc">Ressources naturelles, écologie</div></div></div>
+    <div class="page-item"><div class="page-icon">🌍</div><div><div class="page-name">Commission Affaires Étrangères</div><div class="page-desc">Relations internationales</div></div></div>
+    <div class="page-item"><div class="page-icon">🛡</div><div><div class="page-name">Commission Défense</div><div class="page-desc">Sécurité nationale, défense</div></div></div>
+    <div class="page-item"><div class="page-icon">📐</div><div><div class="page-name">Commission Plan</div><div class="page-desc">Planification, développement</div></div></div>
+    <div class="page-item"><div class="page-icon">🏥</div><div><div class="page-name">Commission Santé</div><div class="page-desc">Santé publique, social</div></div></div>
+    <div class="page-item"><div class="page-icon">🎓</div><div><div class="page-name">Commission Éducation</div><div class="page-desc">Enseignement, culture, jeunesse</div></div></div>
+    <div class="page-item"><div class="page-icon">📰</div><div><div class="page-name">Blog / Actualités</div><div class="page-desc">Articles, publications, communiqués</div></div></div>
+    <div class="page-item"><div class="page-icon">📜</div><div><div class="page-name">Histoire</div><div class="page-desc">Histoire du parlement congolais</div></div></div>
+    <div class="page-item"><div class="page-icon">🎯</div><div><div class="page-name">Rôle & Missions</div><div class="page-desc">Fonctions constitutionnelles</div></div></div>
+    <div class="page-item"><div class="page-icon">✉️</div><div><div class="page-name">Contact</div><div class="page-desc">Formulaire sécurisé, coordonnées</div></div></div>
+    <div class="page-item"><div class="page-icon">📱</div><div><div class="page-name">Design Responsive</div><div class="page-desc">Mobile, tablette, desktop</div></div></div>
+    <div class="page-item"><div class="page-icon">🔍</div><div><div class="page-name">SEO & Sitemap</div><div class="page-desc">Indexation Google optimisée</div></div></div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Fonctionnalités Transversales</div>
+  <div class="features-grid">
+    <div class="feature-item"><div class="feature-check">✓</div>Menu hamburger mobile avec sous-menus</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Formulaire de contact avec anti-spam</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Barre de live streaming "EN DIRECT"</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Filtres sur la liste des Députés</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Date automatique en français</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Catégories d'actualités filtrables</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Liens réseaux sociaux (YouTube, Facebook)</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Favicon officiel</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Page 404 personnalisée</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Robots.txt & Sitemap XML</div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION 03 ═══ -->
+<div class="section" id="s03">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 03</div>
+      <h2 class="section-title">Système CMS —<br>Panneau d'Administration</h2>
+    </div>
+    <div class="section-number">03</div>
+  </div>
+
+  <div class="intro-block">
+    Le tableau de bord d'administration est un <strong>CMS complet, sécurisé et intuitif</strong> accessible uniquement aux équipes autorisées de l'Assemblée Nationale. Il permet de gérer l'intégralité du contenu du site sans jamais toucher au code source.
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Modules disponibles dans le Dashboard</div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon">📰</div>
+      <div class="card-title">Articles & Publications</div>
+      <div class="card-text">Créer, modifier, publier ou archiver des articles. Éditeur riche avec blocs (texte, images, citations, listes). Gestion des catégories et des brouillons avant publication.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🖼</div>
+      <div class="card-title">Carrousel / Diapositives</div>
+      <div class="card-text">Ajouter ou modifier les diapositives de la page d'accueil. Upload d'images, titre, sous-titre, lien d'action. Ordre d'affichage configurable.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📅</div>
+      <div class="card-title">Agenda Parlementaire</div>
+      <div class="card-text">Planifier les sessions, réunions et événements de l'Assemblée. Date, heure, lieu, description. Affichage automatique sur la page d'accueil.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">👤</div>
+      <div class="card-title">Présidence & Bureau</div>
+      <div class="card-text">Mettre à jour les profils du Président et des membres du Bureau (Vice-Présidents, Secrétaires, Questeurs). Photo, biographie, circonscription.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">👥</div>
+      <div class="card-title">Gestion des 151 Députés</div>
+      <div class="card-text">Fiche complète pour chaque député : nom, département, circonscription, groupe parlementaire, photo officielle. Recherche et filtres intégrés. Upload photo direct.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">✉️</div>
+      <div class="card-title">Messages de Contact</div>
+      <div class="card-text">Consulter tous les messages reçus via le formulaire. Marquer comme lu, exporter. Les visiteurs anonymes peuvent envoyer sans être inscrits.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🖼</div>
+      <div class="card-title">Médiathèque</div>
+      <div class="card-text">Gestionnaire de fichiers centralisé. Upload d'images et documents organisés par dossiers. Stockage illimité via Supabase Storage.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📄</div>
+      <div class="card-title">Pages Personnalisées</div>
+      <div class="card-text">Créer des pages institutionnelles supplémentaires avec éditeur par blocs (EditorJS). Slug personnalisé, méta-description SEO. Statut brouillon / publié.</div>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Structure de la Base de Données</div>
+  <div class="db-grid">
+    <div class="db-item"><div class="db-table-name">articles</div><div class="db-fields">Titre, contenu, catégorie, image, statut, slug</div></div>
+    <div class="db-item"><div class="db-table-name">slides</div><div class="db-fields">Image, titre, sous-titre, lien, ordre</div></div>
+    <div class="db-item"><div class="db-table-name">agenda</div><div class="db-fields">Événement, date, heure, lieu, description</div></div>
+    <div class="db-item"><div class="db-table-name">bureau</div><div class="db-fields">Membre, rôle, photo, biographie</div></div>
+    <div class="db-item"><div class="db-table-name">deputes</div><div class="db-fields">151 députés, département, groupe, photo</div></div>
+    <div class="db-item"><div class="db-table-name">contact_messages</div><div class="db-fields">Messages reçus, statut lu/non lu</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Avantages pour les Équipes</div>
+  <div class="features-grid">
+    <div class="feature-item"><div class="feature-check">✓</div>Aucune compétence technique requise — interface simple et intuitive</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Modifications en temps réel — visibles immédiatement sur le site</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Accès multi-utilisateurs sécurisé — identifiants individuels</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Brouillons avant publication — relire avant de rendre public</div>
+    <div class="feature-item"><div class="feature-check">✓</div>Upload de photos intégré — glisser-déposer directement</div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION 04 ═══ -->
+<div class="section" id="s04">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 04</div>
+      <h2 class="section-title">Hébergement —<br>Comparatif & Recommandations</h2>
+    </div>
+    <div class="section-number">04</div>
+  </div>
+
+  <div class="intro-block">
+    Le choix de l'hébergeur est une décision stratégique pour un site institutionnel de cette importance. Notre solution repose sur <strong>Vercel (hébergement) + Supabase (base de données)</strong>, deux leaders mondiaux de l'infrastructure web.
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Comparatif des Solutions d'Hébergement</div>
+  <div style="overflow-x:auto; margin-bottom:2.5rem;">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Critère</th>
+          <th class="highlight">✅ Vercel (Notre choix)</th>
+          <th>Hostinger</th>
+          <th>Hetzner</th>
+          <th>RCPE / Local Congo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Disponibilité (Uptime)</td><td class="highlight good">99.99% garanti (SLA)</td><td>99.9%</td><td>99.9%</td><td class="bad">Variable, coupures</td></tr>
+        <tr><td>CDN / Points de présence</td><td class="highlight good">100+ points mondiaux</td><td>Limité</td><td>3 régions (EU)</td><td class="bad">Aucun CDN</td></tr>
+        <tr><td>Vitesse de chargement</td><td class="highlight good">&lt; 1 seconde mondial</td><td>1–3 secondes</td><td>1–2 secondes (EU)</td><td class="bad">5–15 secondes</td></tr>
+        <tr><td>SSL / HTTPS automatique</td><td class="highlight good">Automatique, gratuit</td><td>Inclus</td><td>Manuel / Let's Encrypt</td><td class="bad">Payant, manuel</td></tr>
+        <tr><td>Protection DDoS</td><td class="highlight good">Intégrée, enterprise</td><td>Basique</td><td>Basique</td><td class="bad">Inexistante</td></tr>
+        <tr><td>Déploiement continu (Git)</td><td class="highlight good">Automatique (push=deploy)</td><td>Non</td><td>Manuel (SSH)</td><td class="bad">Manuel (FTP)</td></tr>
+        <tr><td>Maintenance serveur</td><td class="highlight good">Aucune (serverless)</td><td>Minimale</td><td>Complète (VPS)</td><td class="bad">Complète, coûteuse</td></tr>
+        <tr><td>Risque panne électrique</td><td class="highlight good">Nul (multi-cloud AWS)</td><td>Faible</td><td>Faible</td><td class="bad">Élevé (réseau Congo)</td></tr>
+        <tr><td>Accessibilité internationale</td><td class="highlight good">Excellente</td><td>Bonne</td><td>Bonne (EU)</td><td class="bad">Lente depuis l'étranger</td></tr>
+        <tr><td>Coût mensuel</td><td class="highlight good">Gratuit / Pro ~20 $/mois</td><td>~3–15 $/mois</td><td>~5–20 €/mois</td><td class="bad">Élevé + coûts réseau</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Options Recommandées selon les Besoins</div>
+  <div class="cards-grid">
+    <div class="card" style="border-top: 3px solid var(--or);">
+      <div class="card-title">🥇 Option A — Vercel + Supabase (Recommandé)</div>
+      <div class="card-text">Solution actuelle. 0 serveur à gérer, déploiement automatique depuis GitHub, CDN mondial, SSL gratuit. Supabase assure la base de données PostgreSQL avec backups automatiques. Coût : ~20–50 $/mois pour un site à fort trafic. <strong>Idéal pour démarrer.</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🥈 Option B — Hostinger (Domaine + Email)</div>
+      <div class="card-text">Recommandé pour l'achat du nom de domaine officiel (ex. assemblee-nationale.cg) et la messagerie email officielle (@assemblee-nationale.cg). Interface simple, prix compétitifs en Afrique.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🥉 Option C — Hetzner (VPS pour Indépendance)</div>
+      <div class="card-text">Hetzner (Allemagne, RGPD) propose des serveurs dédiés à bas coût. Recommandé si l'Assemblée souhaite héberger ses propres serveurs en Europe. Nécessite un administrateur système qualifié. Excellente option pour la souveraineté des données.</div>
+    </div>
+    <div class="card" style="border-top: 3px solid var(--rouge);">
+      <div class="card-title" style="color:var(--rouge);">❌ À Éviter — Hébergement Local Congo</div>
+      <div class="card-text">Risques majeurs : coupures d'électricité, bande passante insuffisante pour le trafic international, absence de CDN, SSL coûteux, absence de backups automatiques. Un site institutionnel de l'Assemblée Nationale ne peut pas se permettre ces risques.</div>
+    </div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION 05 ═══ -->
+<div class="section" id="s05">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 05</div>
+      <h2 class="section-title">Sécurité & Performance</h2>
+    </div>
+    <div class="section-number">05</div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Architecture de Sécurité — 6 Niveaux de Protection</div>
+
+  <div class="security-item">
+    <div><div class="security-badge badge-critique">Critique</div></div>
+    <div>
+      <div class="security-title">HTTPS Forcé avec HSTS (2 ans)</div>
+      <div class="security-text">Toutes les communications entre le visiteur et le serveur sont chiffrées par TLS. L'en-tête HSTS force le HTTPS pour les 2 prochaines années, empêchant toute connexion non chiffrée. Le certificat SSL est renouvelé automatiquement sans intervention humaine.</div>
+    </div>
+  </div>
+
+  <div class="security-item">
+    <div><div class="security-badge badge-critique">Critique</div></div>
+    <div>
+      <div class="security-title">Authentification JWT — Accès Admin Sécurisé</div>
+      <div class="security-text">L'accès au panneau d'administration est protégé par des tokens JWT (JSON Web Token) signés et à durée d'expiration. Un administrateur dont le compte est compromis peut être révoqué instantanément. Aucun mot de passe en clair ne transite sur le réseau.</div>
+    </div>
+  </div>
+
+  <div class="security-item">
+    <div><div class="security-badge badge-critique">Critique</div></div>
+    <div>
+      <div class="security-title">Row Level Security (RLS) PostgreSQL</div>
+      <div class="security-text">La base de données impose des règles d'accès au niveau de chaque ligne de données. Les visiteurs anonymes ne peuvent lire que le contenu publié et actif. Il est techniquement impossible pour un visiteur malveillant d'accéder aux brouillons, messages de contact ou données administratives.</div>
+    </div>
+  </div>
+
+  <div class="security-item">
+    <div><div class="security-badge badge-eleve">Élevé</div></div>
+    <div>
+      <div class="security-title">En-têtes HTTP de Sécurité</div>
+      <div class="security-text">5 en-têtes HTTP de sécurité configurés sur Vercel : <strong>X-Frame-Options</strong> (anti-clickjacking), <strong>X-Content-Type-Options</strong> (anti-MIME injection), <strong>X-XSS-Protection</strong> (anti-injection de scripts), <strong>Referrer-Policy</strong> (protection vie privée), <strong>Permissions-Policy</strong> (désactivation caméra, micro, géolocalisation).</div>
+    </div>
+  </div>
+
+  <div class="security-item">
+    <div><div class="security-badge badge-standard">Standard</div></div>
+    <div>
+      <div class="security-title">Robots.txt — Protection du Panneau Admin</div>
+      <div class="security-text">Le fichier robots.txt exclut explicitement le répertoire /admin/ de l'indexation par tous les moteurs de recherche. Le panneau d'administration n'apparaît jamais dans les résultats Google ou Bing et n'est pas découvrable par les robots malveillants.</div>
+    </div>
+  </div>
+
+  <div class="security-item">
+    <div><div class="security-badge badge-standard">Standard</div></div>
+    <div>
+      <div class="security-title">Protection DDoS — Intégrée Vercel (Enterprise)</div>
+      <div class="security-text">Vercel intègre nativement une protection anti-DDoS de niveau enterprise. En cas d'attaque visant à saturer le site, le trafic malveillant est automatiquement filtré. Le site reste accessible au public sans aucune intervention manuelle.</div>
+    </div>
+  </div>
+
+  <div class="perf-row">
+    <div class="perf-cell"><div class="perf-num">&lt;1s</div><div class="perf-label">Chargement page</div></div>
+    <div class="perf-cell"><div class="perf-num">99.99%</div><div class="perf-label">Uptime garanti SLA</div></div>
+    <div class="perf-cell"><div class="perf-num">100+</div><div class="perf-label">Points CDN mondiaux</div></div>
+    <div class="perf-cell"><div class="perf-num">Auto</div><div class="perf-label">Backups base données</div></div>
+    <div class="perf-cell"><div class="perf-num">0</div><div class="perf-label">Serveur à maintenir</div></div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION 06 ═══ -->
+<div class="section" id="s06">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 06</div>
+      <h2 class="section-title">Avantages Compétitifs<br>& Feuille de Route</h2>
+    </div>
+    <div class="section-number">06</div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Nos Avantages Compétitifs</div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title">🌍 Visibilité Internationale</div>
+      <div class="card-text">Grâce au CDN mondial de Vercel, le site est aussi rapide depuis Paris, Washington ou Pékin que depuis Brazzaville. La diaspora congolaise et la presse internationale y accèdent sans friction. Un hébergement local ne peut pas offrir cette expérience.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📱 100% Responsive Mobile</div>
+      <div class="card-text">Le site est entièrement optimisé pour smartphones et tablettes — plus de 70% des Congolais naviguent sur mobile. Menu hamburger, carrousel tactile, formulaires adaptés. Aucun concurrent utilisant un CMS générique n'atteint ce niveau d'optimisation.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔧 Zéro Maintenance Serveur</div>
+      <div class="card-text">Contrairement à un serveur dédié ou un hébergement classique, notre architecture Jamstack ne nécessite aucune mise à jour de système d'exploitation ni gestion de base de données locale. Tout est géré automatiquement.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ Déploiement en 30 Secondes</div>
+      <div class="card-text">Toute modification du code est automatiquement déployée via GitHub → Vercel en moins de 30 secondes. Pas de FTP, pas de connexion SSH. L'équipe technique peut corriger un problème ou ajouter une fonctionnalité en temps réel.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎨 Design Institutionnel Professionnel</div>
+      <div class="card-text">Interface aux couleurs officielles de la République du Congo (vert, jaune, rouge), logo officiel intégré, charte graphique cohérente sur toutes les pages. Un design qui reflète le sérieux et la dignité de l'institution parlementaire.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔍 SEO Optimisé — Google</div>
+      <div class="card-text">Sitemap XML soumis aux moteurs de recherche, balises méta sur chaque page, vitesse de chargement optimale (Core Web Vitals), HTTPS (critère de classement), robots.txt configuré. Excellent positionnement Google garanti.</div>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem; margin-top:2.5rem;">Feuille de Route — Améliorations Post-Contrat</div>
+  <div class="roadmap">
+    <div class="roadmap-phase">
+      <div class="roadmap-header">
+        <div class="roadmap-num">1</div>
+        <div>
+          <div class="roadmap-phase-title">Finalisation & Mise en Production</div>
+          <div class="roadmap-phase-period">PHASE 1 — MOIS 1–2</div>
+        </div>
+      </div>
+      <div class="roadmap-items">
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Nom de domaine officiel (.cg)</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Import des 151 députés en base</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Photos officielles des membres du Bureau</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Formation des équipes admin</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Emails officiels @assemblee-nationale.cg</div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="roadmap-header">
+        <div class="roadmap-num">2</div>
+        <div>
+          <div class="roadmap-phase-title">Enrichissement du Contenu</div>
+          <div class="roadmap-phase-period">PHASE 2 — MOIS 3–4</div>
+        </div>
+      </div>
+      <div class="roadmap-items">
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Vidéothèque des sessions plénières</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Bibliothèque des lois votées (PDF)</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Compte rendu des débats</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Galerie photos officielle</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Newsletter par email</div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="roadmap-header">
+        <div class="roadmap-num">3</div>
+        <div>
+          <div class="roadmap-phase-title">Fonctionnalités Avancées</div>
+          <div class="roadmap-phase-period">PHASE 3 — MOIS 5–6</div>
+        </div>
+      </div>
+      <div class="roadmap-items">
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Moteur de recherche global</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Diffusion live des sessions (streaming)</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Version en anglais du site</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Application mobile (Android / iOS)</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Statistiques de visite (Analytics)</div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="roadmap-header">
+        <div class="roadmap-num">4</div>
+        <div>
+          <div class="roadmap-phase-title">Souveraineté Numérique</div>
+          <div class="roadmap-phase-period">PHASE 4 — LONG TERME</div>
+        </div>
+      </div>
+      <div class="roadmap-items">
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Serveur propre (Hetzner EU)</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Intranet parlementaire</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Portail citoyen (pétitions)</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Archivage numérique officiel</div>
+        <div class="roadmap-item"><div class="roadmap-dot"></div>Interconnexion Sénat</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION 07 ═══ -->
+<div class="section" id="s07">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Section 07</div>
+      <h2 class="section-title">Engagements &<br>Informations de Contact</h2>
+    </div>
+    <div class="section-number">07</div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Nos Engagements</div>
+  <div class="engagements-grid">
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Disponibilité 99.99%</div><div class="engagement-desc">SLA contractualisé avec Vercel</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Code source livré</div><div class="engagement-desc">Propriété intellectuelle de l'Assemblée</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Support technique</div><div class="engagement-desc">Réponse sous 24h ouvrable</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Documentation technique</div><div class="engagement-desc">Guide administrateur complet</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Formation incluse</div><div class="engagement-desc">Équipes de l'Assemblée formées au CMS</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Évolutions incluses</div><div class="engagement-desc">Correctifs et améliorations mineures</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Mises à jour sécurité</div><div class="engagement-desc">Monitoring proactif des vulnérabilités</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Transfert de compétences</div><div class="engagement-desc">Autonomie progressive des équipes IT</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Sauvegardes quotidiennes</div><div class="engagement-desc">Données protégées automatiquement</div></div></div>
+    <div class="engagement-item"><div class="engagement-check">✓</div><div><div class="engagement-title">Confidentialité</div><div class="engagement-desc">Aucune donnée partagée avec des tiers</div></div></div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Récapitulatif de la Solution Livrée</div>
+  <div class="recap-stats">
+    <div class="recap-stat"><div class="recap-num">20+</div><div class="recap-label">Pages institutionnelles</div></div>
+    <div class="recap-stat"><div class="recap-num">151</div><div class="recap-label">Députés en base</div></div>
+    <div class="recap-stat"><div class="recap-num">8</div><div class="recap-label">Commissions permanentes</div></div>
+    <div class="recap-stat"><div class="recap-num">12</div><div class="recap-label">Modules CMS admin</div></div>
+    <div class="recap-stat"><div class="recap-num">6</div><div class="recap-label">Niveaux de sécurité</div></div>
+    <div class="recap-stat"><div class="recap-num">100+</div><div class="recap-label">Points CDN mondiaux</div></div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Contact & Prochaines Étapes</div>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <div class="contact-card-title">Développeur & Prestataire</div>
+      <div class="contact-name">Olympe Consulting</div>
+      <div class="contact-role">Agence Web & Conseil Digital<br>Brazzaville, République du Congo</div>
+      <a href="https://www.olympeconsultingcg.com" class="contact-email" target="_blank">www.olympeconsultingcg.com</a>
+    </div>
+    <div class="contact-card">
+      <div class="contact-card-title">Prochaines Étapes</div>
+      <ul class="next-steps">
+        <li><div class="step-num">1</div>Signature du contrat de prestation</li>
+        <li><div class="step-num">2</div>Acquisition du nom de domaine officiel</li>
+        <li><div class="step-num">3</div>Formation des administrateurs de contenu</li>
+        <li><div class="step-num">4</div>Mise en ligne du site officiel</li>
+        <li><div class="step-num">5</div>Lancement de la Phase 1 (roadmap)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="interpage">
+  <div class="interpage-text">Assemblée Nationale · République du Congo · 15ᵉ Législature</div>
+  <div class="interpage-text">Documentation Technique v1.0 · Mai 2026</div>
+</div>
+
+<!-- ═══ SECTION RÉFÉRENCES ═══ -->
+<div class="section" id="s08">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-eyebrow">Olympe Consulting — Références</div>
+      <h2 class="section-title">Nos Réalisations<br>Web</h2>
+    </div>
+    <div class="section-number">Réf.</div>
+  </div>
+
+  <div class="intro-block">
+    Olympe Consulting est une agence web basée à Brazzaville, spécialisée dans la conception de sites institutionnels, commerciaux et applicatifs. Voici un aperçu de nos réalisations récentes, qui témoignent de notre savoir-faire technique et de notre capacité à livrer des projets de qualité professionnelle pour des clients variés.
+  </div>
+
+  <div class="refs-grid">
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">01</div>
+        <div class="ref-category">Plateforme éducative · Danse</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">AfroBreak</div>
+        <div class="ref-desc">Plateforme internationale dédiée à la danse afro et urbaine. Plus de 500 tutoriels vidéo, événements live en Europe, communauté mondiale d'instructeurs certifiés. Interface bilingue, optimisée mobile.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Plateforme</span>
+          <span class="ref-tag">Vidéo</span>
+          <span class="ref-tag">International</span>
+        </div>
+      </div>
+      <a href="https://www.afrobreak.com" target="_blank" class="ref-link">www.afrobreak.com →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">02</div>
+        <div class="ref-category">E-commerce · Restauration</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">Zando Plus</div>
+        <div class="ref-desc">Site e-commerce pour une enseigne de restauration congolaise. Catalogue de produits, commande en ligne, interface adaptée au marché local. Design moderne et expérience mobile-first.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">E-commerce</span>
+          <span class="ref-tag">Mobile-first</span>
+          <span class="ref-tag">Congo</span>
+        </div>
+      </div>
+      <a href="https://www.zandoplus.com" target="_blank" class="ref-link">www.zandoplus.com →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">03</div>
+        <div class="ref-category">Site institutionnel · Restauration</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">La Désirade Plus</div>
+        <div class="ref-desc">Site vitrine pour un établissement de restauration haut de gamme à Brazzaville. Présentation des services, ambiance visuelle soignée, réservation et contact intégrés.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Vitrine</span>
+          <span class="ref-tag">Brazzaville</span>
+          <span class="ref-tag">Premium</span>
+        </div>
+      </div>
+      <a href="https://www.ladesiradeplus.com" target="_blank" class="ref-link">www.ladesiradeplus.com →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">04</div>
+        <div class="ref-category">Service · Orientation universitaire</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">France Unive</div>
+        <div class="ref-desc">Plateforme d'accompagnement pour étudiants africains souhaitant étudier en France : pré-inscription universitaire gratuite, service Campus France, sécurisation de logement avant l'arrivée.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Service</span>
+          <span class="ref-tag">Éducation</span>
+          <span class="ref-tag">France</span>
+        </div>
+      </div>
+      <a href="https://www.franceunive.fr" target="_blank" class="ref-link">www.franceunive.fr →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">05</div>
+        <div class="ref-category">E-commerce · Alimentation</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">Keya Food</div>
+        <div class="ref-desc">Site e-commerce pour une marque alimentaire. Catalogue de produits, navigation intuitive, expérience d'achat optimisée. Design orienté conversion avec identité visuelle forte.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">E-commerce</span>
+          <span class="ref-tag">Alimentaire</span>
+          <span class="ref-tag">Mobile</span>
+        </div>
+      </div>
+      <a href="https://www.keys-food.com" target="_blank" class="ref-link">www.keys-food.com →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">06</div>
+        <div class="ref-category">Application métier · CRM</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">Atelier 5 CRM</div>
+        <div class="ref-desc">Application CRM sur mesure pour la gestion client d'un atelier professionnel. Suivi des commandes, gestion des clients, tableau de bord opérationnel. Solution 100% administrable.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Application</span>
+          <span class="ref-tag">CRM</span>
+          <span class="ref-tag">Sur mesure</span>
+        </div>
+      </div>
+      <a href="https://atelier5-plum.vercel.app" target="_blank" class="ref-link">atelier5-plum.vercel.app →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">07</div>
+        <div class="ref-category">Application métier · CRM</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">Nouveau Concept CRM</div>
+        <div class="ref-desc">Système CRM développé pour une entreprise à Brazzaville. Gestion des prospects, suivi des interactions clients, rapports d'activité. Interface simple et prise en main rapide.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Application</span>
+          <span class="ref-tag">CRM</span>
+          <span class="ref-tag">Brazzaville</span>
+        </div>
+      </div>
+      <a href="https://nouveauconcept.vercel.app" target="_blank" class="ref-link">nouveauconcept.vercel.app →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">08</div>
+        <div class="ref-category">Application · Livraison de repas</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">Zandofood (BrazzaEats)</div>
+        <div class="ref-desc">Application de commande et livraison de repas depuis les meilleurs restaurants de Brazzaville. Interface rapide, géolocalisation, suivi de commande en temps réel. Design inspiré des grandes plateformes internationales.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Application</span>
+          <span class="ref-tag">Livraison</span>
+          <span class="ref-tag">Brazzaville</span>
+        </div>
+      </div>
+      <a href="https://brazzaeats.vercel.app" target="_blank" class="ref-link">brazzaeats.vercel.app →</a>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-num">09</div>
+        <div class="ref-category">Site vitrine · Événementiel</div>
+      </div>
+      <div class="ref-body">
+        <div class="ref-name">La Désirade Événements</div>
+        <div class="ref-desc">Site de location de matériel de décoration événementielle haut de gamme à Brazzaville : mariages, anniversaires, baptêmes, conférences. Catalogue en ligne, commande via WhatsApp intégrée.</div>
+        <div class="ref-tags">
+          <span class="ref-tag">Vitrine</span>
+          <span class="ref-tag">Événementiel</span>
+          <span class="ref-tag">Brazzaville</span>
+        </div>
+      </div>
+      <a href="https://ladesiradeplus-events.vercel.app" target="_blank" class="ref-link">ladesiradeplus-events.vercel.app →</a>
+    </div>
+
+  </div>
+
+  <div class="refs-footer">
+    <div class="refs-footer-stat"><div class="refs-footer-num">9</div><div class="refs-footer-label">Sites livrés</div></div>
+    <div class="refs-footer-stat"><div class="refs-footer-num">5+</div><div class="refs-footer-label">Secteurs couverts</div></div>
+    <div class="refs-footer-stat"><div class="refs-footer-num">3</div><div class="refs-footer-label">Pays (Congo, France, Europe)</div></div>
+    <div class="refs-footer-stat"><div class="refs-footer-num">100%</div><div class="refs-footer-label">Livrés dans les délais</div></div>
+  </div>
+
+</div>
+
+<style>
+  .refs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .ref-card {
+    border: 1px solid var(--ligne);
+    background: var(--blanc);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+
+  .ref-card:hover { box-shadow: 0 4px 20px rgba(10,61,31,0.1); }
+
+  .ref-header {
+    background: var(--vert);
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ref-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--or);
+    line-height: 1;
+  }
+
+  .ref-category {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    color: rgba(249,246,239,0.5);
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  .ref-body {
+    padding: 1.2rem;
+    flex: 1;
+  }
+
+  .ref-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--vert);
+    margin-bottom: 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+  }
+
+  .ref-desc {
+    font-size: 0.77rem;
+    color: #4a4035;
+    line-height: 1.6;
+    font-weight: 300;
+    margin-bottom: 0.8rem;
+  }
+
+  .ref-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .ref-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid rgba(10,61,31,0.15);
+    color: var(--vert-clair);
+    border-radius: 2px;
+  }
+
+  .ref-link {
+    display: block;
+    padding: 0.8rem 1.2rem;
+    background: rgba(10,61,31,0.04);
+    border-top: 1px solid var(--ligne);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--vert);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .ref-link:hover { background: var(--vert); color: var(--or); }
+
+  .refs-footer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--ligne);
+    border: 1px solid var(--ligne);
+  }
+
+  .refs-footer-stat {
+    background: var(--vert);
+    padding: 1.6rem;
+    text-align: center;
+  }
+
+  .refs-footer-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--or);
+    line-height: 1;
+  }
+
+  .refs-footer-label {
+    font-size: 0.65rem;
+    color: rgba(249,246,239,0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 768px) {
+    .refs-grid { grid-template-columns: 1fr; }
+    .refs-footer { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+
+<div class="color-bar"><div></div><div></div><div></div></div>
+
+<!-- ═══ COLOPHON ═══ -->
+<div class="colophon">
+  <p class="colophon-quote">
+    L'Assemblée Nationale de la République du Congo mérite un portail numérique à la hauteur de son rôle constitutionnel. Nous ne proposons pas simplement un site web — nous proposons <strong>l'infrastructure numérique de la démocratie congolaise.</strong>
+  </p>
+  <div class="colophon-meta">Assemblée Nationale · République du Congo · 15ᵉ Législature · Documentation Technique v1.0 · Mai 2026 · Confidentiel</div>
+</div>
+
+</body>
+</html>

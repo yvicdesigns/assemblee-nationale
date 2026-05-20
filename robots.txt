@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /gate.html
+Disallow: /dossier-technique.html
+Disallow: /presentation-client.html
 
 Sitemap: https://assemblee-nationale-nu.vercel.app/sitemap.xml
