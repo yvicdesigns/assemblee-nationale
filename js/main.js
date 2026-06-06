@@ -4,6 +4,21 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ---- Dark Mode ----
+  const darkBtn  = document.getElementById('darkToggle');
+  const iconEl   = darkBtn?.querySelector('.dark-toggle__icon');
+  const saved    = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (iconEl) iconEl.textContent = '☀️';
+  }
+  darkBtn?.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    if (iconEl) iconEl.textContent = isDark ? '🌙' : '☀️';
+  });
+
   // ---- Date courante ----
   const dateEl = document.querySelector('.top-bar__date');
   if (dateEl) {

@@ -37,7 +37,80 @@
   --trans:   0.3s ease;
   --font:    'Open Sans', sans-serif;
   --font-h:  'Playfair Display', serif;
+
+  /* surfaces */
+  --bg-page:    #ffffff;
+  --bg-card:    #ffffff;
+  --bg-section: #F4F4F4;
+  --text-main:  #1A1A1A;
+  --text-muted: #555555;
+  --border:     #E8E8E8;
 }
+
+/* ── DARK MODE ── */
+[data-theme="dark"] {
+  --blanc:      #1a1f2e;
+  --noir:       #f0f4ff;
+  --gris-f:     #0f1319;
+  --gris-m:     #94a3b8;
+  --gris-c:     #1e2535;
+  --gris-b:     #252d3d;
+  --ombre:      rgba(0,0,0,0.4);
+  --bg-page:    #111827;
+  --bg-card:    #1e2535;
+  --bg-section: #161d2b;
+  --text-main:  #e2e8f0;
+  --text-muted: #94a3b8;
+  --border:     #2d3748;
+}
+
+[data-theme="dark"] body           { background: var(--bg-page); color: var(--text-main); }
+[data-theme="dark"] .site-header   { background: #0a0f18; box-shadow: 0 2px 20px rgba(0,0,0,0.5); }
+[data-theme="dark"] .top-bar       { background: #0a0f18; border-bottom: 1px solid #1e2535; color: #94a3b8; }
+[data-theme="dark"] .news-card,
+[data-theme="dark"] .bureau-card,
+[data-theme="dark"] .commission-card,
+[data-theme="dark"] .agenda-card,
+[data-theme="dark"] .fonct-card,
+[data-theme="dark"] .stat-card     { background: var(--bg-card); border-color: var(--border); color: var(--text-main); }
+[data-theme="dark"] .news-card h3,
+[data-theme="dark"] .bureau-name,
+[data-theme="dark"] .commission-name,
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .president-name { color: var(--text-main); }
+[data-theme="dark"] .president-bio,
+[data-theme="dark"] .news-excerpt,
+[data-theme="dark"] .bureau-role,
+[data-theme="dark"] .stat-label    { color: var(--text-muted); }
+[data-theme="dark"] .president-section { background: #161d2b; }
+[data-theme="dark"] .bureau-section   { background: #111827; }
+[data-theme="dark"] .commissions-section { background: #161d2b; }
+[data-theme="dark"] .deputes-section  { background: #111827; }
+[data-theme="dark"] .agenda-section   { background: #0f1319; }
+[data-theme="dark"] .footer           { background: #0a0f18; }
+[data-theme="dark"] .dropdown         { background: #1e2535; border-color: #2d3748; }
+[data-theme="dark"] .dropdown-link    { color: #cbd5e1; }
+[data-theme="dark"] .dropdown-link:hover { background: #252d3d; color: #fff; }
+[data-theme="dark"] .president-facts li { color: var(--text-muted); }
+[data-theme="dark"] .president-facts li::before { color: var(--vert); }
+[data-theme="dark"] .official-banner { background: #0f1319; }
+[data-theme="dark"] .news-section    { background: #161d2b; }
+
+/* ── BOUTON DARK TOGGLE ── */
+.dark-toggle {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.3s ease;
+  color: #fff;
+  display: flex; align-items: center; gap: 5px;
+}
+.dark-toggle:hover { background: rgba(255,255,255,0.22); transform: scale(1.05); }
+[data-theme="dark"] .dark-toggle { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
