@@ -156,16 +156,32 @@ async function loadCMSBureau() {
   const grid = document.querySelector('.bureau-grid');
   if (!grid) return;
 
-  grid.innerHTML = data.map((m, i) => `
-    <div class="bureau-card${i === 0 ? ' president' : ''}">
-      <div class="bureau-avatar">
-        ${m.photo_url
-          ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
-          : '👤'}
+  const avatarImg = (m, size) => {
+    const s = size === 'lg' ? '96px' : size === 'sm' ? '56px' : '72px';
+    return m.photo_url
+      ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+      : '👤';
+  };
+
+  const card = (m, i, size = '') => `
+    <div class="bureau-card${i === 0 ? ' president' : ''}${size === 'sm' ? ' bureau-card--sm' : ''}">
+      <div class="bureau-avatar${size === 'lg' ? ' bureau-avatar--lg' : size === 'sm' ? ' bureau-avatar--sm' : ''}">
+        ${avatarImg(m, size)}
       </div>
       <p class="bureau-role">${esc(m.role_title)}</p>
-      <p class="bureau-name">${esc(m.name)}</p>
-    </div>`).join('');
+      <p class="bureau-name${size === 'lg' ? ' bureau-name--lg' : ''}">${esc(m.name)}</p>
+    </div>`;
+
+  const top    = data.slice(0, 1);
+  const mid    = data.slice(1, 3);
+  const bottom = data.slice(3);
+
+  grid.innerHTML = `
+    <div class="bureau-hierarchy">
+      <div class="bureau-level bureau-level--top">${top.map((m, i) => card(m, i, 'lg')).join('')}</div>
+      ${mid.length ? `<div class="bureau-level bureau-level--mid">${mid.map((m, i) => card(m, i + 1, '')).join('')}</div>` : ''}
+      ${bottom.length ? `<div class="bureau-level bureau-level--bottom">${bottom.map((m, i) => card(m, i + 3, 'sm')).join('')}</div>` : ''}
+    </div>`;
 }
 
 // =========================================
