@@ -3,6 +3,25 @@
    Stylesheet Principal
    ========================================= */
 
+/* =========================================
+   SCROLL REVEAL ANIMATIONS
+   ========================================= */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--delay, 0ms);
+}
+.reveal.reveal-up    { transform: translateY(48px); }
+.reveal.reveal-left  { transform: translateX(-56px); }
+.reveal.reveal-right { transform: translateX(56px); }
+.reveal.visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transition: none; opacity: 1; transform: none; }
+}
+
 /* --- Variables & Reset --- */
 :root {
   --vert:    #009A44;

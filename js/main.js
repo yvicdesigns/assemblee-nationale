@@ -137,19 +137,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   // ---- Animation on scroll ----
-  const observer = new IntersectionObserver((entries) => {
+  // ---- Scroll Reveal ----
+  const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.animationPlayState = 'running';
-        observer.unobserve(entry.target);
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+
+        // Counter animation si data-count présent
+        const el = entry.target.querySelector('[data-count]') || (entry.target.dataset.count !== undefined ? entry.target : null);
+        entry.target.querySelectorAll('[data-count]').forEach(counter => animateCounter(counter));
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.15 });
 
-  document.querySelectorAll('.bureau-card, .commission-card, .news-card, .fonct-card').forEach(el => {
-    el.style.animation = 'fadeInUp 0.5s ease both paused';
-    observer.observe(el);
-  });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ---- Compteurs animés ----
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.count, 10);
+    if (isNaN(target)) return;
+    const duration = 1400;
+    const start = performance.now();
+    const update = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.floor(ease * target);
+      if (progress < 1) requestAnimationFrame(update);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(update);
+  }
 
 });
 
