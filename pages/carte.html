@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
   <link rel="stylesheet" href="../css/style.css">
   <style>
     /* ======= PAGE CARTE ======= */
@@ -197,8 +197,8 @@
     .carte-legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
 
     /* Dark mode map */
-    [data-theme="dark"] .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
-    [data-theme="dark"] .leaflet-control { filter: invert(100%) hue-rotate(180deg); }
+    [data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85); }
+    [data-theme="dark"] .leaflet-control-zoom a { background:#1e1e1e; color:#a5d6a7; border-color:#333; }
     [data-theme="dark"] .carte-map-header { background: #1e1e1e; border-color: #333; }
     [data-theme="dark"] .dept-tooltip { background: rgba(30,30,30,0.95) !important; color: #a5d6a7 !important; }
 
@@ -430,7 +430,7 @@
 </div>
 
 <!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeE=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
 <script src="../js/cms.js"></script>

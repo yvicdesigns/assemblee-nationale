@@ -163,10 +163,11 @@
       attributionControl: true
     });
 
-    /* Tuile OpenStreetMap */
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    /* Tuile CartoDB Positron — fiable, propre, sans SRI */
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
     /* Couche GeoJSON */
@@ -201,6 +202,9 @@
 
     /* Centrer sur tout le Congo */
     map.fitBounds(geoLayer.getBounds(), { padding: [20, 20] });
+
+    /* Force le recalcul de la taille (fix affichage gris) */
+    setTimeout(() => map.invalidateSize(), 100);
   }
 
   /* ----- Sélection département ----- */
