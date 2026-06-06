@@ -1721,3 +1721,81 @@ section:nth-child(even) { background: var(--gris-c); }
   .hero-slider { height: 320px; }
   .deputes-stats { grid-template-columns: 1fr 1fr; }
 }
+
+/* =========================================
+   RESPONSIVE — ÉLÉMENTS RÉCENTS
+   ========================================= */
+
+/* Header : cache le texte du bouton search sur mobile */
+@media (max-width: 768px) {
+  .search-toggle::after { display: none; }
+  .search-toggle { padding: 6px 10px; }
+  .dark-toggle { padding: 5px 9px; }
+
+  /* Bureau hiérarchie — empile sur mobile */
+  .bureau-level { flex-wrap: wrap; justify-content: center; }
+  .bureau-level--top .bureau-card  { width: 240px; }
+  .bureau-level--mid .bureau-card  { width: calc(50% - 10px); min-width: 140px; }
+  .bureau-level--bottom .bureau-card { width: calc(50% - 10px); min-width: 130px; }
+  .bureau-level--bottom { gap: 10px; }
+
+  /* Stat cards deputes */
+  .deputes-stats { grid-template-columns: 1fr 1fr; }
+
+  /* Modal recherche */
+  .gs-overlay { padding: 60px 12px 12px; }
+  .gs-box { border-radius: 10px; }
+  .gs-footer { display: none; }
+}
+
+@media (max-width: 480px) {
+  /* Bureau — 1 colonne */
+  .bureau-level--mid .bureau-card,
+  .bureau-level--bottom .bureau-card { width: 100%; max-width: 280px; }
+  .bureau-level { gap: 10px; }
+
+  /* Header — masque dark toggle sur très petit écran */
+  .dark-toggle { display: none; }
+
+  /* Session countdown */
+  .sct-num { font-size: 1.4rem; min-width: 40px; padding: 6px 8px; }
+  .sct-sep  { font-size: 1.4rem; }
+}
+
+/* =========================================
+   RESPONSIVE — PAGES INTÉRIEURES
+   ========================================= */
+
+/* presidence.html — photo + contenu */
+@media (max-width: 700px) {
+  .presidence-grid-inline {
+    grid-template-columns: 1fr !important;
+  }
+  .presidence-photo-inline {
+    max-width: 220px;
+    margin: 0 auto;
+  }
+}
+
+/* bureau.html — président layout */
+@media (max-width: 640px) {
+  .bpg-president-layout {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+  }
+}
+
+/* commissions.html — grille icône + titre + lien */
+@media (max-width: 600px) {
+  .commission-page-row {
+    grid-template-columns: 56px 1fr !important;
+  }
+  .commission-page-link { display: none; }
+}
+
+/* deputes.html — stats 4 colonnes → 2 colonnes */
+@media (max-width: 640px) {
+  .deputes-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
