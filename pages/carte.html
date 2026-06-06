@@ -11,304 +11,205 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="../css/style.css">
   <style>
     /* ======= PAGE CARTE ======= */
     .carte-layout {
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: 1fr 400px;
       gap: 32px;
       align-items: start;
       padding: 40px 0 64px;
     }
-    /* Map column */
-    .carte-map-col {
-      position: sticky;
-      top: 90px;
-    }
+
+    /* Map */
     .carte-map-wrap {
       background: var(--gris-c);
       border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.1);
     }
-    .carte-map-wrap h2 {
-      font-family: var(--font-h);
-      font-size: 1.1rem;
-      color: var(--noir);
-      margin-bottom: 6px;
-    }
-    .carte-map-wrap p {
-      font-size: 0.8rem;
-      color: var(--gris-m);
-      margin-bottom: 16px;
-    }
-
-    /* SVG map */
-    .congo-svg {
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-    }
-    .dept-shape {
-      fill: #c8e6c9;
-      stroke: #fff;
-      stroke-width: 1.5;
-      transition: fill 0.22s ease, filter 0.22s ease;
-    }
-    .dept-shape:hover {
-      fill: #81c784;
-      filter: drop-shadow(0 2px 6px rgba(0,154,68,.35));
-    }
-    .dept-shape.active {
-      fill: var(--vert);
-      filter: drop-shadow(0 3px 10px rgba(0,154,68,.5));
-    }
-    .dept-shape.ville {
-      fill: #a5d6a7;
-    }
-    .dept-shape.ville.active {
-      fill: #006428;
-    }
-    .dept-label {
-      font-family: var(--font-h);
-      font-size: 8.5px;
-      fill: #1b5e20;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      pointer-events: none;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-    .dept-label.active {
-      fill: #fff;
-    }
-    .dept-label.small {
-      font-size: 6.5px;
-    }
-
-    /* Legend */
-    .carte-legend {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--gris-b);
-    }
-    .carte-legend-item {
+    .carte-map-header {
+      padding: 16px 20px;
+      background: var(--blanc);
+      border-bottom: 1px solid var(--gris-b);
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      color: var(--gris-m);
+      gap: 12px;
     }
-    .carte-legend-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-      flex-shrink: 0;
+    .carte-map-header h2 {
+      font-family: var(--font-h);
+      font-size: 1rem;
+      color: var(--noir);
+      margin: 0;
+    }
+    .carte-map-header p {
+      font-size: 0.78rem;
+      color: var(--gris-m);
+      margin: 0;
+      margin-left: auto;
+    }
+    #congoMap {
+      height: 560px;
+      width: 100%;
+      z-index: 0;
+    }
+
+    /* Leaflet dept tooltip */
+    .dept-tooltip {
+      background: rgba(255,255,255,0.92) !important;
+      border: 1px solid rgba(0,154,68,0.3) !important;
+      border-radius: 4px !important;
+      color: #1b5e20 !important;
+      font-family: var(--font-h) !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      padding: 3px 6px !important;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1) !important;
+      white-space: nowrap;
+    }
+    .dept-tooltip.active-tooltip {
+      background: var(--vert) !important;
+      color: #fff !important;
+      border-color: #005a1e !important;
     }
 
     /* Right panel */
+    .carte-panel-col {
+      position: sticky;
+      top: 90px;
+    }
     .carte-panel {
       min-height: 480px;
+      max-height: 600px;
+      overflow-y: auto;
     }
     .carte-intro {
       text-align: center;
-      padding: 60px 24px;
+      padding: 48px 24px;
       color: var(--gris-m);
+      background: var(--blanc);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
     }
-    .carte-intro .intro-icon {
-      font-size: 3.5rem;
-      margin-bottom: 20px;
-      display: block;
-    }
-    .carte-intro h3 {
-      font-family: var(--font-h);
-      font-size: 1.3rem;
-      color: var(--noir);
-      margin-bottom: 10px;
-    }
-    .carte-intro p {
-      font-size: 0.9rem;
-      max-width: 340px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
+    .carte-intro .intro-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .carte-intro h3 { font-family: var(--font-h); font-size: 1.2rem; color: var(--noir); margin-bottom: 8px; }
+    .carte-intro p { font-size: 0.85rem; line-height: 1.7; max-width: 280px; margin: 0 auto; }
 
     /* Dept header */
     .dept-header {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 24px;
+      gap: 14px;
+      padding: 20px;
       background: linear-gradient(135deg, #0a3d1f, #1a6b36);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 12px 12px 0 0;
       color: #fff;
     }
-    .dept-header__icon {
-      width: 56px;
-      height: 56px;
-      background: rgba(255,255,255,.15);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      flex-shrink: 0;
-    }
-    .dept-header__name {
-      font-family: var(--font-h);
-      font-size: 1.4rem;
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 4px;
-    }
-    .dept-header__sub {
-      font-size: 0.82rem;
-      opacity: .8;
-    }
+    .dept-header__icon { font-size: 2rem; flex-shrink: 0; }
+    .dept-header__name { font-family: var(--font-h); font-size: 1.3rem; font-weight: 700; line-height: 1.2; }
+    .dept-header__sub { font-size: 0.75rem; opacity: .75; margin-top: 2px; }
     .dept-header__count {
       margin-left: auto;
-      background: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.15);
       border-radius: 8px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       text-align: center;
       flex-shrink: 0;
     }
-    .dept-header__count strong {
-      display: block;
-      font-size: 1.6rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-    .dept-header__count span {
-      font-size: 0.75rem;
-      opacity: .8;
+    .dept-header__count strong { display: block; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .dept-header__count span { font-size: 0.68rem; opacity: .8; }
+
+    /* Panel body */
+    .carte-panel-body {
+      background: var(--blanc);
+      border-radius: 0 0 12px 12px;
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
     }
 
     /* Deputies grid */
     .deputes-grid-carte {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
     .depute-card-carte {
-      background: var(--blanc);
-      border: 1px solid var(--gris-b);
-      border-radius: 10px;
-      padding: 16px;
-      transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-    .depute-card-carte:hover {
-      box-shadow: 0 4px 16px rgba(0,154,68,.12);
-      border-color: var(--vert);
-    }
-    .depute-card-carte__photo {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: var(--gris-c);
-      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      overflow: hidden;
+      gap: 12px;
+      background: var(--gris-c);
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: background 0.2s ease;
     }
-    .depute-card-carte__photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .depute-card-carte:hover { background: #e8f5e9; }
+    .depute-card-carte__photo {
+      width: 40px; height: 40px;
       border-radius: 50%;
+      background: var(--gris-b);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0; overflow: hidden;
     }
-    .depute-card-carte__name {
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: var(--noir);
-      margin-bottom: 4px;
-      line-height: 1.3;
-    }
-    .depute-card-carte__circ {
-      font-size: 0.75rem;
-      color: var(--gris-m);
-      margin-bottom: 6px;
-    }
+    .depute-card-carte__photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .depute-card-carte__info { flex: 1; min-width: 0; }
+    .depute-card-carte__name { font-weight: 700; font-size: 0.82rem; color: var(--noir); line-height: 1.2; }
+    .depute-card-carte__circ { font-size: 0.72rem; color: var(--gris-m); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .depute-card-carte__groupe {
       display: inline-block;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 20px;
       background: #e8f5e9;
       color: #2e7d32;
-      letter-spacing: 0.3px;
+      margin-top: 3px;
+      white-space: nowrap;
     }
 
-    /* Loading / empty states */
+    /* States */
     .carte-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 48px;
-      color: var(--gris-m);
-      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 32px; color: var(--gris-m); font-size: 0.85rem;
     }
     .carte-spinner {
-      width: 24px;
-      height: 24px;
-      border: 3px solid var(--gris-b);
-      border-top-color: var(--vert);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      width: 20px; height: 20px;
+      border: 2px solid var(--gris-b); border-top-color: var(--vert);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .carte-empty {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--gris-m);
-      font-size: 0.9rem;
+      text-align: center; padding: 32px 16px; color: var(--gris-m); font-size: 0.85rem;
     }
-    .carte-empty strong { display: block; font-size: 1rem; color: var(--noir); margin-bottom: 6px; }
+    .carte-empty strong { display: block; font-size: 0.95rem; color: var(--noir); margin-bottom: 6px; }
 
-    /* Dept info cards */
-    .dept-info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .dept-info-card {
+    /* Legend */
+    .carte-legend {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      padding: 12px 20px;
       background: var(--gris-c);
-      border-radius: 8px;
-      padding: 14px;
-      text-align: center;
+      border-top: 1px solid var(--gris-b);
     }
-    .dept-info-card__icon { font-size: 1.2rem; margin-bottom: 4px; }
-    .dept-info-card__val { font-size: 1.1rem; font-weight: 700; color: var(--noir); line-height: 1; margin-bottom: 2px; }
-    .dept-info-card__label { font-size: 0.72rem; color: var(--gris-m); }
+    .carte-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--gris-m); }
+    .carte-legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+    /* Dark mode map */
+    [data-theme="dark"] .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+    [data-theme="dark"] .leaflet-control { filter: invert(100%) hue-rotate(180deg); }
+    [data-theme="dark"] .carte-map-header { background: #1e1e1e; border-color: #333; }
+    [data-theme="dark"] .dept-tooltip { background: rgba(30,30,30,0.95) !important; color: #a5d6a7 !important; }
 
     /* Responsive */
-    @media (max-width: 900px) {
-      .carte-layout {
-        grid-template-columns: 1fr;
-      }
-      .carte-map-col {
-        position: static;
-      }
-      .congo-svg { max-height: 340px; }
-      .dept-info-grid { grid-template-columns: repeat(2, 1fr); }
-      .deputes-grid-carte { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    @media (max-width: 1000px) {
+      .carte-layout { grid-template-columns: 1fr; }
+      .carte-panel-col { position: static; }
+      #congoMap { height: 400px; }
     }
-    @media (max-width: 480px) {
-      .dept-header { flex-wrap: wrap; }
-      .dept-header__count { margin-left: 0; }
-      .dept-info-grid { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 600px) {
+      #congoMap { height: 300px; }
     }
   </style>
 </head>
@@ -354,7 +255,7 @@
               <div class="dropdown-section__title">Les Députés</div>
               <a href="bureau.html" class="dropdown-link">Le Bureau</a>
               <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
-              <a href="carte.html" class="dropdown-link nav-active">Carte des Circonscriptions</a>
+              <a href="carte.html" class="dropdown-link nav-active">🗺️ Carte des Circonscriptions</a>
               <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
               <a href="contact.html" class="dropdown-link">Contacter son député</a>
             </div>
@@ -365,7 +266,6 @@
           <div class="dropdown">
             <div class="dropdown-section">
               <a href="en-construction.html" class="dropdown-link">Calendrier des sessions</a>
-              <a href="en-construction.html" class="dropdown-link">Ordre du jour</a>
               <a href="en-construction.html" class="dropdown-link">Séances plénières</a>
             </div>
           </div>
@@ -420,114 +320,40 @@
   <div class="container">
     <div class="carte-layout">
 
-      <!-- Colonne carte SVG -->
-      <div class="carte-map-col">
+      <!-- Carte Leaflet -->
+      <div>
         <div class="carte-map-wrap">
-          <h2>République du Congo</h2>
-          <p>12 départements · 151 sièges</p>
-
-          <!-- ===== SVG MAP DU CONGO ===== -->
-          <svg class="congo-svg" viewBox="0 0 400 565" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte des 12 départements du Congo">
-            <title>Carte interactive des départements du Congo</title>
-
-            <!-- Sangha (NW, large) -->
-            <polygon class="dept-shape" data-dept="Sangha"
-              points="55,15 180,15 185,55 175,172 145,210 80,220 40,203 22,163 28,78"
-              id="shape-sangha"/>
-            <text class="dept-label" x="100" y="110" id="label-sangha">SANGHA</text>
-
-            <!-- Cuvette (N-Center) -->
-            <polygon class="dept-shape" data-dept="Cuvette"
-              points="180,15 288,15 294,90 283,183 252,242 197,256 145,210 175,172 185,55"
-              id="shape-cuvette"/>
-            <text class="dept-label" x="228" y="115" id="label-cuvette">CUVETTE</text>
-
-            <!-- Likouala (NE, very large) -->
-            <polygon class="dept-shape" data-dept="Likouala"
-              points="288,15 400,15 400,155 393,237 352,256 295,262 252,242 283,183 294,90"
-              id="shape-likouala"/>
-            <text class="dept-label" x="340" y="110" id="label-likouala">LIKOUALA</text>
-
-            <!-- Cuvette-Ouest (W-Center) -->
-            <polygon class="dept-shape" data-dept="Cuvette-Ouest"
-              points="22,163 40,203 80,220 145,210 153,267 112,300 58,310 16,284 16,215"
-              id="shape-cuvette-ouest"/>
-            <text class="dept-label small" x="76" y="256" id="label-cuvette-ouest">CUVETTE-OUEST</text>
-
-            <!-- Plateaux (Center-E) -->
-            <polygon class="dept-shape" data-dept="Plateaux"
-              points="252,242 295,262 352,256 393,237 400,155 400,370 372,392 318,402 268,378 246,304 197,256 252,242"
-              id="shape-plateaux"/>
-            <text class="dept-label" x="335" y="295" id="label-plateaux">PLATEAUX</text>
-
-            <!-- Lékoumou (Center-W) -->
-            <polygon class="dept-shape" data-dept="Lékoumou"
-              points="16,284 58,310 112,300 153,267 197,256 246,304 220,372 182,402 120,410 63,399 22,362"
-              id="shape-lekoumou"/>
-            <text class="dept-label" x="122" y="342" id="label-lekoumou">LÉKOUMOU</text>
-
-            <!-- Bouenza (Center-S) -->
-            <polygon class="dept-shape" data-dept="Bouenza"
-              points="120,410 182,402 220,372 268,378 283,426 276,470 226,486 165,481 128,452"
-              id="shape-bouenza"/>
-            <text class="dept-label" x="202" y="440" id="label-bouenza">BOUENZA</text>
-
-            <!-- Niari (SW) -->
-            <polygon class="dept-shape" data-dept="Niari"
-              points="16,284 22,362 63,399 120,410 128,452 99,475 53,480 10,454 8,377 12,307"
-              id="shape-niari"/>
-            <text class="dept-label" x="60" y="408" id="label-niari">NIARI</text>
-
-            <!-- Pool (SE, large) -->
-            <polygon class="dept-shape" data-dept="Pool"
-              points="268,378 318,402 372,392 400,370 400,542 368,554 307,552 278,522 258,489 276,470 283,426 268,378"
-              id="shape-pool"/>
-            <text class="dept-label" x="344" y="470" id="label-pool">POOL</text>
-
-            <!-- Kouilou (SW coast) -->
-            <polygon class="dept-shape" data-dept="Kouilou"
-              points="10,454 53,480 78,500 80,544 40,554 8,534 8,454"
-              id="shape-kouilou"/>
-            <text class="dept-label small" x="44" y="508" id="label-kouilou">KOUILOU</text>
-
-            <!-- Pointe-Noire (city, SW coast) -->
-            <polygon class="dept-shape ville" data-dept="Pointe-Noire"
-              points="8,534 40,554 42,566 8,566"
-              id="shape-pn"/>
-            <text class="dept-label small" x="25" y="553" id="label-pn">P-N</text>
-
-            <!-- Brazzaville (city, SE) -->
-            <polygon class="dept-shape ville" data-dept="Brazzaville"
-              points="278,503 298,497 308,516 291,530 273,522"
-              id="shape-brazza"/>
-            <text class="dept-label small" x="291" y="515" id="label-brazza">BZV</text>
-
-          </svg>
-          <!-- END SVG -->
-
+          <div class="carte-map-header">
+            <span style="font-size:1.3rem;">🗺️</span>
+            <h2>République du Congo — 12 Départements</h2>
+            <p>151 sièges · 15ᵉ Législature</p>
+          </div>
+          <div id="congoMap"></div>
           <div class="carte-legend">
             <div class="carte-legend-item">
-              <div class="carte-legend-dot" style="background:#c8e6c9;border:1.5px solid #81c784;"></div>
+              <div class="carte-legend-dot" style="background:rgba(129,199,132,0.7);border:2px solid #fff;box-shadow:0 0 0 1px #81c784;"></div>
               Département
             </div>
             <div class="carte-legend-item">
-              <div class="carte-legend-dot" style="background:#a5d6a7;border:1.5px solid #66bb6a;"></div>
-              Ville-département
+              <div class="carte-legend-dot" style="background:var(--vert);border:2px solid #fff;box-shadow:0 0 0 1px #005a1e;"></div>
+              Sélectionné
             </div>
             <div class="carte-legend-item">
-              <div class="carte-legend-dot" style="background:var(--vert);border:1.5px solid #005a20;"></div>
-              Sélectionné
+              <div class="carte-legend-dot" style="background:rgba(129,199,132,0.9);border:2px solid #66bb6a;"></div>
+              Survol
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Colonne résultats -->
-      <div class="carte-panel" id="cartePanel">
-        <div class="carte-intro">
-          <span class="intro-icon">🗺️</span>
-          <h3>Sélectionnez un département</h3>
-          <p>Cliquez sur n'importe quel département de la carte pour afficher la liste de ses représentants à l'Assemblée nationale.</p>
+      <!-- Panel résultats -->
+      <div class="carte-panel-col">
+        <div class="carte-panel" id="cartePanel">
+          <div class="carte-intro">
+            <span class="intro-icon">👆</span>
+            <h3>Sélectionnez un département</h3>
+            <p>Cliquez sur la carte pour afficher les représentants de ce département à l'Assemblée nationale.</p>
+          </div>
         </div>
       </div>
 
@@ -603,6 +429,8 @@
   </div>
 </div>
 
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeE=" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
 <script src="../js/cms.js"></script>
