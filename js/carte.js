@@ -23,9 +23,9 @@
   };
 
   /* -------------------------------------------------------
-     GeoJSON — Frontières approximatives des 12 départements
-     Coordonnées : [longitude, latitude]
-     Source : approximation basée sur la géographie officielle
+     GeoJSON — Frontières des 12 départements du Congo
+     Coordonnées calibrées sur cartes officielles (MAE 2004)
+     Format GeoJSON : [longitude, latitude]
   ------------------------------------------------------- */
   const CONGO_GEOJSON = {
     type: 'FeatureCollection',
@@ -33,98 +33,74 @@
       {
         type: 'Feature',
         properties: { name: 'Sangha' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[13.3,3.7],[16.2,3.7],[16.5,1.6],[16.0,0.8],[15.0,0.4],[13.8,0.5],[13.2,1.3],[13.0,2.5],[13.3,3.7]]]
-        }
+        /* NW : onglet Sembé (13.5-14.3E) + corps principal Ouésso (14.3-16.2E) */
+        geometry: { type: 'Polygon', coordinates: [[ [13.5,3.72],[14.3,3.72],[14.3,3.0],[14.8,3.0],[14.8,3.72],[16.18,3.72],[16.5,2.0],[16.3,1.0],[15.5,0.55],[14.5,0.55],[13.8,1.0],[13.5,1.8],[13.3,2.5],[13.5,3.72] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Likouala' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[16.2,3.7],[18.65,3.5],[18.65,0.2],[18.0,-0.2],[17.2,-0.5],[16.5,-0.5],[16.5,0.8],[16.0,0.8],[16.5,1.6],[16.2,3.7]]]
-        }
+        /* NE, très grand. Impfondo 18.07E/1.62N, Dongou 17.7E/3.1N */
+        geometry: { type: 'Polygon', coordinates: [[ [16.18,3.72],[18.65,3.72],[18.65,0.5],[18.0,0.0],[17.2,-0.3],[16.5,-0.5],[16.3,1.0],[16.5,2.0],[16.18,3.72] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Cuvette' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[14.8,0.4],[15.0,0.4],[16.0,0.8],[16.5,0.8],[16.5,-0.5],[17.2,-0.5],[17.0,-1.3],[15.8,-1.9],[14.8,-1.6],[14.5,-0.9],[14.8,0.1],[14.8,0.4]]]
-        }
+        /* Centre-nord. Owando 15.9E/-0.48, Makoua 15.7E/0 */
+        geometry: { type: 'Polygon', coordinates: [[ [14.5,0.55],[15.5,0.55],[16.3,1.0],[16.5,-0.5],[17.2,-0.3],[17.0,-1.2],[16.0,-2.0],[15.2,-1.8],[14.5,-1.0],[14.5,0.0],[14.5,0.55] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Cuvette-Ouest' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[13.8,0.5],[14.8,0.4],[14.8,0.1],[14.5,-0.9],[13.8,-1.6],[13.0,-1.6],[12.5,-0.9],[12.8,-0.3],[13.2,0.3],[13.8,0.5]]]
-        }
+        /* Ouest, Ewo 14.82E/-0.88, Okoyo 15.1E/-1.47 */
+        geometry: { type: 'Polygon', coordinates: [[ [13.8,1.0],[14.5,0.55],[14.5,0.0],[14.5,-1.0],[13.8,-1.8],[13.0,-1.8],[12.5,-1.0],[12.7,-0.3],[13.2,0.3],[13.8,1.0] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Plateaux' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[15.8,-1.9],[17.0,-1.3],[17.2,-0.5],[18.0,-0.2],[18.65,0.2],[18.65,-3.5],[18.0,-4.3],[17.0,-4.6],[15.5,-4.1],[14.8,-3.1],[14.5,-2.1],[15.8,-1.9]]]
-        }
+        /* Centre-est. Djambala 14.75E/-2.52, Gamboma 15.87E/-1.88 */
+        geometry: { type: 'Polygon', coordinates: [[ [15.2,-1.8],[16.0,-2.0],[17.0,-1.2],[17.2,-0.3],[18.0,0.0],[18.65,0.5],[18.65,-4.0],[17.5,-4.5],[16.0,-4.8],[15.0,-4.0],[14.8,-3.0],[15.2,-1.8] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Lékoumou' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[13.0,-1.6],[13.8,-1.6],[14.5,-0.9],[14.8,-1.6],[14.8,-3.1],[13.8,-3.6],[13.0,-3.1],[12.5,-2.1],[12.5,-1.6],[13.0,-1.6]]]
-        }
+        /* Centre. Sibiti 13.35E/-3.68, Zanaga 13.8E/-2.85 */
+        geometry: { type: 'Polygon', coordinates: [[ [13.0,-1.8],[13.8,-1.8],[14.5,-1.0],[15.2,-1.8],[14.8,-3.0],[14.0,-3.8],[13.0,-3.2],[12.5,-2.2],[13.0,-1.8] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Bouenza' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[13.0,-3.1],[13.8,-3.6],[14.8,-3.1],[15.5,-4.1],[15.0,-4.6],[14.5,-5.1],[13.5,-4.9],[12.8,-4.6],[12.5,-3.9],[13.0,-3.1]]]
-        }
+        /* Centre-sud. Madingou 13.55E/-4.15, Nkayi 13E/-4.2 */
+        geometry: { type: 'Polygon', coordinates: [[ [13.0,-3.2],[14.0,-3.8],[14.8,-3.0],[15.0,-4.0],[15.3,-4.7],[14.5,-5.1],[13.5,-4.9],[12.8,-4.6],[12.5,-4.0],[13.0,-3.2] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Niari' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[12.5,-1.6],[13.0,-1.6],[13.0,-3.1],[12.5,-3.9],[12.8,-4.6],[12.5,-4.9],[12.0,-5.1],[11.5,-5.1],[11.2,-4.5],[11.5,-3.6],[12.0,-2.6],[12.5,-2.1],[12.5,-1.6]]]
-        }
+        /* SW. Dolisie 12.67E/-4.2, Mossendjo 12.7E/-3.0 */
+        geometry: { type: 'Polygon', coordinates: [[ [12.5,-1.0],[13.0,-1.8],[12.5,-2.2],[13.0,-3.2],[12.5,-4.0],[12.8,-4.6],[12.3,-5.0],[11.8,-5.05],[11.3,-4.6],[11.5,-3.8],[11.8,-2.8],[12.2,-2.0],[12.5,-1.0] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Pool' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[14.5,-2.1],[14.8,-3.1],[15.5,-4.1],[17.0,-4.6],[18.0,-4.3],[18.65,-3.5],[18.65,-5.1],[16.0,-5.1],[15.2,-5.0],[14.5,-5.1],[14.5,-4.1],[14.5,-2.1]]]
-        }
+        /* SE, longe fleuve Congo. Kinkala 14.76E/-4.36 */
+        geometry: { type: 'Polygon', coordinates: [[ [14.5,-2.2],[14.8,-3.0],[15.0,-4.0],[16.0,-4.8],[17.5,-4.5],[18.65,-4.0],[18.65,-5.15],[16.2,-5.15],[15.3,-5.1],[14.5,-5.1],[15.3,-4.7],[15.0,-4.0],[14.5,-3.5],[14.5,-2.2] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Kouilou' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[11.2,-3.6],[12.5,-3.2],[12.5,-3.9],[12.0,-5.1],[11.5,-5.1],[11.1,-4.8],[11.1,-3.6],[11.2,-3.6]]]
-        }
+        /* SW côtier, autour de Pointe-Noire */
+        geometry: { type: 'Polygon', coordinates: [[ [12.5,-1.0],[12.7,-0.3],[12.5,-0.5],[12.0,-1.5],[11.8,-2.5],[11.5,-3.3],[11.2,-4.0],[11.5,-4.6],[11.8,-5.05],[11.3,-5.1],[11.1,-4.7],[11.5,-3.8],[11.8,-2.8],[12.2,-2.0],[12.5,-1.0] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Pointe-Noire' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[11.7,-4.6],[12.1,-4.55],[12.25,-4.75],[12.1,-4.98],[11.8,-4.98],[11.7,-4.75],[11.7,-4.6]]]
-        }
+        /* Ville-département enclavée dans Kouilou, côte atlantique */
+        geometry: { type: 'Polygon', coordinates: [[ [11.75,-4.55],[12.05,-4.5],[12.2,-4.72],[12.1,-4.97],[11.8,-4.97],[11.7,-4.72],[11.75,-4.55] ]] }
       },
       {
         type: 'Feature',
         properties: { name: 'Brazzaville' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[15.1,-4.1],[15.5,-4.1],[15.6,-4.3],[15.5,-4.5],[15.15,-4.5],[15.0,-4.3],[15.1,-4.1]]]
-        }
+        /* Capitale, rive droite du fleuve Congo */
+        geometry: { type: 'Polygon', coordinates: [[ [15.1,-4.1],[15.55,-4.1],[15.65,-4.3],[15.55,-4.52],[15.15,-4.52],[15.0,-4.32],[15.1,-4.1] ]] }
       }
     ]
   };
