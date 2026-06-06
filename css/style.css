@@ -471,31 +471,18 @@ section:nth-child(even) { background: var(--gris-c); }
 .president-photo__frame {
   width: 100%;
   aspect-ratio: 3/4;
-  background: linear-gradient(135deg, var(--gris-c), var(--gris-b));
   border-radius: 6px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-}
-.president-photo__frame::before {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 6px;
-  background: linear-gradient(to right, var(--vert), var(--jaune), var(--rouge));
+  background: transparent;
 }
 .president-photo__placeholder {
   font-size: 5rem;
   opacity: 0.3;
   user-select: none;
-}
-.president-photo__label {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to right, var(--vert) 0%, var(--vert) 33%, var(--jaune) 33%, var(--jaune) 66%, var(--rouge) 66%);
-  height: 6px;
 }
 .president-content { }
 .president-role {
@@ -584,9 +571,8 @@ section:nth-child(even) { background: var(--gris-c); }
   justify-content: center;
   font-size: 2rem;
   margin: 0 auto 14px;
-  border: 3px solid var(--gris-b);
+  overflow: hidden;
 }
-.bureau-card.president .bureau-avatar { border-color: var(--jaune); }
 .bureau-role {
   font-size: 0.7rem;
   font-weight: 700;
