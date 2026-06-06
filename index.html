@@ -162,6 +162,12 @@
       </ul>
     </nav>
 
+    <button class="search-toggle" id="searchToggle" aria-label="Rechercher" title="Recherche globale (Ctrl+K)">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+      </svg>
+    </button>
+
     <button class="dark-toggle" id="darkToggle" aria-label="Mode sombre" title="Mode sombre / clair">
       <span class="dark-toggle__icon">🌙</span>
     </button>
@@ -933,8 +939,30 @@
 <!-- Scroll to top -->
 <button class="scroll-top" title="Haut de page" aria-label="Retour en haut">↑</button>
 
+<!-- RECHERCHE GLOBALE -->
+<div class="gs-overlay" id="gsOverlay" role="dialog" aria-modal="true" aria-label="Recherche">
+  <div class="gs-box">
+    <div class="gs-input-wrap">
+      <svg class="gs-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+      </svg>
+      <input class="gs-input" id="gsInput" type="text" placeholder="Rechercher un député, une commission, un article…" autocomplete="off" spellcheck="false">
+      <button class="gs-clear" id="gsClear" aria-label="Effacer">✕</button>
+    </div>
+    <div class="gs-results" id="gsResults">
+      <div class="gs-hint">Tapez pour rechercher dans tout le site</div>
+    </div>
+    <div class="gs-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> naviguer</span>
+      <span><kbd>↵</kbd> ouvrir</span>
+      <span><kbd>Échap</kbd> fermer</span>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/main.js"></script>
 <script src="js/cms.js"></script>
+<script src="js/search.js"></script>
 </body>
 </html>
