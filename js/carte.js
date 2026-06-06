@@ -133,7 +133,10 @@
     const mapEl = document.getElementById('congoMap');
     if (!mapEl || typeof L === 'undefined') return;
 
+    /* Centre Congo Brazzaville : lat -0.8, lon 15.2 — zoom 6 */
     map = L.map('congoMap', {
+      center: [-0.8, 15.2],
+      zoom: 6,
       zoomControl: true,
       scrollWheelZoom: false,
       attributionControl: true
@@ -176,11 +179,14 @@
       }
     }).addTo(map);
 
-    /* Centrer sur tout le Congo */
-    map.fitBounds(geoLayer.getBounds(), { padding: [20, 20] });
+    /* Ajuste le zoom pour afficher tout le Congo */
+    try {
+      const bounds = geoLayer.getBounds();
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] });
+    } catch (_) {}
 
     /* Force le recalcul de la taille (fix affichage gris) */
-    setTimeout(() => map.invalidateSize(), 100);
+    setTimeout(() => map.invalidateSize(), 150);
   }
 
   /* ----- Sélection département ----- */
