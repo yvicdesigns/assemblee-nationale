@@ -6,210 +6,135 @@
   <script src="../js/gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carte des Circonscriptions – Assemblée Nationale – République du Congo</title>
-  <meta name="description" content="Carte interactive des 12 départements du Congo. Cliquez sur un département pour voir ses députés.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* ======= PAGE CARTE ======= */
     .carte-layout {
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 420px 1fr;
       gap: 32px;
       align-items: start;
-      padding: 40px 0 64px;
+      padding: 36px 0 64px;
     }
-
-    /* Map */
+    .carte-map-col { position: sticky; top: 88px; }
     .carte-map-wrap {
-      background: var(--gris-c);
-      border-radius: 12px;
-      overflow: hidden;
+      background: #f0f4f0;
+      border-radius: 14px;
+      padding: 20px;
       box-shadow: 0 4px 24px rgba(0,0,0,.1);
     }
-    .carte-map-header {
-      padding: 16px 20px;
-      background: var(--blanc);
-      border-bottom: 1px solid var(--gris-b);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .carte-map-header h2 {
-      font-family: var(--font-h);
-      font-size: 1rem;
-      color: var(--noir);
-      margin: 0;
-    }
-    .carte-map-header p {
-      font-size: 0.78rem;
-      color: var(--gris-m);
-      margin: 0;
-      margin-left: auto;
-    }
-    #congoMap {
-      height: 560px;
+    .carte-map-wrap h2 { font-family:var(--font-h); font-size:1rem; color:var(--noir); margin:0 0 4px; }
+    .carte-map-wrap p  { font-size:.78rem; color:var(--gris-m); margin:0 0 14px; }
+
+    /* ===== SVG CARTE ===== */
+    .congo-svg {
       width: 100%;
-      z-index: 0;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,.12));
     }
-
-    /* Leaflet dept tooltip */
-    .dept-tooltip {
-      background: rgba(255,255,255,0.92) !important;
-      border: 1px solid rgba(0,154,68,0.3) !important;
-      border-radius: 4px !important;
-      color: #1b5e20 !important;
-      font-family: var(--font-h) !important;
-      font-size: 10px !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.5px !important;
-      padding: 3px 6px !important;
-      box-shadow: 0 1px 4px rgba(0,0,0,.1) !important;
-      white-space: nowrap;
+    /* Fond pays */
+    .congo-bg { fill: #e8f5e9; stroke: #a5d6a7; stroke-width: 1; }
+    /* Départements */
+    .dept-shape {
+      fill: #a5d6a7;
+      stroke: #fff;
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+      transition: fill .2s, filter .2s;
+      cursor: pointer;
     }
-    .dept-tooltip.active-tooltip {
-      background: var(--vert) !important;
-      color: #fff !important;
-      border-color: #005a1e !important;
-    }
-
-    /* Right panel */
-    .carte-panel-col {
-      position: sticky;
-      top: 90px;
-    }
-    .carte-panel {
-      min-height: 480px;
-      max-height: 600px;
-      overflow-y: auto;
-    }
-    .carte-intro {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--gris-m);
-      background: var(--blanc);
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
-    }
-    .carte-intro .intro-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
-    .carte-intro h3 { font-family: var(--font-h); font-size: 1.2rem; color: var(--noir); margin-bottom: 8px; }
-    .carte-intro p { font-size: 0.85rem; line-height: 1.7; max-width: 280px; margin: 0 auto; }
-
-    /* Dept header */
-    .dept-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 20px;
-      background: linear-gradient(135deg, #0a3d1f, #1a6b36);
-      border-radius: 12px 12px 0 0;
-      color: #fff;
-    }
-    .dept-header__icon { font-size: 2rem; flex-shrink: 0; }
-    .dept-header__name { font-family: var(--font-h); font-size: 1.3rem; font-weight: 700; line-height: 1.2; }
-    .dept-header__sub { font-size: 0.75rem; opacity: .75; margin-top: 2px; }
-    .dept-header__count {
-      margin-left: auto;
-      background: rgba(255,255,255,.15);
-      border-radius: 8px;
-      padding: 8px 14px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-    .dept-header__count strong { display: block; font-size: 1.5rem; font-weight: 700; line-height: 1; }
-    .dept-header__count span { font-size: 0.68rem; opacity: .8; }
-
-    /* Panel body */
-    .carte-panel-body {
-      background: var(--blanc);
-      border-radius: 0 0 12px 12px;
-      padding: 16px;
-      box-shadow: 0 4px 16px rgba(0,0,0,.08);
-    }
-
-    /* Deputies grid */
-    .deputes-grid-carte {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .depute-card-carte {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--gris-c);
-      border-radius: 8px;
-      padding: 10px 12px;
-      transition: background 0.2s ease;
-    }
-    .depute-card-carte:hover { background: #e8f5e9; }
-    .depute-card-carte__photo {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--gris-b);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; flex-shrink: 0; overflow: hidden;
-    }
-    .depute-card-carte__photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-    .depute-card-carte__info { flex: 1; min-width: 0; }
-    .depute-card-carte__name { font-weight: 700; font-size: 0.82rem; color: var(--noir); line-height: 1.2; }
-    .depute-card-carte__circ { font-size: 0.72rem; color: var(--gris-m); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .depute-card-carte__groupe {
-      display: inline-block;
-      font-size: 0.65rem;
+    .dept-shape:hover  { fill: #4caf50; filter: brightness(1.05); }
+    .dept-shape.active { fill: #009A44; stroke: #00521e; stroke-width: 2; }
+    .dept-shape.ville  { fill: #66bb6a; }
+    .dept-shape.ville.active { fill: #1b5e20; }
+    /* Labels */
+    .dept-label {
+      font-family: var(--font-h);
+      font-size: 9px;
       font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 20px;
-      background: #e8f5e9;
-      color: #2e7d32;
-      margin-top: 3px;
-      white-space: nowrap;
+      fill: #1b5e20;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+      letter-spacing: .5px;
     }
+    .dept-label.active { fill: #fff; }
+    .dept-label.small  { font-size: 7px; }
+    /* Ville dot */
+    .city-dot { fill:#1b5e20; stroke:#fff; stroke-width:1; pointer-events:none; }
+    .city-dot.active { fill:#fff; stroke:#009A44; }
+    /* Fleuve Congo */
+    .river { fill:none; stroke:#90caf9; stroke-width:2; stroke-linecap:round; opacity:.7; }
 
-    /* States */
-    .carte-loading {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 32px; color: var(--gris-m); font-size: 0.85rem;
-    }
-    .carte-spinner {
-      width: 20px; height: 20px;
-      border: 2px solid var(--gris-b); border-top-color: var(--vert);
-      border-radius: 50%; animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .carte-empty {
-      text-align: center; padding: 32px 16px; color: var(--gris-m); font-size: 0.85rem;
-    }
-    .carte-empty strong { display: block; font-size: 0.95rem; color: var(--noir); margin-bottom: 6px; }
+    /* Légende */
+    .carte-legend { display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; padding-top:10px; border-top:1px solid #d0e8d0; }
+    .carte-legend-item { display:flex; align-items:center; gap:6px; font-size:.72rem; color:var(--gris-m); }
+    .carte-legend-dot  { width:12px; height:12px; border-radius:2px; flex-shrink:0; }
 
-    /* Legend */
-    .carte-legend {
-      display: flex; gap: 14px; flex-wrap: wrap;
-      padding: 12px 20px;
-      background: var(--gris-c);
-      border-top: 1px solid var(--gris-b);
+    /* Panel droite */
+    .carte-panel-col { min-height:480px; }
+    .carte-panel     { min-height:400px; }
+    .carte-intro {
+      text-align:center; padding:56px 24px;
+      background:var(--blanc); border-radius:12px;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);
+      color:var(--gris-m);
     }
-    .carte-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--gris-m); }
-    .carte-legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+    .carte-intro .intro-icon { font-size:3rem; margin-bottom:14px; display:block; }
+    .carte-intro h3 { font-family:var(--font-h); font-size:1.2rem; color:var(--noir); margin-bottom:8px; }
+    .carte-intro p  { font-size:.85rem; line-height:1.7; max-width:280px; margin:0 auto; }
 
-    /* Dark mode map */
-    [data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85); }
-    [data-theme="dark"] .leaflet-control-zoom a { background:#1e1e1e; color:#a5d6a7; border-color:#333; }
-    [data-theme="dark"] .carte-map-header { background: #1e1e1e; border-color: #333; }
-    [data-theme="dark"] .dept-tooltip { background: rgba(30,30,30,0.95) !important; color: #a5d6a7 !important; }
-
-    /* Responsive */
-    @media (max-width: 1000px) {
-      .carte-layout { grid-template-columns: 1fr; }
-      .carte-panel-col { position: static; }
-      #congoMap { height: 400px; }
+    .dept-header {
+      display:flex; align-items:center; gap:14px; padding:20px;
+      background:linear-gradient(135deg,#0a3d1f,#1a6b36);
+      border-radius:12px 12px 0 0; color:#fff;
     }
-    @media (max-width: 600px) {
-      #congoMap { height: 300px; }
+    .dept-header__icon  { font-size:2rem; flex-shrink:0; }
+    .dept-header__name  { font-family:var(--font-h); font-size:1.3rem; font-weight:700; line-height:1.2; }
+    .dept-header__sub   { font-size:.75rem; opacity:.75; margin-top:2px; }
+    .dept-header__count { margin-left:auto; background:rgba(255,255,255,.15); border-radius:8px; padding:8px 14px; text-align:center; flex-shrink:0; }
+    .dept-header__count strong { display:block; font-size:1.5rem; font-weight:700; line-height:1; }
+    .dept-header__count span   { font-size:.68rem; opacity:.8; }
+    .carte-panel-body { background:var(--blanc); border-radius:0 0 12px 12px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.08); }
+    .deputes-grid-carte { display:flex; flex-direction:column; gap:10px; }
+    .depute-card-carte {
+      display:flex; align-items:center; gap:12px;
+      background:var(--gris-c); border-radius:8px; padding:10px 12px;
+      transition:background .2s;
+    }
+    .depute-card-carte:hover { background:#e8f5e9; }
+    .depute-card-carte__photo {
+      width:40px; height:40px; border-radius:50%;
+      background:var(--gris-b); display:flex; align-items:center; justify-content:center;
+      font-size:1rem; font-weight:700; flex-shrink:0; overflow:hidden; color:var(--gris-m);
+    }
+    .depute-card-carte__photo img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .depute-card-carte__info { flex:1; min-width:0; }
+    .depute-card-carte__name  { font-weight:700; font-size:.82rem; color:var(--noir); line-height:1.2; }
+    .depute-card-carte__circ  { font-size:.72rem; color:var(--gris-m); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .depute-card-carte__groupe { display:inline-block; font-size:.65rem; font-weight:700; padding:2px 6px; border-radius:20px; background:#e8f5e9; color:#2e7d32; margin-top:3px; }
+    .carte-loading { display:flex; align-items:center; justify-content:center; gap:10px; padding:32px; color:var(--gris-m); font-size:.85rem; }
+    .carte-spinner { width:20px; height:20px; border:2px solid var(--gris-b); border-top-color:var(--vert); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .carte-empty { text-align:center; padding:32px 16px; color:var(--gris-m); font-size:.85rem; }
+    .carte-empty strong { display:block; font-size:.95rem; color:var(--noir); margin-bottom:6px; }
+
+    /* Dark mode */
+    [data-theme="dark"] .carte-map-wrap  { background:#1e2e1e; }
+    [data-theme="dark"] .congo-bg        { fill:#1a3020; stroke:#2d5a3a; }
+    [data-theme="dark"] .dept-shape      { fill:#2d5a3a; stroke:#0d2016; }
+    [data-theme="dark"] .dept-shape:hover{ fill:#3d7a50; }
+    [data-theme="dark"] .dept-shape.active{ fill:#009A44; }
+    [data-theme="dark"] .dept-label      { fill:#a5d6a7; }
+    [data-theme="dark"] .dept-label.active{ fill:#fff; }
+
+    @media (max-width:960px) {
+      .carte-layout { grid-template-columns:1fr; }
+      .carte-map-col { position:static; }
     }
   </style>
 </head>
@@ -239,7 +164,6 @@
 </div>
 
 <div class="nav-overlay"></div>
-
 <header class="site-header">
   <div class="container">
     <a href="../index.html" class="site-logo">
@@ -250,65 +174,55 @@
         <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
         <li class="nav-item">
           <a href="deputes.html" class="nav-link">Les Députés <span class="arrow">▾</span></a>
-          <div class="dropdown">
-            <div class="dropdown-section">
-              <div class="dropdown-section__title">Les Députés</div>
-              <a href="bureau.html" class="dropdown-link">Le Bureau</a>
-              <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
-              <a href="carte.html" class="dropdown-link nav-active">🗺️ Carte des Circonscriptions</a>
-              <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
-              <a href="contact.html" class="dropdown-link">Contacter son député</a>
-            </div>
-          </div>
+          <div class="dropdown"><div class="dropdown-section">
+            <div class="dropdown-section__title">Les Députés</div>
+            <a href="bureau.html" class="dropdown-link">Le Bureau</a>
+            <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
+            <a href="carte.html" class="dropdown-link nav-active">🗺️ Carte des Circonscriptions</a>
+            <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
+            <a href="contact.html" class="dropdown-link">Contacter son député</a>
+          </div></div>
         </li>
         <li class="nav-item">
           <a href="en-construction.html" class="nav-link">Travaux Parlementaires <span class="arrow">▾</span></a>
-          <div class="dropdown">
-            <div class="dropdown-section">
-              <a href="en-construction.html" class="dropdown-link">Calendrier des sessions</a>
-              <a href="en-construction.html" class="dropdown-link">Séances plénières</a>
-            </div>
-          </div>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="en-construction.html" class="dropdown-link">Calendrier des sessions</a>
+            <a href="en-construction.html" class="dropdown-link">Séances plénières</a>
+          </div></div>
         </li>
         <li class="nav-item">
           <a href="en-construction.html" class="nav-link">Coopération <span class="arrow">▾</span></a>
-          <div class="dropdown">
-            <div class="dropdown-section">
-              <a href="en-construction.html" class="dropdown-link">Diplomatie parlementaire</a>
-            </div>
-          </div>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="en-construction.html" class="dropdown-link">Diplomatie parlementaire</a>
+          </div></div>
         </li>
         <li class="nav-item">
           <a href="role.html" class="nav-link">Découvrir <span class="arrow">▾</span></a>
-          <div class="dropdown">
-            <div class="dropdown-section">
-              <a href="role.html" class="dropdown-link">Rôle de l'Assemblée nationale</a>
-              <a href="histoire.html" class="dropdown-link">Notre histoire</a>
-            </div>
-          </div>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="role.html" class="dropdown-link">Rôle de l'Assemblée nationale</a>
+            <a href="histoire.html" class="dropdown-link">Notre histoire</a>
+          </div></div>
         </li>
         <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
       </ul>
     </nav>
-    <button class="search-toggle" id="searchToggle" aria-label="Rechercher" title="Recherche globale (Ctrl+K)">
+    <button class="search-toggle" id="searchToggle" aria-label="Rechercher">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
         <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
       </svg>
     </button>
-    <button class="dark-toggle" id="darkToggle" aria-label="Mode sombre" title="Mode sombre / clair">
+    <button class="dark-toggle" id="darkToggle" aria-label="Mode sombre">
       <span class="dark-toggle__icon">🌙</span>
     </button>
     <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 
-<div class="page-hero" style="padding: 36px 0 28px;">
+<div class="page-hero" style="padding:32px 0 24px;">
   <div class="container">
     <div class="page-hero__breadcrumb">
-      <a href="../index.html">Accueil</a>
-      <span>›</span>
-      <a href="deputes.html">Les Députés</a>
-      <span>›</span>
+      <a href="../index.html">Accueil</a><span>›</span>
+      <a href="deputes.html">Les Députés</a><span>›</span>
       <span>Carte</span>
     </div>
     <h1 class="page-hero__title">Carte des Circonscriptions</h1>
@@ -316,31 +230,137 @@
   </div>
 </div>
 
-<div class="page-content" style="padding-top: 0;">
+<div class="page-content" style="padding-top:0;">
   <div class="container">
     <div class="carte-layout">
 
-      <!-- Carte Leaflet -->
-      <div>
+      <!-- CARTE SVG -->
+      <div class="carte-map-col">
         <div class="carte-map-wrap">
-          <div class="carte-map-header">
-            <span style="font-size:1.3rem;">🗺️</span>
-            <h2>République du Congo — 12 Départements</h2>
-            <p>151 sièges · 15ᵉ Législature</p>
-          </div>
-          <div id="congoMap"></div>
+          <h2>🗺️ République du Congo</h2>
+          <p>12 départements · 151 sièges · 15ᵉ Législature</p>
+
+          <!--
+            Projection équirectangulaire :
+            x = (lon - 11.0) × 49.35
+            y = (3.75 - lat) × 54.75
+            ViewBox : 0 0 380 495
+          -->
+          <svg class="congo-svg" viewBox="0 0 380 495" xmlns="http://www.w3.org/2000/svg"
+               role="img" aria-label="Carte interactive des 12 départements du Congo">
+            <title>Carte des départements — République du Congo</title>
+
+            <!-- Contour pays (fond) -->
+            <polygon class="congo-bg" points="
+              123,2 163,2 163,41 188,41 188,2
+              256,2 378,2 378,178 345,205 306,222 271,233
+              247,317 207,306 173,261 138,306 99,306
+              74,261 84,222 109,189 138,151 123,107 113,68
+              123,2
+              256,2 271,96 260,151
+              296,272 247,317 207,306 187,371 197,426
+              247,470 320,453 378,426 378,488
+              256,488 211,487 173,487
+              173,426 173,371
+              148,413 99,382
+              74,426 88,459 64,481 40,483
+              15,459 25,414 40,360 60,316
+              49,382 25,399 5,414 5,469 25,486 49,481 60,464 52,452 37,454
+            " style="fill:#e8f5e9;stroke:#a5d6a7;stroke-width:1;"/>
+
+            <!-- FLEUVE CONGO (décoratif) -->
+            <path class="river" d="M345,205 Q320,280 280,350 Q260,400 229,441 Q215,460 211,487"/>
+
+            <!-- ======= DÉPARTEMENT : SANGHA ======= -->
+            <!-- NW avec onglet Sembé. Chef-lieu Ouésso -->
+            <polygon class="dept-shape" data-dept="Sangha" data-label-id="lbl-sangha"
+              points="123,2 163,2 163,41 188,41 188,2 256,2 271,96 260,151 222,175 173,175 138,151 123,107 113,68"/>
+            <text class="dept-label" id="lbl-sangha" x="188" y="88">SANGHA</text>
+
+            <!-- ======= DÉPARTEMENT : LIKOUALA ======= -->
+            <!-- NE, le plus grand. Chef-lieu Impfondo -->
+            <polygon class="dept-shape" data-dept="Likouala" data-label-id="lbl-likouala"
+              points="256,2 378,2 378,178 345,205 306,222 271,233 260,151 271,96"/>
+            <text class="dept-label" id="lbl-likouala" x="320" y="110">LIKOUALA</text>
+
+            <!-- ======= DÉPARTEMENT : CUVETTE ======= -->
+            <!-- Centre-nord. Chef-lieu Owando -->
+            <polygon class="dept-shape" data-dept="Cuvette" data-label-id="lbl-cuvette"
+              points="173,175 222,175 260,151 271,233 306,222 296,272 247,317 207,306 173,261 173,205"/>
+            <text class="dept-label" id="lbl-cuvette" x="232" y="238">CUVETTE</text>
+
+            <!-- ======= DÉPARTEMENT : CUVETTE-OUEST ======= -->
+            <!-- Ouest. Chef-lieu Ewo -->
+            <polygon class="dept-shape" data-dept="Cuvette-Ouest" data-label-id="lbl-cuvetteouest"
+              points="138,151 173,175 173,205 173,261 138,306 99,306 74,261 84,222 109,189"/>
+            <text class="dept-label small" id="lbl-cuvetteouest" x="128" y="233">CUVETTE-OUEST</text>
+
+            <!-- ======= DÉPARTEMENT : PLATEAUX ======= -->
+            <!-- Centre-est. Chef-lieu Djambala -->
+            <polygon class="dept-shape" data-dept="Plateaux" data-label-id="lbl-plateaux"
+              points="207,306 247,317 296,272 306,222 345,205 378,178 378,426 320,453 247,470 197,426 187,371"/>
+            <text class="dept-label" id="lbl-plateaux" x="308" y="360">PLATEAUX</text>
+
+            <!-- ======= DÉPARTEMENT : LÉKOUMOU ======= -->
+            <!-- Centre. Chef-lieu Sibiti -->
+            <polygon class="dept-shape" data-dept="Lékoumou" data-label-id="lbl-lekoumou"
+              points="99,306 138,306 173,261 207,306 187,371 148,413 99,382 74,327"/>
+            <text class="dept-label" id="lbl-lekoumou" x="138" y="350">LÉKOUMOU</text>
+
+            <!-- ======= DÉPARTEMENT : BOUENZA ======= -->
+            <!-- Centre-sud. Chef-lieu Madingou -->
+            <polygon class="dept-shape" data-dept="Bouenza" data-label-id="lbl-bouenza"
+              points="99,382 148,413 187,371 197,426 211,464 173,486 123,475 88,459 74,426"/>
+            <text class="dept-label" id="lbl-bouenza" x="148" y="437">BOUENZA</text>
+
+            <!-- ======= DÉPARTEMENT : NIARI ======= -->
+            <!-- SW. Chef-lieu Dolisie -->
+            <polygon class="dept-shape" data-dept="Niari" data-label-id="lbl-niari"
+              points="74,261 99,306 74,327 99,382 74,426 88,459 64,481 40,483 15,459 25,414 40,360 60,316"/>
+            <text class="dept-label" id="lbl-niari" x="58" y="395">NIARI</text>
+
+            <!-- ======= DÉPARTEMENT : POOL ======= -->
+            <!-- SE, longe le fleuve Congo. Chef-lieu Kinkala -->
+            <polygon class="dept-shape" data-dept="Pool" data-label-id="lbl-pool"
+              points="187,371 197,426 247,470 320,453 378,426 378,488 256,488 211,487 173,487 173,426"/>
+            <text class="dept-label" id="lbl-pool" x="280" y="462">POOL</text>
+
+            <!-- ======= DÉPARTEMENT : KOUILOU ======= -->
+            <!-- SW côtier. Chef-lieu Loango -->
+            <polygon class="dept-shape" data-dept="Kouilou" data-label-id="lbl-kouilou"
+              points="25,399 49,382 64,426 49,481 25,486 5,469 5,414"/>
+            <text class="dept-label small" id="lbl-kouilou" x="30" y="443">KOUILOU</text>
+
+            <!-- ======= VILLE-DÉPARTEMENT : POINTE-NOIRE ======= -->
+            <polygon class="dept-shape ville" data-dept="Pointe-Noire" data-label-id="lbl-pn"
+              points="37,454 52,452 60,464 54,478 40,478 35,464"/>
+            <text class="dept-label small" id="lbl-pn" x="48" y="467">P-NOIRE</text>
+
+            <!-- ======= VILLE-DÉPARTEMENT : BRAZZAVILLE ======= -->
+            <polygon class="dept-shape ville" data-dept="Brazzaville" data-label-id="lbl-brazza"
+              points="202,430 224,430 229,441 224,452 204,452 197,441"/>
+            <text class="dept-label small" id="lbl-brazza" x="213" y="441">BZV</text>
+
+            <!-- Villes repère -->
+            <circle class="city-dot" cx="213" cy="441" r="3" title="Brazzaville"/>
+            <circle class="city-dot" cx="47" cy="467" r="3" title="Pointe-Noire"/>
+            <circle class="city-dot" cx="263" cy="120" r="2.5" title="Ouésso"/>
+            <circle class="city-dot" cx="353" cy="116" r="2.5" title="Impfondo"/>
+
+          </svg>
+
           <div class="carte-legend">
             <div class="carte-legend-item">
-              <div class="carte-legend-dot" style="background:rgba(129,199,132,0.7);border:2px solid #fff;box-shadow:0 0 0 1px #81c784;"></div>
+              <div class="carte-legend-dot" style="background:#a5d6a7;border:1px solid #81c784;"></div>
               Département
             </div>
             <div class="carte-legend-item">
-              <div class="carte-legend-dot" style="background:var(--vert);border:2px solid #fff;box-shadow:0 0 0 1px #005a1e;"></div>
+              <div class="carte-legend-dot" style="background:#009A44;border:1px solid #005a1e;"></div>
               Sélectionné
             </div>
             <div class="carte-legend-item">
-              <div class="carte-legend-dot" style="background:rgba(129,199,132,0.9);border:2px solid #66bb6a;"></div>
-              Survol
+              <div class="carte-legend-dot" style="background:#66bb6a;border:1px solid #4caf50;"></div>
+              Ville-dépt
             </div>
           </div>
         </div>
@@ -362,48 +382,33 @@
 </div>
 
 <footer class="site-footer">
-  <div class="footer-top">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <div class="footer-logo-emblem">🏛️</div>
-            <div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div>
-          </div>
-          <p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p>
-          <div class="footer-address"><span class="footer-address-icon">📍</span><span>Rond-point de la place de la République, Brazzaville</span></div>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-col__title">Institutions</h4>
-          <ul class="footer-links">
-            <li><a href="https://senat.cg/" target="_blank" rel="noopener">Sénat</a></li>
-            <li><a href="https://presidence.cg/" target="_blank" rel="noopener">Présidence</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-col__title">Liens Rapides</h4>
-          <ul class="footer-links">
-            <li><a href="histoire.html">Notre histoire</a></li>
-            <li><a href="role.html">Rôle de l'Assemblée</a></li>
-            <li><a href="contact.html">Nous contacter</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-col__title">Réseaux sociaux</h4>
-          <div class="footer-social">
-            <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a>
-            <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a>
-          </div>
-        </div>
+  <div class="footer-top"><div class="container"><div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="footer-logo-emblem">🏛️</div>
+        <div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div>
       </div>
+      <p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p>
+      <div class="footer-address"><span class="footer-address-icon">📍</span><span>Rond-point de la place de la République, Brazzaville</span></div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <div class="container">
-      <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
-      <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
-    </div>
-  </div>
+    <div class="footer-col"><h4 class="footer-col__title">Institutions</h4><ul class="footer-links">
+      <li><a href="https://senat.cg/" target="_blank" rel="noopener">Sénat</a></li>
+      <li><a href="https://presidence.cg/" target="_blank" rel="noopener">Présidence</a></li>
+    </ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Liens Rapides</h4><ul class="footer-links">
+      <li><a href="histoire.html">Notre histoire</a></li>
+      <li><a href="role.html">Rôle de l'Assemblée</a></li>
+      <li><a href="contact.html">Nous contacter</a></li>
+    </ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Réseaux sociaux</h4><div class="footer-social">
+      <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a>
+      <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a>
+    </div></div>
+  </div></div></div>
+  <div class="footer-bottom"><div class="container">
+    <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
+    <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
+  </div></div>
 </footer>
 
 <button class="scroll-top" title="Haut de page">↑</button>
@@ -429,8 +434,6 @@
   </div>
 </div>
 
-<!-- Leaflet JS -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
 <script src="../js/cms.js"></script>
