@@ -470,14 +470,13 @@ section:nth-child(even) { background: var(--gris-c); }
 }
 .president-photo__frame {
   width: 100%;
-  aspect-ratio: 3/4;
-  border-radius: 6px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   background: transparent;
+}
+.president-photo__frame img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 .president-photo__placeholder {
   font-size: 5rem;
