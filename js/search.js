@@ -25,7 +25,7 @@
     { type: 'commission', icon: '🌿', name: 'Commission Environnement',             sub: 'Développement durable', url: 'pages/commission-environnement.html' },
   ];
 
-  const LABELS = { page: 'Page', commission: 'Commission', depute: 'Député', article: 'Article' };
+  const LABELS = { page: 'Page', commission: 'Commission', depute: 'Député', article: 'Article', bureau: 'Bureau', agenda: 'Agenda' };
 
   let overlay, input, results, clearBtn;
   let debounceTimer = null;
@@ -113,13 +113,30 @@
       const { createClient } = supabase;
       const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const [depRes, artRes] = await Promise.all([
+      const [depRes, depDeptRes, depCircRes, depGroupRes, artRes, bureauRes, agendaRes] = await Promise.all([
+        // Députés — par nom
         db.from('deputes').select('name, constituency, department, groupe').ilike('name', `%${q}%`).eq('active', true).limit(8),
-        db.from('articles').select('title, excerpt, category, slug').ilike('title', `%${q}%`).eq('status', 'published').limit(5)
+        // Députés — par département
+        db.from('deputes').select('name, constituency, department, groupe').ilike('department', `%${q}%`).eq('active', true).limit(4),
+        // Députés — par circonscription
+        db.from('deputes').select('name, constituency, department, groupe').ilike('constituency', `%${q}%`).eq('active', true).limit(4),
+        // Députés — par groupe politique
+        db.from('deputes').select('name, constituency, department, groupe').ilike('groupe', `%${q}%`).eq('active', true).limit(4),
+        // Articles
+        db.from('articles').select('title, excerpt, category').or(`title.ilike.%${q}%,excerpt.ilike.%${q}%,category.ilike.%${q}%`).eq('status', 'published').limit(5),
+        // Bureau
+        db.from('bureau').select('name, role_title, biography').or(`name.ilike.%${q}%,role_title.ilike.%${q}%`).eq('active', true).limit(4),
+        // Agenda
+        db.from('agenda').select('title, event_date, description').ilike('title', `%${q}%`).limit(4),
       ]);
 
-      if (depRes.data?.length) {
-        groups['depute'] = depRes.data.map(d => ({
+      // Fusion et dédoublonnage des députés
+      const deputeMap = new Map();
+      [...(depRes.data||[]), ...(depDeptRes.data||[]), ...(depCircRes.data||[]), ...(depGroupRes.data||[])].forEach(d => {
+        if (!deputeMap.has(d.name)) deputeMap.set(d.name, d);
+      });
+      if (deputeMap.size) {
+        groups['depute'] = [...deputeMap.values()].slice(0, 10).map(d => ({
           type: 'depute', icon: '👤',
           name: d.name,
           sub: [d.constituency, d.department].filter(Boolean).join(' — '),
@@ -136,6 +153,24 @@
           url: 'pages/blog.html'
         }));
       }
+
+      if (bureauRes.data?.length) {
+        groups['bureau'] = bureauRes.data.map(b => ({
+          type: 'bureau', icon: '🏛️',
+          name: b.name,
+          sub: b.role_title || '',
+          url: 'pages/bureau.html'
+        }));
+      }
+
+      if (agendaRes.data?.length) {
+        groups['agenda'] = agendaRes.data.map(a => ({
+          type: 'agenda', icon: '📅',
+          name: a.title,
+          sub: a.event_date ? new Date(a.event_date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : '',
+          url: 'index.html#agenda'
+        }));
+      }
     } catch (_) {}
 
     renderResults(groups, q);
@@ -143,7 +178,7 @@
 
   function renderResults(groups, q) {
     currentItems = [];
-    const order = ['depute', 'article', 'commission', 'page'];
+    const order = ['depute', 'bureau', 'article', 'agenda', 'commission', 'page'];
     let html = '';
 
     order.forEach(type => {
