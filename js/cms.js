@@ -156,17 +156,15 @@ async function loadCMSBureau() {
   const grid = document.querySelector('.bureau-grid');
   if (!grid) return;
 
-  const avatarImg = (m, size) => {
-    const s = size === 'lg' ? '96px' : size === 'sm' ? '56px' : '72px';
-    return m.photo_url
-      ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
-      : '👤';
-  };
+  const avatarImg = (m) => m.photo_url
+    ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+    : '👤';
 
   const card = (m, i, size = '') => `
-    <div class="bureau-card${i === 0 ? ' president' : ''}${size === 'sm' ? ' bureau-card--sm' : ''}">
+    <div class="bureau-card${i === 0 ? ' president' : ''}${size === 'sm' ? ' bureau-card--sm' : ''}"
+         data-bureau-id="${i}" style="cursor:pointer;">
       <div class="bureau-avatar${size === 'lg' ? ' bureau-avatar--lg' : size === 'sm' ? ' bureau-avatar--sm' : ''}">
-        ${avatarImg(m, size)}
+        ${avatarImg(m)}
       </div>
       <p class="bureau-role">${esc(m.role_title)}</p>
       <p class="bureau-name${size === 'lg' ? ' bureau-name--lg' : ''}">${esc(m.name)}</p>
@@ -182,6 +180,57 @@ async function loadCMSBureau() {
       ${mid.length ? `<div class="bureau-level bureau-level--mid">${mid.map((m, i) => card(m, i + 1, '')).join('')}</div>` : ''}
       ${bottom.length ? `<div class="bureau-level bureau-level--bottom">${bottom.map((m, i) => card(m, i + 3, 'sm')).join('')}</div>` : ''}
     </div>`;
+
+  // Inject modal if not present
+  if (!document.getElementById('bureauModal')) {
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="bureauModal" class="bm-overlay" role="dialog" aria-modal="true">
+        <div class="bm-box">
+          <button class="bm-close" aria-label="Fermer">&times;</button>
+          <div class="bm-photo-wrap">
+            <div class="bm-photo" id="bmPhoto"></div>
+          </div>
+          <div class="bm-info">
+            <span class="bm-role" id="bmRole"></span>
+            <h2 class="bm-name" id="bmName"></h2>
+            <div class="bm-divider"></div>
+            <p class="bm-bio" id="bmBio"></p>
+            <div class="bm-meta" id="bmMeta"></div>
+          </div>
+        </div>
+      </div>`);
+
+    const overlay = document.getElementById('bureauModal');
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeBureauModal(); });
+    overlay.querySelector('.bm-close').addEventListener('click', closeBureauModal);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBureauModal(); });
+  }
+
+  // Click handlers
+  grid.querySelectorAll('.bureau-card').forEach((el, i) => {
+    el.addEventListener('click', () => openBureauModal(data[i]));
+  });
+}
+
+function openBureauModal(m) {
+  const modal = document.getElementById('bureauModal');
+  document.getElementById('bmRole').textContent = m.role_title || '';
+  document.getElementById('bmName').textContent = m.name || '';
+  document.getElementById('bmBio').textContent  = m.biography || 'Aucune biographie disponible.';
+  document.getElementById('bmPhoto').innerHTML  = m.photo_url
+    ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}">`
+    : '<span class="bm-placeholder">👤</span>';
+  const meta = [];
+  if (m.constituency) meta.push(`<span>📍 ${esc(m.constituency)}</span>`);
+  document.getElementById('bmMeta').innerHTML = meta.join('');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBureauModal() {
+  const modal = document.getElementById('bureauModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // =========================================
