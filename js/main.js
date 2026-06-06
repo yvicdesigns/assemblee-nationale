@@ -119,8 +119,38 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(update, 1000);
   }
 
-  setupCountdown('countdown1', '2025-10-08T09:00:00');
-  setupCountdown('countdown2', '2025-10-15T09:00:00');
+  setupCountdown('countdown1', '2026-10-08T09:00:00');
+  setupCountdown('countdown2', '2026-10-15T09:00:00');
+
+  // ---- Minuterie principale (bandeau vert) ----
+  const SESSION_DATE = new Date('2026-10-15T09:00:00');
+  function updateMainCountdown() {
+    const diff = SESSION_DATE - Date.now();
+    if (diff <= 0) {
+      ['sct-days','sct-hours','sct-mins','sct-secs'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '00';
+      });
+      return;
+    }
+    const pad = n => String(Math.floor(n)).padStart(2, '0');
+    const days  = diff / 86400000;
+    const hours = (diff % 86400000) / 3600000;
+    const mins  = (diff % 3600000)  / 60000;
+    const secs  = (diff % 60000)    / 1000;
+    const el = id => document.getElementById(id);
+    if (el('sct-days'))  el('sct-days').textContent  = pad(days);
+    if (el('sct-hours')) el('sct-hours').textContent = pad(hours);
+    if (el('sct-mins'))  el('sct-mins').textContent  = pad(mins);
+    if (el('sct-secs'))  el('sct-secs').textContent  = pad(secs);
+  }
+  updateMainCountdown();
+  setInterval(updateMainCountdown, 1000);
+
+  // ---- PWA Service Worker ----
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 
   // ---- Scroll to top ----
   const scrollBtn = document.querySelector('.scroll-top');

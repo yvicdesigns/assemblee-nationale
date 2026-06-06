@@ -1,0 +1,44 @@
+{
+  "name": "Assemblée Nationale — République du Congo",
+  "short_name": "Assemblée Nationale",
+  "description": "Site officiel de l'Assemblée Nationale de la République du Congo — 15ᵉ Législature",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#009A44",
+  "theme_color": "#009A44",
+  "lang": "fr",
+  "orientation": "portrait-primary",
+  "categories": ["government", "news"],
+  "icons": [
+    {
+      "src": "/logo/logo-dark-small.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Les Députés",
+      "url": "/pages/deputes.html",
+      "description": "Voir les 151 députés"
+    },
+    {
+      "name": "Actualités",
+      "url": "/pages/blog.html",
+      "description": "Dernières actualités parlementaires"
+    },
+    {
+      "name": "Commissions",
+      "url": "/pages/commissions.html",
+      "description": "Les 8 commissions permanentes"
+    }
+  ]
+}

@@ -912,6 +912,71 @@ section:nth-child(even) { background: var(--gris-c); }
 /* =========================================
    SECTION AGENDA / COUNTDOWN
    ========================================= */
+/* ── MINUTERIE PROCHAINE SESSION ── */
+.session-countdown {
+  background: linear-gradient(135deg, #0a1f12 0%, #009A44 100%);
+  color: #fff;
+  padding: 28px 0;
+}
+.session-countdown__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.session-countdown__tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-bottom: 8px;
+}
+.session-countdown__title {
+  font-family: var(--font-h);
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+.session-countdown__date { font-size: 0.82rem; opacity: 0.8; }
+.session-countdown__timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.sct-unit { text-align: center; }
+.sct-num {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  min-width: 64px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+}
+.sct-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-top: 4px; display: block; }
+.sct-sep { font-size: 2rem; font-weight: 800; opacity: 0.5; margin-bottom: 20px; }
+
+@keyframes sctPulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+.sct-sep { animation: sctPulse 1s ease-in-out infinite; }
+
+[data-theme="dark"] .session-countdown { background: linear-gradient(135deg, #050f08 0%, #0a3d1f 100%); }
+
+@media (max-width: 640px) {
+  .session-countdown__inner { flex-direction: column; text-align: center; }
+  .session-countdown__timer { justify-content: center; }
+  .sct-num { font-size: 1.6rem; min-width: 48px; }
+}
+
 .agenda-section { background: var(--gris-f); color: var(--blanc); }
 .agenda-section .section-title { color: var(--noir); }
 .agenda-section .section-title::after { background: var(--jaune); }

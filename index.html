@@ -13,6 +13,15 @@
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#009A44">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Assemblée Nationale">
+  <link rel="apple-touch-icon" href="/logo/logo-dark-small.png">
 </head>
 <body>
 
@@ -455,6 +464,30 @@
     </div>
   </div>
 </section>
+
+<!-- ==============================
+     MINUTERIE PROCHAINE SESSION
+     ============================== -->
+<div class="session-countdown reveal reveal-up">
+  <div class="container">
+    <div class="session-countdown__inner">
+      <div class="session-countdown__left">
+        <span class="session-countdown__tag">🏛️ PROCHAINE SESSION PLÉNIÈRE</span>
+        <h3 class="session-countdown__title">Session Ordinaire — 2ᵉ semestre 2026</h3>
+        <p class="session-countdown__date">Ouverture prévue le <strong>15 octobre 2026</strong></p>
+      </div>
+      <div class="session-countdown__timer" id="mainCountdown">
+        <div class="sct-unit"><span class="sct-num" id="sct-days">--</span><span class="sct-label">Jours</span></div>
+        <div class="sct-sep">:</div>
+        <div class="sct-unit"><span class="sct-num" id="sct-hours">--</span><span class="sct-label">Heures</span></div>
+        <div class="sct-sep">:</div>
+        <div class="sct-unit"><span class="sct-num" id="sct-mins">--</span><span class="sct-label">Min</span></div>
+        <div class="sct-sep">:</div>
+        <div class="sct-unit"><span class="sct-num" id="sct-secs">--</span><span class="sct-label">Sec</span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ==============================
      AGENDA / COUNTDOWN
