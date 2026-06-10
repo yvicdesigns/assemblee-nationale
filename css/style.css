@@ -1421,27 +1421,57 @@ section:nth-child(even) { background: var(--gris-c); }
   align-items: center;
 }
 .deputes-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
 }
 .stat-card {
+  flex: 1 1 0;
+  min-width: 0;
   background: var(--gris-c);
-  border-radius: 8px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 28px 20px;
   text-align: center;
-  border-bottom: 4px solid var(--vert);
-  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+  position: relative;
+  overflow: hidden;
   cursor: default;
+  transition: flex .45s cubic-bezier(.4,0,.2,1),
+              background .3s ease,
+              box-shadow .3s ease;
 }
-.stat-card:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 12px 32px rgba(0,0,0,.12);
-  background: var(--blanc);
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 4px;
+  background: var(--vert);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .4s cubic-bezier(.4,0,.2,1);
 }
-.stat-card:nth-child(2) { border-color: var(--rouge); }
-.stat-card:nth-child(3) { border-color: var(--jaune); }
-.stat-card:nth-child(4) { border-color: var(--gris-m); }
+.stat-card:nth-child(2)::after { background: var(--rouge); }
+.stat-card:nth-child(3)::after { background: var(--jaune); }
+.stat-card:nth-child(4)::after { background: var(--gris-m); }
+
+/* Accordéon : le card survolé s'étire, les autres se rétractent */
+.deputes-stats:has(.stat-card:hover) .stat-card        { flex: 0.55 1 0; }
+.deputes-stats .stat-card:hover                         { flex: 2.2 1 0; background: var(--blanc); box-shadow: 0 12px 36px rgba(0,0,0,.13); }
+.deputes-stats .stat-card:hover::after                  { transform: scaleX(1); }
+
+.stat-desc {
+  font-size: .78rem;
+  color: var(--gris-m);
+  line-height: 1.5;
+  margin-top: 10px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .4s cubic-bezier(.4,0,.2,1), opacity .35s ease;
+}
+.stat-card:hover .stat-desc {
+  max-height: 80px;
+  opacity: 1;
+}
 .stat-num {
   font-size: 2.5rem;
   font-weight: 700;
@@ -1855,7 +1885,10 @@ section:nth-child(even) { background: var(--gris-c); }
   .footer-grid { grid-template-columns: 1fr; }
   .slide-title { font-size: 1.1rem; }
   .hero-slider { height: 320px; }
-  .deputes-stats { grid-template-columns: 1fr 1fr; }
+  .deputes-stats { flex-wrap: wrap; }
+  .deputes-stats .stat-card { flex: 1 1 calc(50% - 7px); }
+  .deputes-stats:has(.stat-card:hover) .stat-card { flex: 1 1 calc(50% - 7px); }
+  .deputes-stats .stat-card:hover { flex: 1 1 calc(50% - 7px); box-shadow: 0 8px 20px rgba(0,0,0,.1); }
 }
 
 /* =========================================
@@ -1893,7 +1926,10 @@ section:nth-child(even) { background: var(--gris-c); }
   .bureau-level--bottom { gap: 10px; }
 
   /* Stat cards deputes */
-  .deputes-stats { grid-template-columns: 1fr 1fr; }
+  .deputes-stats { flex-wrap: wrap; }
+  .deputes-stats .stat-card { flex: 1 1 calc(50% - 7px); }
+  .deputes-stats:has(.stat-card:hover) .stat-card { flex: 1 1 calc(50% - 7px); }
+  .deputes-stats .stat-card:hover { flex: 1 1 calc(50% - 7px); }
 
   /* Modal recherche */
   .gs-overlay { padding: 60px 12px 12px; }
