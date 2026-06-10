@@ -1189,25 +1189,31 @@ section:nth-child(even) { background: var(--gris-c); }
   .sct-num { font-size: 1.6rem; min-width: 48px; }
 }
 
-.agenda-section { background: var(--gris-f); color: var(--blanc); }
+.agenda-section { background: var(--blanc); color: var(--noir); }
 .agenda-section .section-title { color: var(--noir); }
 .agenda-section .section-title::after { background: var(--jaune); }
 .agenda-section .section-sub { color: var(--gris-m); }
 .agenda-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
   margin-top: 32px;
 }
 .agenda-card {
-  background: #ffffff;
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--gris-c);
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 28px;
   border-top: 4px solid var(--jaune);
-  transition: all var(--trans);
+  overflow: hidden;
+  transition: flex .45s cubic-bezier(.4,0,.2,1),
+              background .3s ease,
+              box-shadow .3s ease;
 }
-.agenda-card:hover { background: #f8fafc; }
+.agenda-grid:has(.agenda-card:hover) .agenda-card      { flex: 0.45 1 0; }
+.agenda-grid .agenda-card:hover                         { flex: 2.1 1 0; background: #ffffff; box-shadow: 0 12px 36px rgba(0,0,0,.1); }
 .agenda-date {
   font-size: 0.8rem;
   color: #b45309;
@@ -1801,7 +1807,9 @@ section:nth-child(even) { background: var(--gris-c); }
 @media (max-width: 900px) {
   .president-grid { grid-template-columns: 1fr; }
   .president-photo { max-width: 280px; margin: 0 auto; }
-  .agenda-grid { grid-template-columns: 1fr; }
+  .agenda-grid { flex-direction: column; }
+  .agenda-grid:has(.agenda-card:hover) .agenda-card { flex: 1 1 auto; }
+  .agenda-grid .agenda-card:hover { flex: 1 1 auto; }
   .composition-grid { grid-template-columns: 1fr; }
   .fonctionnement-grid { grid-template-columns: 1fr 1fr; }
   .deputes-content { grid-template-columns: 1fr; }
