@@ -156,30 +156,70 @@ async function loadCMSBureau() {
   const grid = document.querySelector('.bureau-grid');
   if (!grid) return;
 
-  const avatarImg = (m) => m.photo_url
-    ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
-    : '👤';
+  const av = (m, cls) => `<div class="${cls}">${
+    m.photo_url
+      ? `<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" loading="lazy">`
+      : '👤'
+  }</div>`;
 
-  const card = (m, i, size = '') => `
-    <div class="bureau-card${i === 0 ? ' president' : ''}${size === 'sm' ? ' bureau-card--sm' : ''}"
-         data-bureau-id="${i}" style="cursor:pointer;">
-      <div class="bureau-avatar${size === 'lg' ? ' bureau-avatar--lg' : size === 'sm' ? ' bureau-avatar--sm' : ''}">
-        ${avatarImg(m)}
-      </div>
-      <p class="bureau-role">${esc(m.role_title)}</p>
-      <p class="bureau-name${size === 'lg' ? ' bureau-name--lg' : ''}">${esc(m.name)}</p>
-    </div>`;
+  const roleIcon = r => /secr/i.test(r) ? '🍃' : /quest/i.test(r) ? '⚖️' : '📋';
 
-  const top    = data.slice(0, 1);
-  const mid    = data.slice(1, 3);
-  const bottom = data.slice(3);
+  const president = data[0];
+  const vps       = data.slice(1, 3);
+  const bottom    = data.slice(3);
 
   grid.innerHTML = `
-    <div class="bureau-hierarchy">
-      <div class="bureau-level bureau-level--top">${top.map((m, i) => card(m, i, 'lg')).join('')}</div>
-      ${mid.length ? `<div class="bureau-level bureau-level--mid">${mid.map((m, i) => card(m, i + 1, '')).join('')}</div>` : ''}
-      ${bottom.length ? `<div class="bureau-level bureau-level--bottom">${bottom.map((m, i) => card(m, i + 3, 'sm')).join('')}</div>` : ''}
-    </div>`;
+    <!-- ── Président ── -->
+    <div class="bh-president" data-bureau-id="0">
+      ${av(president, 'bh-president__photo')}
+      <div class="bh-president__info">
+        <span class="bh-badge">PRÉSIDENT</span>
+        <h3 class="bh-president__name">${esc(president.name)}</h3>
+        <div class="bh-star">★</div>
+      </div>
+    </div>
+
+    ${vps.length ? `
+    <!-- ── Vice-Présidents ── -->
+    <div class="bh-section-header">
+      <div class="bh-line"></div>
+      <span class="bh-section-label">VICE-PRÉSIDENTS</span>
+      <div class="bh-line"></div>
+    </div>
+    <div class="bh-vp-grid">
+      ${vps.map((m, i) => `
+      <div class="bh-card-h" data-bureau-id="${i + 1}">
+        <div class="bh-card-h__bar"></div>
+        ${av(m, 'bh-card-h__photo')}
+        <div class="bh-card-h__info">
+          <span class="bh-card-h__role">${esc(m.role_title)}</span>
+          <p class="bh-card-h__name">${esc(m.name)}</p>
+          <div class="bh-card-h__line"></div>
+        </div>
+      </div>`).join('')}
+    </div>` : ''}
+
+    ${bottom.length ? `
+    <!-- ── Secrétaires & Questeurs ── -->
+    <div class="bh-section-header">
+      <div class="bh-line"></div>
+      <span class="bh-section-label">SECRÉTAIRES ET QUESTEURS</span>
+      <div class="bh-line"></div>
+    </div>
+    <div class="bh-bottom-grid">
+      ${bottom.map((m, i) => `
+      <div class="bh-card-sm" data-bureau-id="${i + 3}">
+        <div class="bh-card-sm__bar"></div>
+        ${av(m, 'bh-card-sm__photo')}
+        <div class="bh-card-sm__info">
+          <span class="bh-card-sm__icon">${roleIcon(m.role_title)}</span>
+          <span class="bh-card-sm__role">${esc(m.role_title)}</span>
+          <p class="bh-card-sm__name">${esc(m.name)}</p>
+          <div class="bh-card-sm__line"></div>
+        </div>
+      </div>`).join('')}
+    </div>` : ''}
+  `;
 
   // Inject modal if not present
   if (!document.getElementById('bureauModal')) {
@@ -206,9 +246,10 @@ async function loadCMSBureau() {
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBureauModal(); });
   }
 
-  // Click handlers
-  grid.querySelectorAll('.bureau-card').forEach((el, i) => {
-    el.addEventListener('click', () => openBureauModal(data[i]));
+  // Click handlers — tous les éléments avec data-bureau-id
+  grid.querySelectorAll('[data-bureau-id]').forEach(el => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => openBureauModal(data[+el.dataset.bureauId]));
   });
 }
 

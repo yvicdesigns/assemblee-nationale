@@ -152,6 +152,73 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 
+  // ---- PWA Install Banner ----
+  (function () {
+    const DISMISSED_KEY = 'pwa-banner-dismissed';
+    // Ne pas afficher si déjà refusé ou si l'app est déjà installée
+    if (localStorage.getItem(DISMISSED_KEY)) return;
+    if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+    let deferredPrompt = null;
+
+    function buildBanner(isIOS) {
+      const el = document.createElement('div');
+      el.id = 'pwa-banner';
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-label', 'Installer l\'application');
+      el.innerHTML = `
+        <div class="pwa-b__left">
+          <div class="pwa-b__icon">🏛️</div>
+          <div class="pwa-b__text">
+            <strong>Installer l'Assemblée Nationale</strong>
+            <span>${isIOS
+              ? 'Appuyez sur <b>□↑</b> puis <b>« Sur l\'écran d\'accueil »</b>'
+              : 'Accédez rapidement à l\'Assemblée nationale, même sans connexion'
+            }</span>
+          </div>
+        </div>
+        <div class="pwa-b__actions">
+          ${isIOS ? '' : '<button class="pwa-b__btn" id="pwaInstall">Installer</button>'}
+          <button class="pwa-b__close" id="pwaClose" aria-label="Fermer">✕</button>
+        </div>`;
+      document.body.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('pwa-b--show'));
+
+      document.getElementById('pwaClose').addEventListener('click', () => {
+        el.classList.remove('pwa-b--show');
+        localStorage.setItem(DISMISSED_KEY, '1');
+        setTimeout(() => el.remove(), 400);
+      });
+
+      if (!isIOS) {
+        document.getElementById('pwaInstall').addEventListener('click', async () => {
+          el.classList.remove('pwa-b--show');
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+          }
+          localStorage.setItem(DISMISSED_KEY, '1');
+          setTimeout(() => el.remove(), 400);
+        });
+      }
+    }
+
+    // Android / Chrome — attend l'événement natif
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      setTimeout(() => buildBanner(false), 4000);
+    });
+
+    // iOS Safari — instructions manuelles
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /safari/i.test(navigator.userAgent) && !/chrome|crios|fxios/i.test(navigator.userAgent);
+    if (isIOS && isSafari) {
+      setTimeout(() => buildBanner(true), 4000);
+    }
+  })();
+
   // ---- Scroll to top ----
   const scrollBtn = document.querySelector('.scroll-top');
   window.addEventListener('scroll', () => {

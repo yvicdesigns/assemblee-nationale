@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <script src="../js/gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -250,23 +251,22 @@
                role="img" aria-label="Carte interactive des 12 départements du Congo">
             <title>Carte des départements — République du Congo</title>
 
-            <!-- Contour pays (fond) -->
+            <!--
+              Contour réel du Congo Brazzaville (sens horaire depuis le coin NW)
+              ──────────────────────────────────────────────────────────────────
+              La frontière OUEST a une CONCAVITÉ profonde côté Gabon :
+                (74,261)→(64,222)→(49,178) = point le plus à l'OUEST (12°E, 0,5°N)
+                → remonte vers (74,151)→(138,151) avant de rejoindre Sangha
+              C'est ce creux qui donne au Congo sa forme caractéristique.
+            -->
             <polygon class="congo-bg" points="
-              123,2 163,2 163,41 188,41 188,2
-              256,2 378,2 378,178 345,205 306,222 271,233
-              247,317 207,306 173,261 138,306 99,306
-              74,261 84,222 109,189 138,151 123,107 113,68
-              123,2
-              256,2 271,96 260,151
-              296,272 247,317 207,306 187,371 197,426
-              247,470 320,453 378,426 378,488
-              256,488 211,487 173,487
-              173,426 173,371
-              148,413 99,382
-              74,426 88,459 64,481 40,483
-              15,459 25,414 40,360 60,316
-              49,382 25,399 5,414 5,469 25,486 49,481 60,464 52,452 37,454
-            " style="fill:#e8f5e9;stroke:#a5d6a7;stroke-width:1;"/>
+              123,2 163,2 163,41 188,41 188,2 378,2
+              378,490
+              256,490 173,488 123,476 88,460 64,482 40,484 15,460 5,470 5,414
+              25,374 40,360 60,316
+              74,261 64,222 49,178 74,151 138,151
+              123,107 113,68
+            "/>
 
             <!-- FLEUVE CONGO (décoratif) -->
             <path class="river" d="M345,205 Q320,280 280,350 Q260,400 229,441 Q215,460 211,487"/>
@@ -290,10 +290,13 @@
             <text class="dept-label" id="lbl-cuvette" x="232" y="238">CUVETTE</text>
 
             <!-- ======= DÉPARTEMENT : CUVETTE-OUEST ======= -->
-            <!-- Ouest. Chef-lieu Ewo -->
+            <!--
+              Frontière OUEST = concavité Gabon :
+              (74,261)→(64,222)→(49,178) [creux]→(74,151) puis rejoint Sangha à (138,151)
+            -->
             <polygon class="dept-shape" data-dept="Cuvette-Ouest" data-label-id="lbl-cuvetteouest"
-              points="138,151 173,175 173,205 173,261 138,306 99,306 74,261 84,222 109,189"/>
-            <text class="dept-label small" id="lbl-cuvetteouest" x="128" y="233">CUVETTE-OUEST</text>
+              points="138,151 173,175 173,205 173,261 138,306 99,306 74,261 64,222 49,178 74,151"/>
+            <text class="dept-label small" id="lbl-cuvetteouest" x="147" y="222">CUV.-OUEST</text>
 
             <!-- ======= DÉPARTEMENT : PLATEAUX ======= -->
             <!-- Centre-est. Chef-lieu Djambala -->

@@ -1,6 +1,6 @@
 {
   "name": "Assemblée Nationale — République du Congo",
-  "short_name": "Assemblée Nationale",
+  "short_name": "Assemblée AN",
   "description": "Site officiel de l'Assemblée Nationale de la République du Congo — 15ᵉ Législature",
   "start_url": "/",
   "display": "standalone",
@@ -11,16 +11,10 @@
   "categories": ["government", "news"],
   "icons": [
     {
-      "src": "/logo/logo-dark-small.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [],
