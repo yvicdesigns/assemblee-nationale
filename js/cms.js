@@ -92,32 +92,28 @@ async function loadCMSSlides() {
 
 // =========================================
 // ACTUALITÉS
-// Images Wikimedia Commons libres de droits pour l'Assemblée nationale du Congo
-const WM = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
+// Images Wikimedia Commons vérifiées — libres de droits
+const _WC = 'https://upload.wikimedia.org/wikipedia/commons/';
 const NEWS_IMAGES = [
-  { re: /anniversaire|proclamation|indépend|drapeau|national.*congo|congo.*national/i,
-    url: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_the_Republic_of_the_Congo.svg' },
-  { re: /santé|médic|hôpital|soin|maladie|épidémie/i,
-    url: WM + 'Dispensaire_de_Pointe-Noire_(Congo).jpg' },
-  { re: /pléni|session|budget|loi.*finance|finance.*loi|ordinaire/i,
-    url: WM + 'Parlementaires_congolais_-_2019.jpg' },
-  { re: /commission|réorganis|réform|structure/i,
-    url: WM + 'Parlementaires_congolais_-_2019.jpg' },
-  { re: /audience|rencontr|visite|délégat/i,
-    url: WM + 'Palais_du_Parlement_de_Brazzaville.jpg' },
-  { re: /quinquennat|bilan|mandat|résultat/i,
-    url: WM + 'Parlementaires_congolais_-_2019.jpg' },
-  { re: /présid/i,
-    url: WM + 'Palais_du_Parlement_de_Brazzaville.jpg' },
-  { re: /congrès|sénat/i,
-    url: WM + 'Palais_du_Parlement_de_Brazzaville.jpg' },
+  { re: /anniversaire|proclamation|indépend|drapeau|fête.*(nation|républ)|nation.*congo/i,
+    url: _WC + '9/92/Flag_of_the_Republic_of_the_Congo.svg' },
+  { re: /santé|médic|hôpital|soin|maladie|épidémie|législat.*santé|santé.*législat/i,
+    url: _WC + '7/70/Republic_of_Congo_Minister_of_Health_Felix_Kabarge_meeting_Mohammad_Nasim_Bangladesh_Ministry_of_Health_2018-04-24_%28PID-0044511%29.jpg' },
+  { re: /commission|réorganis|réform|structure|comité/i,
+    url: _WC + 'a/ae/Congopresse_1.jpg' },
+  { re: /quinquennat|bilan|mandat|résultat|point.*assemblée/i,
+    url: _WC + '6/6e/Congopresse_4.jpg' },
+  { re: /pléni|session|budget|loi.*finance|finance.*loi|ordinaire|clôture/i,
+    url: _WC + '0/04/Parlementaires_congolais_-_2019.jpg' },
+  { re: /audience|rencontr|visite|délégat|présid|congrès|sénat/i,
+    url: _WC + '0/04/Parlementaires_congolais_-_2019.jpg' },
 ];
 
 function resolveNewsImage(title) {
   for (const { re, url } of NEWS_IMAGES) {
     if (re.test(title)) return url;
   }
-  return WM + 'Parlementaires_congolais_-_2019.jpg';
+  return _WC + '6/6e/Congopresse_4.jpg';
 }
 
 // =========================================
