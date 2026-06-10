@@ -92,28 +92,14 @@ async function loadCMSSlides() {
 
 // =========================================
 // ACTUALITÉS
-// Images Wikimedia Commons vérifiées — libres de droits
-const _WC = 'https://upload.wikimedia.org/wikipedia/commons/';
-const NEWS_IMAGES = [
-  { re: /anniversaire|proclamation|indépend|drapeau|fête.*(nation|républ)|nation.*congo/i,
-    url: _WC + '9/92/Flag_of_the_Republic_of_the_Congo.svg' },
-  { re: /santé|médic|hôpital|soin|maladie|épidémie|législat.*santé|santé.*législat/i,
-    url: _WC + '7/70/Republic_of_Congo_Minister_of_Health_Felix_Kabarge_meeting_Mohammad_Nasim_Bangladesh_Ministry_of_Health_2018-04-24_%28PID-0044511%29.jpg' },
-  { re: /commission|réorganis|réform|structure|comité/i,
-    url: _WC + 'a/ae/Congopresse_1.jpg' },
-  { re: /quinquennat|bilan|mandat|résultat|point.*assemblée/i,
-    url: _WC + '6/6e/Congopresse_4.jpg' },
-  { re: /pléni|session|budget|loi.*finance|finance.*loi|ordinaire|clôture/i,
-    url: _WC + '0/04/Parlementaires_congolais_-_2019.jpg' },
-  { re: /audience|rencontr|visite|délégat|présid|congrès|sénat/i,
-    url: _WC + '0/04/Parlementaires_congolais_-_2019.jpg' },
+// Photos officielles de l'Assemblée Nationale du Congo Brazzaville
+const AN_PHOTOS = [
+  'https://upload.wikimedia.org/wikipedia/commons/0/04/Parlementaires_congolais_-_2019.jpg', // séance plénière
+  'https://upload.wikimedia.org/wikipedia/commons/c/c0/Palais_du_peuple_BZV.jpg',             // bâtiment du parlement
 ];
 
-function resolveNewsImage(title) {
-  for (const { re, url } of NEWS_IMAGES) {
-    if (re.test(title)) return url;
-  }
-  return _WC + '6/6e/Congopresse_4.jpg';
+function resolveNewsImage(title, index) {
+  return AN_PHOTOS[index % AN_PHOTOS.length];
 }
 
 // =========================================
@@ -141,7 +127,7 @@ async function loadCMSActualites() {
       'linear-gradient(135deg,#0a2a1a,#1a5a3a)',
       'linear-gradient(135deg,#001a3d,#003a6b)',
     ];
-    const imgSrc = a.image_url || resolveNewsImage(a.title || '');
+    const imgSrc = a.image_url || resolveNewsImage(a.title || '', i);
     const imgStyle = `background-image:url('${imgSrc}');background-size:cover;background-position:center;`;
 
     return `
