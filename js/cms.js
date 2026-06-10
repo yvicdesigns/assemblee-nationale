@@ -92,6 +92,34 @@ async function loadCMSSlides() {
 
 // =========================================
 // ACTUALITÉS
+// Images Wikimedia Commons libres de droits pour l'Assemblée nationale du Congo
+const WM = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
+const NEWS_IMAGES = [
+  { re: /anniversaire|proclamation|indépend|drapeau|national.*congo|congo.*national/i,
+    url: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_the_Republic_of_the_Congo.svg' },
+  { re: /santé|médic|hôpital|soin|maladie|épidémie/i,
+    url: WM + 'Dispensaire_de_Pointe-Noire_(Congo).jpg' },
+  { re: /pléni|session|budget|loi.*finance|finance.*loi|ordinaire/i,
+    url: WM + 'Parlementaires_congolais_-_2019.jpg' },
+  { re: /commission|réorganis|réform|structure/i,
+    url: WM + 'Parlementaires_congolais_-_2019.jpg' },
+  { re: /audience|rencontr|visite|délégat/i,
+    url: WM + 'Palais_du_Parlement_de_Brazzaville.jpg' },
+  { re: /quinquennat|bilan|mandat|résultat/i,
+    url: WM + 'Parlementaires_congolais_-_2019.jpg' },
+  { re: /présid/i,
+    url: WM + 'Palais_du_Parlement_de_Brazzaville.jpg' },
+  { re: /congrès|sénat/i,
+    url: WM + 'Palais_du_Parlement_de_Brazzaville.jpg' },
+];
+
+function resolveNewsImage(title) {
+  for (const { re, url } of NEWS_IMAGES) {
+    if (re.test(title)) return url;
+  }
+  return WM + 'Parlementaires_congolais_-_2019.jpg';
+}
+
 // =========================================
 async function loadCMSActualites() {
   const { data, error } = await cms
@@ -117,14 +145,12 @@ async function loadCMSActualites() {
       'linear-gradient(135deg,#0a2a1a,#1a5a3a)',
       'linear-gradient(135deg,#001a3d,#003a6b)',
     ];
-    const imgStyle = a.image_url
-      ? `background-image:url('${a.image_url}');background-size:cover;background-position:center;`
-      : `background:${gradients[i % gradients.length]};`;
+    const imgSrc = a.image_url || resolveNewsImage(a.title || '');
+    const imgStyle = `background-image:url('${imgSrc}');background-size:cover;background-position:center;`;
 
     return `
       <article class="news-card" data-cat="${catSlug}">
         <div class="news-card__img" style="${imgStyle}">
-          ${!a.image_url ? `<span>${emoji}</span>` : ''}
         </div>
         <div class="news-card__body">
           <div class="news-card__meta">
