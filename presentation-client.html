@@ -7,1128 +7,463 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --vert:   #009A44;
-      --jaune:  #FBDE4A;
-      --rouge:  #DC241F;
-      --noir:   #0f172a;
-      --gris-f: #1e293b;
-      --gris-m: #475569;
-      --gris-c: #94a3b8;
-      --bord:   #e2e8f0;
-      --bg:     #f8fafc;
+      --vert:  #009A44; --jaune: #FBDE4A; --rouge: #DC241F;
+      --noir:  #0f172a; --gris-f:#1e293b; --gris-m:#475569;
+      --gris-c:#94a3b8; --bord:  #e2e8f0; --bg:    #f8fafc;
     }
+    body { font-family:'Inter',sans-serif; background:#cbd5e1; color:var(--gris-f); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .page { width:210mm; min-height:297mm; background:#fff; margin:12mm auto; position:relative; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,.18); page-break-after:always; }
+    @media print { body{background:#fff} .page{margin:0;box-shadow:none} .no-print{display:none!important} }
+    .no-print { position:fixed; top:20px; right:20px; z-index:999; background:var(--vert); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:'Inter',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(0,154,68,.35); }
+    .no-print:hover { background:#007a36; }
+    .page-num { position:absolute; bottom:16px; right:24px; font-size:.68rem; color:var(--gris-c); }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #cbd5e1;
-      color: var(--gris-f);
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
+    /* ── COUVERTURE ── */
+    .cover { min-height:297mm; display:flex; flex-direction:column; }
+    .flag { display:flex; height:8px; }
+    .flag span { flex:1; }
+    .flag span:nth-child(1){background:var(--vert)} .flag span:nth-child(2){background:var(--jaune)} .flag span:nth-child(3){background:var(--rouge)}
+    .cover__hero { background:var(--noir); flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 40px; text-align:center; position:relative; }
+    .cover__hero::before { content:''; position:absolute; inset:0; background:url('https://upload.wikimedia.org/wikipedia/commons/0/04/Parlementaires_congolais_-_2019.jpg') center/cover; opacity:.12; }
+    .cover__badge { position:relative; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:var(--jaune); font-size:.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 16px; border-radius:20px; margin-bottom:24px; }
+    .cover__title { position:relative; font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:700; color:#fff; line-height:1.2; margin-bottom:16px; }
+    .cover__title em { color:var(--jaune); font-style:normal; }
+    .cover__sub { position:relative; font-size:.95rem; color:rgba(255,255,255,.65); max-width:340px; line-height:1.6; margin-bottom:32px; }
+    .cover__pills { position:relative; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+    .cover__pill { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.8); font-size:.7rem; padding:5px 12px; border-radius:20px; }
+    .cover__band { background:#fff; padding:20px 40px; display:flex; align-items:center; justify-content:space-between; }
+    .cover__org { display:flex; align-items:center; gap:12px; }
+    .cover__org-icon { width:44px;height:44px; background:var(--vert); border-radius:8px; display:flex;align-items:center;justify-content:center; color:#fff;font-size:1.4rem; }
+    .cover__org-name { font-size:.75rem;font-weight:700;color:var(--noir);text-transform:uppercase;letter-spacing:.5px;line-height:1.3; }
+    .cover__org-sub { font-size:.68rem;color:var(--gris-m); }
+    .cover__meta { font-size:.72rem;color:var(--gris-m);text-align:right;line-height:1.5; }
+    .cover__meta strong { color:var(--gris-f);display:block; }
 
-    /* ── PAGE A4 ── */
-    .page {
-      width: 210mm;
-      min-height: 297mm;
-      background: #fff;
-      margin: 12mm auto;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 32px rgba(0,0,0,.18);
-      page-break-after: always;
-    }
+    /* ── LAYOUTS COMMUNS ── */
+    .pi { padding:40px 44px; }
+    .ph { display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:14px;border-bottom:2px solid var(--bord); }
+    .ph__num { width:36px;height:36px;border-radius:8px;background:var(--vert);color:#fff;font-weight:800;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .ph__num.rouge{background:var(--rouge)} .ph__num.bleu{background:#1d4ed8}
+    .ph__title { font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--noir); }
+    .ph__sub { font-size:.78rem;color:var(--gris-m);margin-top:2px; }
+    .lbl { font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--vert);margin-bottom:6px;margin-top:20px; }
+    .divider { height:2px;background:linear-gradient(90deg,var(--vert),var(--jaune),transparent);margin:22px 0; }
+    p.body-text { font-size:.82rem;color:var(--gris-m);line-height:1.7; }
 
-    @media print {
-      body { background: #fff; }
-      .page { margin: 0; box-shadow: none; }
-      .no-print { display: none !important; }
-    }
+    /* ── GRILLES ── */
+    .g2 { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px; }
+    .g3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px; }
+    .g4 { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px; }
+    .card { background:var(--bg);border:1px solid var(--bord);border-radius:10px;padding:16px; }
+    .card__icon { font-size:1.3rem;margin-bottom:8px; }
+    .card__title { font-size:.8rem;font-weight:700;color:var(--noir);margin-bottom:4px; }
+    .card__text { font-size:.73rem;color:var(--gris-m);line-height:1.55; }
 
-    /* ── BOUTON IMPRESSION ── */
-    .no-print {
-      position: fixed; top: 20px; right: 20px; z-index: 999;
-      background: var(--vert); color: #fff;
-      border: none; padding: 12px 24px; border-radius: 8px;
-      font-family: 'Inter', sans-serif; font-size: .9rem; font-weight: 600;
-      cursor: pointer; box-shadow: 0 4px 16px rgba(0,154,68,.35);
-    }
-    .no-print:hover { background: #007a36; }
+    /* ── FEATURES ── */
+    .feat { display:flex;gap:10px;align-items:flex-start;padding:14px;background:var(--bg);border:1px solid var(--bord);border-radius:8px; }
+    .feat__dot { width:28px;height:28px;border-radius:6px;background:var(--vert);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0; }
+    .feat__dot.r{background:var(--rouge)} .feat__dot.y{background:#d97706} .feat__dot.b{background:#1d4ed8} .feat__dot.p{background:#7c3aed}
+    .feat__title { font-size:.8rem;font-weight:700;color:var(--noir);margin-bottom:3px; }
+    .feat__text  { font-size:.71rem;color:var(--gris-m);line-height:1.5; }
 
-    /* ═══════════════════════════════════
-       PAGE 1 — COUVERTURE
-    ═══════════════════════════════════ */
-    .cover {
-      min-height: 297mm;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-    .cover__flag {
-      display: flex;
-      height: 8px;
-    }
-    .cover__flag span { flex: 1; }
-    .cover__flag span:nth-child(1) { background: var(--vert); }
-    .cover__flag span:nth-child(2) { background: var(--jaune); }
-    .cover__flag span:nth-child(3) { background: var(--rouge); }
+    /* ── SÉCURITÉ ── */
+    .sec-alert { background:#fef2f2;border:1px solid #fecaca;border-left:4px solid var(--rouge);border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0; }
+    .sec-alert__title { font-size:.8rem;font-weight:700;color:#991b1b;margin-bottom:4px; }
+    .sec-alert__text  { font-size:.73rem;color:#7f1d1d;line-height:1.55; }
+    .sec-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px; }
+    .sec-item { background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px; }
+    .sec-item.critical { background:#fef2f2;border-color:#fecaca; }
+    .sec-item__head { display:flex;align-items:center;gap:8px;margin-bottom:5px; }
+    .sec-badge { font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:#009A44;color:#fff; }
+    .sec-badge.red  { background:var(--rouge); }
+    .sec-badge.warn { background:#d97706; }
+    .sec-item__title { font-size:.78rem;font-weight:700;color:var(--noir); }
+    .sec-item__text  { font-size:.71rem;color:var(--gris-m);line-height:1.5; }
+    .sec-check-list { margin-top:8px;display:flex;flex-direction:column;gap:4px; }
+    .sec-check { font-size:.7rem;color:var(--gris-m);display:flex;align-items:center;gap:6px; }
+    .sec-check::before { content:'✓';color:#009A44;font-weight:700;flex-shrink:0; }
+    .sec-check.warn::before { content:'🔒';color:#d97706; }
 
-    .cover__hero {
-      background: var(--noir);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 48px 40px;
-      text-align: center;
-      position: relative;
-    }
-    .cover__hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: url('https://upload.wikimedia.org/wikipedia/commons/0/04/Parlementaires_congolais_-_2019.jpg') center/cover;
-      opacity: .12;
-    }
-    .cover__badge {
-      position: relative;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.2);
-      color: var(--jaune);
-      font-size: .7rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-    }
-    .cover__title {
-      position: relative;
-      font-family: 'Playfair Display', serif;
-      font-size: 2.6rem;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.2;
-      margin-bottom: 16px;
-    }
-    .cover__title em {
-      color: var(--jaune);
-      font-style: normal;
-    }
-    .cover__sub {
-      position: relative;
-      font-size: .95rem;
-      color: rgba(255,255,255,.65);
-      max-width: 320px;
-      line-height: 1.6;
-    }
-    .cover__logo-band {
-      background: #fff;
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cover__logo-band .org {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .cover__logo-band .org-icon {
-      width: 44px; height: 44px;
-      background: var(--vert);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 1.4rem;
-    }
-    .cover__logo-band .org-name {
-      font-size: .75rem; font-weight: 700; color: var(--noir);
-      text-transform: uppercase; letter-spacing: .5px;
-      line-height: 1.3;
-    }
-    .cover__logo-band .org-sub {
-      font-size: .68rem; color: var(--gris-m);
-    }
-    .cover__meta {
-      font-size: .72rem; color: var(--gris-m); text-align: right; line-height: 1.5;
-    }
-    .cover__meta strong { color: var(--gris-f); display: block; }
+    /* ── LIVE ── */
+    .live-box { background:var(--noir);border-radius:10px;padding:20px;margin-top:14px; }
+    .live-box__head { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+    .live-dot-big { width:10px;height:10px;background:#dc2626;border-radius:50%;flex-shrink:0; }
+    .live-box__title { font-size:.88rem;font-weight:700;color:#fff; }
+    .live-box__text { font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.6; }
+    .live-features { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px; }
+    .live-feat { background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:10px;font-size:.71rem;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:6px; }
 
-    /* ═══════════════════════════════════
-       COMMON LAYOUT
-    ═══════════════════════════════════ */
-    .page-inner {
-      padding: 40px 44px;
-    }
-    .page-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 32px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid var(--bord);
-    }
-    .page-header__num {
-      width: 36px; height: 36px; border-radius: 8px;
-      background: var(--vert); color: #fff;
-      font-weight: 800; font-size: .95rem;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .page-header__title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-weight: 600; color: var(--noir);
-    }
-    .page-header__sub {
-      font-size: .78rem; color: var(--gris-m); margin-top: 2px;
-    }
-    .page-num {
-      position: absolute; bottom: 16px; right: 24px;
-      font-size: .68rem; color: var(--gris-c);
-    }
+    /* ── KPI ── */
+    .kpi { text-align:center;padding:14px 8px;background:var(--bg);border:1px solid var(--bord);border-radius:10px; }
+    .kpi__num { font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--vert);line-height:1; }
+    .kpi__label { font-size:.66rem;color:var(--gris-m);margin-top:4px; }
 
-    /* ── SECTION TITRE ── */
-    .section-lbl {
-      font-size: .65rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--vert);
-      margin-bottom: 6px;
-    }
-    .section-h {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--noir);
-      margin-bottom: 12px;
-    }
-    .divider {
-      height: 2px;
-      background: linear-gradient(90deg, var(--vert) 0%, var(--jaune) 50%, transparent 100%);
-      margin: 24px 0;
-    }
+    /* ── PLANNING ── */
+    .tl { margin-top:16px;padding-left:26px;position:relative; }
+    .tl::before { content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:var(--bord); }
+    .tl-item { position:relative;margin-bottom:18px; }
+    .tl-item::before { content:'';position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--vert);border:2px solid #fff;box-shadow:0 0 0 2px var(--vert); }
+    .tl-item.cur::before { background:var(--jaune);box-shadow:0 0 0 2px var(--jaune); }
+    .tl-item.nxt::before { background:var(--bord);box-shadow:0 0 0 2px var(--gris-c); }
+    .tl-date { font-size:.67rem;font-weight:700;color:var(--vert);text-transform:uppercase;letter-spacing:.5px; }
+    .tl-item.cur .tl-date{color:#d97706} .tl-item.nxt .tl-date{color:var(--gris-m)}
+    .tl-title { font-size:.84rem;font-weight:700;color:var(--noir);margin:2px 0; }
+    .tl-text  { font-size:.72rem;color:var(--gris-m);line-height:1.5; }
+    .tl-pills { display:flex;flex-wrap:wrap;gap:5px;margin-top:5px; }
+    .pill { font-size:.62rem;font-weight:600;background:#f0fdf4;color:var(--vert);border:1px solid #bbf7d0;padding:2px 8px;border-radius:20px; }
+    .pill.o{background:#fffbeb;color:#d97706;border-color:#fde68a} .pill.g{background:var(--bg);color:var(--gris-m);border-color:var(--bord)}
 
-    /* ═══════════════════════════════════
-       PAGE 2 — CONTEXTE & BESOIN
-    ═══════════════════════════════════ */
-    .need-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 20px;
-    }
-    .need-card {
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 10px;
-      padding: 18px;
-    }
-    .need-card__icon { font-size: 1.4rem; margin-bottom: 8px; }
-    .need-card__title { font-size: .82rem; font-weight: 700; color: var(--noir); margin-bottom: 5px; }
-    .need-card__text { font-size: .75rem; color: var(--gris-m); line-height: 1.6; }
+    /* ── PRIX ── */
+    .price-highlight { background:linear-gradient(135deg,#0a3d1f,#1a6b36);border-radius:12px;padding:28px 32px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:24px; }
+    .price-highlight__label { font-size:.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px; }
+    .price-highlight__amount { font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:#fff;line-height:1; }
+    .price-highlight__currency { font-size:.9rem;color:rgba(255,255,255,.7);margin-top:4px; }
+    .price-highlight__right { flex-shrink:0;text-align:right; }
+    .price-highlight__includes { font-size:.72rem;color:rgba(255,255,255,.6);line-height:1.8; }
+    .price-highlight__includes span { color:var(--jaune);font-weight:600; }
+    .price-table { width:100%;border-collapse:collapse;margin-top:16px;font-size:.78rem; }
+    .price-table th { background:var(--noir);color:#fff;padding:10px 14px;text-align:left;font-size:.72rem;font-weight:600; }
+    .price-table th:last-child{text-align:right}
+    .price-table td { padding:9px 14px;border-bottom:1px solid var(--bord);color:var(--gris-f);vertical-align:top; }
+    .price-table td:last-child{text-align:right;font-weight:700;color:var(--noir)}
+    .price-table tr:nth-child(even) td{background:var(--bg)}
+    .price-table .total td{background:#f0fdf4;font-weight:800;border-top:2px solid var(--vert);font-size:.85rem;color:var(--vert)}
+    .payment-note { margin-top:14px;background:#fafafa;border:1px solid var(--bord);border-radius:8px;padding:12px 16px;font-size:.72rem;color:var(--gris-m);line-height:1.6; }
 
-    .quote-block {
-      background: linear-gradient(135deg, #f0fdf4, #fefce8);
-      border-left: 4px solid var(--vert);
-      border-radius: 0 10px 10px 0;
-      padding: 20px 24px;
-      margin: 24px 0;
-    }
-    .quote-block p {
-      font-style: italic;
-      font-size: .88rem;
-      color: var(--gris-f);
-      line-height: 1.7;
-    }
-    .quote-block cite {
-      display: block;
-      margin-top: 8px;
-      font-size: .72rem;
-      font-weight: 700;
-      color: var(--vert);
-      font-style: normal;
-    }
+    /* ── POURQUOI / CONTACT ── */
+    .why-card { background:var(--bg);border:1px solid var(--bord);border-radius:10px;padding:16px;display:flex;gap:10px; }
+    .why-icon { width:36px;height:36px;border-radius:7px;background:var(--vert);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0; }
+    .why-icon.r{background:var(--rouge)} .why-icon.y{background:#d97706} .why-icon.b{background:#1d4ed8}
+    .why-title { font-size:.8rem;font-weight:700;color:var(--noir);margin-bottom:3px; }
+    .why-text  { font-size:.71rem;color:var(--gris-m);line-height:1.5; }
+    .contact-box { margin-top:24px;background:var(--noir);border-radius:12px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px; }
+    .contact-box__badge { font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--jaune);margin-bottom:8px; }
+    .contact-box__title { font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:#fff;line-height:1.3; }
+    .contact-box__right { text-align:right;flex-shrink:0; }
+    .contact-item { font-size:.78rem;color:rgba(255,255,255,.7);margin-bottom:6px;display:flex;align-items:center;justify-content:flex-end;gap:8px; }
+    .contact-item strong{color:#fff}
+    .contact-cta { display:inline-block;margin-top:12px;background:var(--vert);color:#fff;font-size:.78rem;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none; }
 
-    /* ═══════════════════════════════════
-       PAGE 3 — SOLUTION LIVRÉE
-    ═══════════════════════════════════ */
-    .feature-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .feat {
-      display: flex; gap: 10px; align-items: flex-start;
-      padding: 14px;
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 8px;
-    }
-    .feat__dot {
-      width: 28px; height: 28px; border-radius: 6px;
-      background: var(--vert); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .9rem; flex-shrink: 0;
-    }
-    .feat__dot.rouge { background: var(--rouge); }
-    .feat__dot.jaune { background: #d97706; }
-    .feat__dot.bleu  { background: #2563eb; }
-    .feat__title { font-size: .8rem; font-weight: 700; color: var(--noir); margin-bottom: 3px; }
-    .feat__text  { font-size: .72rem; color: var(--gris-m); line-height: 1.5; }
+    /* ── QUOTE ── */
+    .quote { background:linear-gradient(135deg,#f0fdf4,#fefce8);border-left:4px solid var(--vert);border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0; }
+    .quote p { font-style:italic;font-size:.85rem;color:var(--gris-f);line-height:1.7; }
+    .quote cite { display:block;margin-top:6px;font-size:.7rem;font-weight:700;color:var(--vert);font-style:normal; }
 
-    .pages-list {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .page-pill {
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: .72rem; font-weight: 600; color: var(--gris-f);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .page-pill::before {
-      content: '↗';
-      color: var(--vert); font-size: .8rem;
-    }
-
-    /* ═══════════════════════════════════
-       PAGE 4 — STACK TECHNIQUE
-    ═══════════════════════════════════ */
-    .stack-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-      flex-wrap: wrap;
-    }
-    .stack-item {
-      flex: 1 1 calc(33% - 10px);
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-    }
-    .stack-item__icon { font-size: 1.6rem; margin-bottom: 6px; }
-    .stack-item__name { font-size: .8rem; font-weight: 700; color: var(--noir); }
-    .stack-item__role { font-size: .68rem; color: var(--gris-m); margin-top: 3px; }
-
-    .arch-diagram {
-      margin-top: 24px;
-      background: var(--noir);
-      border-radius: 12px;
-      padding: 24px;
-      color: #fff;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr auto 1fr;
-      gap: 0;
-      align-items: center;
-      text-align: center;
-    }
-    .arch-box {
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 8px;
-      padding: 12px 8px;
-    }
-    .arch-box__title { font-size: .72rem; font-weight: 700; color: var(--jaune); margin-bottom: 4px; }
-    .arch-box__sub   { font-size: .62rem; color: rgba(255,255,255,.55); line-height: 1.4; }
-    .arch-arrow { color: rgba(255,255,255,.3); font-size: 1.2rem; padding: 0 6px; }
-
-    /* ═══════════════════════════════════
-       PAGE 5 — FONCTIONNALITÉS CLÉ
-    ═══════════════════════════════════ */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .kpi {
-      text-align: center;
-      padding: 16px 10px;
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 10px;
-    }
-    .kpi__num {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem; font-weight: 700;
-      color: var(--vert); line-height: 1;
-    }
-    .kpi__label { font-size: .68rem; color: var(--gris-m); margin-top: 4px; }
-
-    .func-block {
-      margin-bottom: 16px;
-    }
-    .func-block__head {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 8px;
-    }
-    .func-tag {
-      font-size: .65rem; font-weight: 700;
-      background: var(--vert); color: #fff;
-      padding: 3px 10px; border-radius: 20px;
-      text-transform: uppercase; letter-spacing: .5px;
-    }
-    .func-tag.orange { background: #d97706; }
-    .func-tag.bleu   { background: #2563eb; }
-    .func-tag.rouge  { background: var(--rouge); }
-    .func-block__title { font-size: .85rem; font-weight: 700; color: var(--noir); }
-    .func-block__text  { font-size: .75rem; color: var(--gris-m); line-height: 1.6; padding-left: 0; }
-
-    /* ═══════════════════════════════════
-       PAGE 6 — PLANNING & LIVRABLES
-    ═══════════════════════════════════ */
-    .timeline {
-      margin-top: 20px;
-      position: relative;
-      padding-left: 28px;
-    }
-    .timeline::before {
-      content: '';
-      position: absolute;
-      left: 10px; top: 0; bottom: 0;
-      width: 2px;
-      background: var(--bord);
-    }
-    .tl-item {
-      position: relative;
-      margin-bottom: 20px;
-    }
-    .tl-item::before {
-      content: '';
-      position: absolute;
-      left: -22px; top: 4px;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--vert);
-      border: 2px solid #fff;
-      box-shadow: 0 0 0 2px var(--vert);
-    }
-    .tl-item.done::before { background: var(--vert); }
-    .tl-item.current::before { background: var(--jaune); box-shadow: 0 0 0 2px var(--jaune); }
-    .tl-item.next::before { background: var(--bord); box-shadow: 0 0 0 2px var(--gris-c); }
-    .tl-date { font-size: .68rem; font-weight: 700; color: var(--vert); text-transform: uppercase; letter-spacing: .5px; }
-    .tl-item.current .tl-date { color: #d97706; }
-    .tl-item.next .tl-date { color: var(--gris-m); }
-    .tl-title { font-size: .85rem; font-weight: 700; color: var(--noir); margin: 2px 0; }
-    .tl-text  { font-size: .73rem; color: var(--gris-m); line-height: 1.5; }
-    .tl-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
-    .tl-pill {
-      font-size: .62rem; font-weight: 600;
-      background: #f0fdf4; color: var(--vert);
-      border: 1px solid #bbf7d0;
-      padding: 2px 8px; border-radius: 20px;
-    }
-    .tl-pill.orange { background: #fffbeb; color: #d97706; border-color: #fde68a; }
-    .tl-pill.grey   { background: var(--bg); color: var(--gris-m); border-color: var(--bord); }
-
-    /* ═══════════════════════════════════
-       PAGE 7 — TARIFICATION
-    ═══════════════════════════════════ */
-    .price-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
-      font-size: .78rem;
-    }
-    .price-table th {
-      background: var(--noir);
-      color: #fff;
-      padding: 10px 16px;
-      text-align: left;
-      font-size: .72rem;
-      font-weight: 600;
-      letter-spacing: .3px;
-    }
-    .price-table th:last-child { text-align: right; }
-    .price-table td {
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--bord);
-      color: var(--gris-f);
-      vertical-align: top;
-    }
-    .price-table td:last-child { text-align: right; font-weight: 700; color: var(--noir); }
-    .price-table tr:nth-child(even) td { background: var(--bg); }
-    .price-table .total td {
-      background: #f0fdf4;
-      font-weight: 800;
-      border-top: 2px solid var(--vert);
-      font-size: .85rem;
-    }
-    .price-note {
-      margin-top: 12px;
-      font-size: .72rem;
-      color: var(--gris-m);
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 8px;
-      padding: 12px 16px;
-      line-height: 1.6;
-    }
-
-    .maintenance-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      margin-top: 24px;
-    }
-    .maint-card {
-      border: 2px solid var(--bord);
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-    }
-    .maint-card.highlight {
-      border-color: var(--vert);
-      background: #f0fdf4;
-    }
-    .maint-card__label {
-      font-size: .65rem; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--gris-m);
-      margin-bottom: 6px;
-    }
-    .maint-card.highlight .maint-card__label { color: var(--vert); }
-    .maint-card__price {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-weight: 700; color: var(--noir);
-    }
-    .maint-card__period { font-size: .68rem; color: var(--gris-m); }
-    .maint-card__features {
-      margin-top: 10px;
-      list-style: none;
-      text-align: left;
-    }
-    .maint-card__features li {
-      font-size: .7rem; color: var(--gris-m);
-      padding: 3px 0;
-      border-bottom: 1px solid var(--bord);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .maint-card__features li::before { content: '✓'; color: var(--vert); font-weight: 700; }
-
-    /* ═══════════════════════════════════
-       PAGE 8 — POURQUOI NOUS / CONTACT
-    ═══════════════════════════════════ */
-    .why-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .why-card {
-      background: var(--bg);
-      border: 1px solid var(--bord);
-      border-radius: 10px;
-      padding: 18px;
-      display: flex; gap: 12px;
-    }
-    .why-icon {
-      width: 38px; height: 38px; border-radius: 8px;
-      background: var(--vert); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; flex-shrink: 0;
-    }
-    .why-icon.rouge { background: var(--rouge); }
-    .why-icon.jaune { background: #d97706; }
-    .why-icon.bleu  { background: #2563eb; }
-    .why-title { font-size: .82rem; font-weight: 700; color: var(--noir); margin-bottom: 4px; }
-    .why-text  { font-size: .72rem; color: var(--gris-m); line-height: 1.5; }
-
-    .contact-box {
-      margin-top: 28px;
-      background: var(--noir);
-      border-radius: 12px;
-      padding: 28px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-    .contact-box__badge {
-      font-size: .65rem; font-weight: 700; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--jaune); margin-bottom: 8px;
-    }
-    .contact-box__title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem; font-weight: 600; color: #fff;
-      line-height: 1.3;
-    }
-    .contact-box__right { text-align: right; flex-shrink: 0; }
-    .contact-item {
-      font-size: .78rem; color: rgba(255,255,255,.7);
-      margin-bottom: 6px; display: flex; align-items: center; justify-content: flex-end; gap: 8px;
-    }
-    .contact-item strong { color: #fff; }
-    .contact-cta {
-      display: inline-block;
-      margin-top: 12px;
-      background: var(--vert);
-      color: #fff;
-      font-size: .78rem;
-      font-weight: 700;
-      padding: 10px 22px;
-      border-radius: 6px;
-      text-decoration: none;
-    }
+    /* ── PAGES LIST ── */
+    .pages-list { margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px; }
+    .page-pill { background:var(--bg);border:1px solid var(--bord);border-radius:6px;padding:7px 11px;font-size:.71rem;font-weight:600;color:var(--gris-f);display:flex;align-items:center;gap:5px; }
+    .page-pill::before{content:'↗';color:var(--vert);font-size:.75rem}
+    .page-pill.new{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+    .page-pill.new::before{content:'★'}
   </style>
 </head>
 <body>
 
-<button class="no-print" onclick="window.print()">⬇ Télécharger en PDF</button>
+<button class="no-print" onclick="window.print()">⬇ Exporter en PDF</button>
 
-<!-- ══════════════════════════════════════════
-     PAGE 1 — COUVERTURE
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 1 — COUVERTURE ══ -->
 <div class="page">
   <div class="cover">
-    <div class="cover__flag">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="flag"><span></span><span></span><span></span></div>
     <div class="cover__hero">
-      <div class="cover__badge">Appel d'offre — Réponse officielle</div>
-      <h1 class="cover__title">
-        Site officiel de<br>
-        l'<em>Assemblée Nationale</em><br>
-        du Congo
-      </h1>
-      <p class="cover__sub">
-        Proposition de conception, développement et maintenance de la plateforme numérique institutionnelle
-      </p>
+      <div class="cover__badge">Réponse à appel d'offre — AN-WEB-2026</div>
+      <h1 class="cover__title">Site officiel de<br>l'<em>Assemblée Nationale</em><br>du Congo</h1>
+      <p class="cover__sub">Proposition de conception, développement, sécurisation et maintenance de la plateforme numérique institutionnelle</p>
+      <div class="cover__pills">
+        <span class="cover__pill">🔒 Architecture sécurisée</span>
+        <span class="cover__pill">🔴 Diffusion en direct</span>
+        <span class="cover__pill">📱 Application mobile</span>
+        <span class="cover__pill">🗺 Carte interactive</span>
+        <span class="cover__pill">👥 151 Députés</span>
+      </div>
     </div>
-    <div class="cover__logo-band">
-      <div class="org">
-        <div class="org-icon">🏛</div>
+    <div class="cover__band">
+      <div class="cover__org">
+        <div class="cover__org-icon">🏛</div>
         <div>
-          <div class="org-name">Assemblée Nationale<br>République du Congo</div>
-          <div class="org-sub">Destinataire</div>
+          <div class="cover__org-name">Assemblée Nationale<br>République du Congo</div>
+          <div class="cover__org-sub">Destinataire</div>
         </div>
       </div>
-      <div class="cover__meta">
-        <strong>Juin 2026</strong>
-        Version 1.0 — Confidentiel<br>
-        Référence : AN-WEB-2026
-      </div>
+      <div class="cover__meta"><strong>Juin 2026</strong>Version 1.0 — Confidentiel<br>Réf. AN-WEB-2026</div>
     </div>
   </div>
   <span class="page-num">1 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 2 — CONTEXTE & BESOIN
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 2 — CONTEXTE & BESOIN ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">01</div>
-      <div>
-        <div class="page-header__title">Contexte & Besoin</div>
-        <div class="page-header__sub">Compréhension de la mission</div>
-      </div>
-    </div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num">01</div><div><div class="ph__title">Contexte & Besoin</div><div class="ph__sub">Compréhension de la mission</div></div></div>
 
-    <div class="section-lbl">Contexte</div>
-    <p style="font-size:.82rem;color:var(--gris-m);line-height:1.7;">
-      L'Assemblée Nationale de la République du Congo, institution représentant les 151 députés élus au suffrage universel direct, nécessitait une présence numérique à la hauteur de son rôle constitutionnel. Dans un contexte de transformation digitale des institutions africaines, disposer d'un site web officiel, accessible et moderne est devenu une exigence de transparence démocratique.
-    </p>
+    <p class="body-text">L'Assemblée Nationale de la République du Congo, institution représentant les 151 députés élus au suffrage universel direct, nécessitait une présence numérique à la hauteur de son rôle constitutionnel. Dans un contexte de transformation digitale des institutions africaines, disposer d'un site web officiel sécurisé, accessible et moderne est devenu une exigence de transparence démocratique.</p>
 
-    <div class="quote-block">
-      <p>« La démocratie numérique exige que les institutions parlementaires soient visibles, accessibles et transparentes pour les citoyens, au-delà des frontières physiques. »</p>
+    <div class="quote">
+      <p>« La démocratie numérique exige que les institutions parlementaires soient visibles, accessibles et sécurisées pour les citoyens, au-delà des frontières physiques. »</p>
       <cite>— Objectif stratégique de la 15ᵉ Législature</cite>
     </div>
 
-    <div class="section-lbl">Besoins identifiés</div>
-    <div class="need-grid">
-      <div class="need-card">
-        <div class="need-card__icon">🌐</div>
-        <div class="need-card__title">Présence institutionnelle</div>
-        <div class="need-card__text">Le Congo n'avait pas de site officiel de l'AN consultable par le grand public et la presse internationale.</div>
-      </div>
-      <div class="need-card">
-        <div class="need-card__icon">👥</div>
-        <div class="need-card__title">Annuaire des députés</div>
-        <div class="need-card__text">Rendre accessible l'identité, le département et la commission de chaque député élu.</div>
-      </div>
-      <div class="need-card">
-        <div class="need-card__icon">📰</div>
-        <div class="need-card__title">Diffusion de l'information</div>
-        <div class="need-card__text">Publier les actualités, séances plénières et agenda institutionnel en temps réel.</div>
-      </div>
-      <div class="need-card">
-        <div class="need-card__icon">📱</div>
-        <div class="need-card__title">Accessibilité mobile</div>
-        <div class="need-card__text">Le taux de pénétration mobile au Congo est supérieur à 80 % — le site doit fonctionner sur smartphone.</div>
-      </div>
+    <div class="lbl">Besoins identifiés</div>
+    <div class="g2">
+      <div class="card"><div class="card__icon">🌐</div><div class="card__title">Présence institutionnelle</div><div class="card__text">Le Congo ne disposait pas de site officiel de l'AN consultable par le grand public et la presse internationale.</div></div>
+      <div class="card"><div class="card__icon">👥</div><div class="card__title">Annuaire des députés</div><div class="card__text">Rendre accessible l'identité, le département et la commission de chaque député élu.</div></div>
+      <div class="card"><div class="card__icon">📺</div><div class="card__title">Transparence en direct</div><div class="card__text">Permettre aux citoyens de suivre les séances plénières en temps réel depuis leur téléphone.</div></div>
+      <div class="card"><div class="card__icon">🔒</div><div class="card__title">Sécurité renforcée</div><div class="card__text">Suite à des incidents passés, l'institution exige une architecture résistante aux intrusions et défacements.</div></div>
     </div>
   </div>
   <span class="page-num">2 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 3 — SOLUTION LIVRÉE
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 3 — SOLUTION LIVRÉE ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">02</div>
-      <div>
-        <div class="page-header__title">Solution livrée</div>
-        <div class="page-header__sub">Architecture du site et pages développées</div>
-      </div>
-    </div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num">02</div><div><div class="ph__title">Solution livrée</div><div class="ph__sub">Fonctionnalités et pages développées</div></div></div>
 
-    <div class="section-lbl">Fonctionnalités principales</div>
-    <div class="feature-list">
-      <div class="feat">
-        <div class="feat__dot">🗺</div>
-        <div>
-          <div class="feat__title">Carte interactive du Congo</div>
-          <div class="feat__text">12 départements cliquables en SVG pur, coordonnées géographiques réelles, navigation vers les informations locales.</div>
-        </div>
-      </div>
-      <div class="feat">
-        <div class="feat__dot rouge">👤</div>
-        <div>
-          <div class="feat__title">Annuaire des 151 députés</div>
-          <div class="feat__text">Recherche, filtre par commission/département, fiche individuelle avec photo et biographie.</div>
-        </div>
-      </div>
-      <div class="feat">
-        <div class="feat__dot jaune">📋</div>
-        <div>
-          <div class="feat__title">Bureau de l'Assemblée</div>
-          <div class="feat__text">Présentation du Président, Vice-Présidents, Secrétaires et Questeurs avec design premium.</div>
-        </div>
-      </div>
-      <div class="feat">
-        <div class="feat__dot bleu">📰</div>
-        <div>
-          <div class="feat__title">Actualités & Agenda</div>
-          <div class="feat__text">Gestion dynamique des articles, catégories, filtres et compte à rebours des sessions.</div>
-        </div>
-      </div>
-      <div class="feat">
-        <div class="feat__dot">📱</div>
-        <div>
-          <div class="feat__title">Application mobile (PWA)</div>
-          <div class="feat__text">Installable sur Android et iOS comme une vraie app, fonctionne hors ligne.</div>
-        </div>
-      </div>
-      <div class="feat">
-        <div class="feat__dot rouge">🔐</div>
-        <div>
-          <div class="feat__title">Back-office sécurisé</div>
-          <div class="feat__text">Interface d'administration pour gérer députés, actualités et bureau sans développeur.</div>
-        </div>
-      </div>
+    <div class="g2">
+      <div class="feat"><div class="feat__dot">🗺</div><div><div class="feat__title">Carte interactive du Congo</div><div class="feat__text">12 départements SVG cliquables aux coordonnées géographiques réelles.</div></div></div>
+      <div class="feat"><div class="feat__dot r">👤</div><div><div class="feat__title">Annuaire des 151 députés</div><div class="feat__text">Recherche, filtres par commission/département, fiche individuelle.</div></div></div>
+      <div class="feat"><div class="feat__dot y">📋</div><div><div class="feat__title">Bureau de l'Assemblée</div><div class="feat__text">Président, Vice-Présidents, Secrétaires et Questeurs — design premium.</div></div></div>
+      <div class="feat"><div class="feat__dot b">📰</div><div><div class="feat__title">Actualités & Agenda</div><div class="feat__text">Articles dynamiques, catégories, filtres, compte à rebours des sessions.</div></div></div>
+      <div class="feat"><div class="feat__dot p">📱</div><div><div class="feat__title">Application mobile (PWA)</div><div class="feat__text">Installable sur Android et iOS, fonctionne partiellement hors connexion.</div></div></div>
+      <div class="feat"><div class="feat__dot r">🔐</div><div><div class="feat__title">Back-office sécurisé</div><div class="feat__text">Gestion des contenus sans développeur — accès staff uniquement.</div></div></div>
     </div>
 
     <div class="divider"></div>
-    <div class="section-lbl">Pages développées</div>
+    <div class="lbl">Pages développées</div>
     <div class="pages-list">
       <div class="page-pill">Accueil</div>
       <div class="page-pill">Les Députés</div>
       <div class="page-pill">Le Bureau</div>
       <div class="page-pill">Carte du Congo</div>
-      <div class="page-pill">Commissions</div>
+      <div class="page-pill">Commissions (×8)</div>
       <div class="page-pill">Actualités</div>
       <div class="page-pill">Agenda</div>
       <div class="page-pill">À propos</div>
       <div class="page-pill">Contact</div>
       <div class="page-pill">Administration</div>
-      <div class="page-pill">Mode sombre</div>
-      <div class="page-pill">Recherche globale</div>
+      <div class="page-pill new">★ En Direct (Live)</div>
+      <div class="page-pill new">★ Alertes citoyens</div>
     </div>
   </div>
   <span class="page-num">3 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 4 — STACK TECHNIQUE
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 4 — LIVE + NOTIFICATIONS ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">03</div>
-      <div>
-        <div class="page-header__title">Architecture technique</div>
-        <div class="page-header__sub">Technologies choisies et justifications</div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num" style="background:#dc2626">▶</div><div><div class="ph__title">Fonctionnalités exclusives</div><div class="ph__sub">Diffusion en direct & Alertes citoyens — différenciantes</div></div></div>
+
+    <p class="body-text">Ces deux fonctionnalités positionnent le site de l'Assemblée Nationale du Congo comme <strong>le parlement le plus avancé numériquement de la zone CEMAC</strong>. Aucun parlement voisin ne propose ces deux services simultanément.</p>
+
+    <div class="live-box">
+      <div class="live-box__head">
+        <div class="live-dot-big"></div>
+        <div class="live-box__title">Diffusion en direct des séances plénières</div>
+      </div>
+      <div class="live-box__text">Les citoyens congolais — à Brazzaville, Pointe-Noire, Dolisie ou à l'étranger — peuvent suivre chaque séance plénière en temps réel depuis leur téléphone ou ordinateur, sans déplacement ni connexion câblée.</div>
+      <div class="live-features">
+        <div class="live-feat">📺 Player vidéo intégré plein écran</div>
+        <div class="live-feat">🔴 Badge "En Direct" visible dans le menu</div>
+        <div class="live-feat">📅 Programme des prochaines séances</div>
+        <div class="live-feat">▶ Replay des séances passées</div>
+        <div class="live-feat">📤 Partage sur les réseaux sociaux</div>
+        <div class="live-feat">📱 Compatible smartphone, tablette, TV</div>
       </div>
     </div>
 
-    <div class="section-lbl">Stack technologique</div>
-    <div class="stack-row">
-      <div class="stack-item">
-        <div class="stack-item__icon">⚡</div>
-        <div class="stack-item__name">HTML5 / CSS3 / JS</div>
-        <div class="stack-item__role">Front-end natif — zéro dépendance, chargement instantané</div>
+    <div class="lbl" style="margin-top:18px;">Alertes & Notifications push</div>
+    <div class="g2">
+      <div class="card">
+        <div class="card__icon">🔔</div>
+        <div class="card__title">Notification sur smartphone</div>
+        <div class="card__text">Les citoyens s'abonnent en un clic. Dès qu'une séance commence ou qu'une loi est votée, ils reçoivent une alerte sur leur téléphone — même si le navigateur est fermé.</div>
       </div>
-      <div class="stack-item">
-        <div class="stack-item__icon">🗄</div>
-        <div class="stack-item__name">Supabase</div>
-        <div class="stack-item__role">Base de données PostgreSQL + API REST + Authentification</div>
+      <div class="card">
+        <div class="card__icon">📊</div>
+        <div class="card__title">Impact citoyen mesurable</div>
+        <div class="card__text">Nombre d'abonnés, taux d'ouverture des notifications — des indicateurs concrets pour mesurer l'engagement démocratique des Congolais.</div>
       </div>
-      <div class="stack-item">
-        <div class="stack-item__icon">🚀</div>
-        <div class="stack-item__name">Vercel CDN</div>
-        <div class="stack-item__role">Hébergement mondial, HTTPS automatique, déploiements en 30 sec</div>
-      </div>
-      <div class="stack-item">
-        <div class="stack-item__icon">📦</div>
-        <div class="stack-item__name">PWA / Service Worker</div>
-        <div class="stack-item__role">Mode hors ligne, installation mobile Android & iOS</div>
-      </div>
-      <div class="stack-item">
-        <div class="stack-item__icon">🗺</div>
-        <div class="stack-item__name">SVG Équirectangulaire</div>
-        <div class="stack-item__role">Carte du Congo 100 % vectorielle, projection géographique réelle</div>
-      </div>
-      <div class="stack-item">
-        <div class="stack-item__icon">🔒</div>
-        <div class="stack-item__name">Sécurité renforcée</div>
-        <div class="stack-item__role">Admin protégé, robots.txt configuré, données sensibles masquées</div>
-      </div>
-    </div>
-
-    <div class="arch-diagram">
-      <div class="arch-box">
-        <div class="arch-box__title">Utilisateur</div>
-        <div class="arch-box__sub">Navigateur<br>Smartphone<br>Tablette</div>
-      </div>
-      <div class="arch-arrow">→</div>
-      <div class="arch-box">
-        <div class="arch-box__title">Vercel CDN</div>
-        <div class="arch-box__sub">HTML/CSS/JS<br>statique<br>Cache mondial</div>
-      </div>
-      <div class="arch-arrow">⇄</div>
-      <div class="arch-box">
-        <div class="arch-box__title">Supabase</div>
-        <div class="arch-box__sub">PostgreSQL<br>Deputés, Actus<br>Bureau, Auth</div>
-      </div>
-    </div>
-
-    <div style="margin-top:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;font-size:.72rem;color:var(--gris-m);line-height:1.6;">
-      <strong style="color:var(--vert);">Avantage Jamstack :</strong> L'architecture statique garantit des temps de chargement inférieurs à 1 seconde, une disponibilité de 99,99 % et des coûts d'hébergement proches de zéro, tout en permettant une gestion dynamique des contenus via base de données.
     </div>
   </div>
   <span class="page-num">4 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 5 — FONCTIONNALITÉS CLÉS EN CHIFFRES
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 5 — SÉCURITÉ ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">04</div>
-      <div>
-        <div class="page-header__title">Fonctionnalités clés</div>
-        <div class="page-header__sub">Ce que le site permet concrètement</div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num rouge">🔒</div><div><div class="ph__title">Sécurité & Protection</div><div class="ph__sub">Architecture conçue pour résister aux attaques</div></div></div>
+
+    <div class="sec-alert">
+      <div class="sec-alert__title">⚠ Contexte : incidents de sécurité passés</div>
+      <div class="sec-alert__text">Suite aux piratages et défacements subis par des sites institutionnels congolais, notre architecture a été conçue dès le départ pour éliminer les vecteurs d'attaque les plus courants. Chaque décision technique répond à une menace réelle.</div>
+    </div>
+
+    <div class="lbl">Mesures de sécurité implémentées</div>
+    <div class="sec-grid">
+      <div class="sec-item">
+        <div class="sec-item__head"><span class="sec-badge">Critique</span><div class="sec-item__title">Architecture Jamstack statique</div></div>
+        <div class="sec-item__text">Pas de serveur PHP, pas de WordPress, pas de CMS standard. <strong>90 % des piratages de sites institutionnels exploitent des vulnérabilités PHP/WordPress.</strong> Notre site ne peut pas être défacé de cette façon.</div>
+        <div class="sec-check-list">
+          <div class="sec-check">Zéro base de données exposée publiquement</div>
+          <div class="sec-check">Zéro exécution de code côté serveur</div>
+          <div class="sec-check">Zéro plugin tiers vulnérable</div>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-item__head"><span class="sec-badge">Critique</span><div class="sec-item__title">Administration totalement isolée</div></div>
+        <div class="sec-item__text">L'interface d'administration est sur une URL non indexée, protégée par authentification Supabase. Le fichier <code>robots.txt</code> interdit l'indexation de /admin/.</div>
+        <div class="sec-check-list">
+          <div class="sec-check">URL admin non devinable</div>
+          <div class="sec-check">Authentification Supabase (JWT)</div>
+          <div class="sec-check">Exclue des moteurs de recherche</div>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-item__head"><span class="sec-badge warn">Important</span><div class="sec-item__title">HTTPS forcé sur toutes les pages</div></div>
+        <div class="sec-item__text">Vercel impose HTTPS automatiquement. Toutes les communications sont chiffrées TLS 1.3. Impossible d'accéder au site en HTTP non sécurisé.</div>
+        <div class="sec-check-list">
+          <div class="sec-check">Certificat SSL renouvelé automatiquement</div>
+          <div class="sec-check">TLS 1.3 — chiffrement moderne</div>
+          <div class="sec-check warn">Redirection HTTP → HTTPS automatique</div>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-item__head"><span class="sec-badge warn">Important</span><div class="sec-item__title">Protection des données personnelles</div></div>
+        <div class="sec-item__text">Aucun numéro de téléphone ni adresse privée des députés n'est stocké ou affiché publiquement. Les données sensibles restent dans la base de données sécurisée.</div>
+        <div class="sec-check-list">
+          <div class="sec-check">Numéros de téléphone masqués</div>
+          <div class="sec-check">Accès données par rôle (RLS Supabase)</div>
+          <div class="sec-check warn">Logs d'accès admin conservés</div>
+        </div>
       </div>
     </div>
 
-    <div class="kpi-row">
-      <div class="kpi">
-        <div class="kpi__num">20+</div>
-        <div class="kpi__label">Pages développées</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi__num">151</div>
-        <div class="kpi__label">Profils de députés</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi__num">12</div>
-        <div class="kpi__label">Départements sur la carte</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi__num">100%</div>
-        <div class="kpi__label">Responsive mobile</div>
-      </div>
-    </div>
-
-    <div class="func-block">
-      <div class="func-block__head">
-        <span class="func-tag">Annuaire</span>
-        <div class="func-block__title">Recherche et filtrage des 151 députés</div>
-      </div>
-      <div class="func-block__text">Chaque député dispose d'une fiche : photo, département, commission permanente, biographie. Recherche par nom, département ou commission. Le back-office permet de mettre à jour ces informations sans développeur.</div>
-    </div>
-
-    <div class="func-block">
-      <div class="func-block__head">
-        <span class="func-tag orange">Carte</span>
-        <div class="func-block__title">Carte géographique interactive du Congo Brazzaville</div>
-      </div>
-      <div class="func-block__text">Carte SVG vectorielle avec les 12 départements du Congo aux proportions géographiques réelles (projection équirectangulaire). Chaque département est cliquable et affiche les informations associées.</div>
-    </div>
-
-    <div class="func-block">
-      <div class="func-block__head">
-        <span class="func-tag bleu">CMS</span>
-        <div class="func-block__title">Système de gestion de contenu intégré</div>
-      </div>
-      <div class="func-block__text">Interface d'administration accessible sur /admin/ permettant la gestion complète des députés, actualités, membres du bureau et diapositives de la page d'accueil. Authentification sécurisée, accès réservé au staff.</div>
-    </div>
-
-    <div class="func-block">
-      <div class="func-block__head">
-        <span class="func-tag rouge">PWA</span>
-        <div class="func-block__title">Application installable sur smartphone</div>
-      </div>
-      <div class="func-block__text">Le site s'installe comme une application native sur Android et iOS. Une bannière propose l'installation automatiquement. Fonctionne partiellement hors connexion grâce au Service Worker.</div>
-    </div>
+    <div class="lbl" style="margin-top:20px;">Hébergement sécurisé — Vercel CDN</div>
+    <p class="body-text">Vercel est l'infrastructure utilisée par des gouvernements et grandes entreprises mondiales. Les fichiers sont distribués depuis <strong>200+ points de présence</strong> dans le monde, rendant une attaque DDoS inefficace. Disponibilité contractuelle : <strong>99,99 %</strong>.</p>
   </div>
   <span class="page-num">5 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 6 — PLANNING
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 6 — PLANNING ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">05</div>
-      <div>
-        <div class="page-header__title">Planning & livrables</div>
-        <div class="page-header__sub">Phases de développement et jalons</div>
-      </div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num">05</div><div><div class="ph__title">Planning & Livrables</div><div class="ph__sub">Phases de développement et jalons</div></div></div>
+
+    <div class="g4" style="margin-bottom:20px;">
+      <div class="kpi"><div class="kpi__num">20+</div><div class="kpi__label">Pages développées</div></div>
+      <div class="kpi"><div class="kpi__num">151</div><div class="kpi__label">Profils de députés</div></div>
+      <div class="kpi"><div class="kpi__num">12</div><div class="kpi__label">Départements carte</div></div>
+      <div class="kpi"><div class="kpi__num">100%</div><div class="kpi__label">Responsive mobile</div></div>
     </div>
 
-    <div class="timeline">
-      <div class="tl-item done">
+    <div class="tl">
+      <div class="tl-item">
         <div class="tl-date">Phase 1 — Avril 2026 ✓</div>
         <div class="tl-title">Conception & Design</div>
         <div class="tl-text">Charte graphique, maquettes, architecture de l'information, intégration des couleurs nationales.</div>
-        <div class="tl-pills">
-          <span class="tl-pill">Charte graphique</span>
-          <span class="tl-pill">Design responsive</span>
-          <span class="tl-pill">Mode sombre</span>
-        </div>
+        <div class="tl-pills"><span class="pill">Charte graphique</span><span class="pill">Design system</span><span class="pill">Mode sombre</span></div>
       </div>
-
-      <div class="tl-item done">
+      <div class="tl-item">
         <div class="tl-date">Phase 2 — Mai 2026 ✓</div>
-        <div class="tl-title">Développement front-end & base de données</div>
-        <div class="tl-text">Développement de toutes les pages, connexion Supabase, annuaire des députés, carte interactive.</div>
-        <div class="tl-pills">
-          <span class="tl-pill">20+ pages HTML</span>
-          <span class="tl-pill">Supabase PostgreSQL</span>
-          <span class="tl-pill">Carte SVG</span>
-          <span class="tl-pill">CMS admin</span>
-        </div>
+        <div class="tl-title">Développement & base de données</div>
+        <div class="tl-text">20+ pages, Supabase PostgreSQL, annuaire des députés, carte SVG interactive, CMS admin.</div>
+        <div class="tl-pills"><span class="pill">20+ pages</span><span class="pill">Supabase</span><span class="pill">Carte SVG</span><span class="pill">CMS</span></div>
       </div>
-
-      <div class="tl-item done">
+      <div class="tl-item">
         <div class="tl-date">Phase 3 — Juin 2026 ✓</div>
-        <div class="tl-title">Optimisation & déploiement</div>
-        <div class="tl-text">PWA, optimisation mobile, déploiement Vercel, configuration DNS, tests multi-navigateurs.</div>
-        <div class="tl-pills">
-          <span class="tl-pill">PWA installable</span>
-          <span class="tl-pill">Vercel CDN</span>
-          <span class="tl-pill">HTTPS / SEO</span>
-        </div>
+        <div class="tl-title">Sécurité, Live & Notifications</div>
+        <div class="tl-text">Audit sécurité complet, page diffusion en direct, système d'alertes citoyens, déploiement Vercel.</div>
+        <div class="tl-pills"><span class="pill">Sécurité</span><span class="pill">Live streaming</span><span class="pill">Notifications</span><span class="pill">PWA</span></div>
       </div>
-
-      <div class="tl-item current">
+      <div class="tl-item cur">
         <div class="tl-date">Phase 4 — En cours</div>
         <div class="tl-title">Peuplement des données & recette</div>
-        <div class="tl-text">Saisie des 151 profils de députés, photos, biographies, actualités. Tests finaux avant mise en production officielle.</div>
-        <div class="tl-pills">
-          <span class="tl-pill orange">151 profils</span>
-          <span class="tl-pill orange">Photos officielles</span>
-          <span class="tl-pill orange">Recette client</span>
-        </div>
+        <div class="tl-text">Saisie des 151 profils, photos officielles, actualités, tests finaux avant mise en production.</div>
+        <div class="tl-pills"><span class="pill o">151 profils</span><span class="pill o">Photos officielles</span><span class="pill o">Recette client</span></div>
       </div>
-
-      <div class="tl-item next">
+      <div class="tl-item nxt">
         <div class="tl-date">Phase 5 — Juillet 2026</div>
         <div class="tl-title">Mise en ligne officielle & formation</div>
-        <div class="tl-text">Lancement public, transfert du nom de domaine officiel, formation de l'équipe de communication.</div>
-        <div class="tl-pills">
-          <span class="tl-pill grey">Domaine officiel</span>
-          <span class="tl-pill grey">Formation staff</span>
-          <span class="tl-pill grey">Lancement public</span>
-        </div>
+        <div class="tl-text">Lancement public, transfert du domaine officiel, formation de l'équipe de communication.</div>
+        <div class="tl-pills"><span class="pill g">Domaine officiel</span><span class="pill g">Formation staff</span><span class="pill g">Lancement public</span></div>
       </div>
     </div>
   </div>
   <span class="page-num">6 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 7 — TARIFICATION
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 7 — TARIFICATION ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">06</div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num">06</div><div><div class="ph__title">Tarification</div><div class="ph__sub">Investissement unique — forfait tout compris</div></div></div>
+
+    <div class="price-highlight">
       <div>
-        <div class="page-header__title">Tarification</div>
-        <div class="page-header__sub">Investissement et options de maintenance</div>
+        <div class="price-highlight__label">Montant total du projet</div>
+        <div class="price-highlight__amount">2 500 000</div>
+        <div class="price-highlight__currency">Francs CFA (FCFA) — paiement unique</div>
+      </div>
+      <div class="price-highlight__right">
+        <div class="price-highlight__includes">
+          <span>✓</span> Conception & Design complet<br>
+          <span>✓</span> Développement 20+ pages<br>
+          <span>✓</span> Diffusion en direct (Live)<br>
+          <span>✓</span> Alertes & Notifications citoyens<br>
+          <span>✓</span> Sécurité architecture renforcée<br>
+          <span>✓</span> Formation de l'équipe AN<br>
+          <span>✓</span> 3 mois de support post-livraison
+        </div>
       </div>
     </div>
 
-    <div class="section-lbl">Développement — Forfait tout compris</div>
+    <div class="lbl" style="margin-top:20px;">Détail des prestations</div>
     <table class="price-table">
-      <thead>
-        <tr>
-          <th>Prestation</th>
-          <th>Détail</th>
-          <th>Prix</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Prestation</th><th>Détail</th><th>Valeur</th></tr></thead>
       <tbody>
-        <tr>
-          <td><strong>Conception & UX/UI</strong></td>
-          <td>Charte graphique, maquettes, design system, mode sombre</td>
-          <td>À définir</td>
-        </tr>
-        <tr>
-          <td><strong>Développement front-end</strong></td>
-          <td>20+ pages HTML/CSS/JS responsive, animations, PWA</td>
-          <td>À définir</td>
-        </tr>
-        <tr>
-          <td><strong>Base de données & CMS</strong></td>
-          <td>Supabase PostgreSQL, back-office admin, API REST</td>
-          <td>À définir</td>
-        </tr>
-        <tr>
-          <td><strong>Carte interactive</strong></td>
-          <td>SVG géographique 12 départements, projection équirectangulaire</td>
-          <td>À définir</td>
-        </tr>
-        <tr>
-          <td><strong>Déploiement & configuration</strong></td>
-          <td>Vercel CDN, HTTPS, DNS, robots.txt, sitemap, SEO</td>
-          <td>À définir</td>
-        </tr>
-        <tr>
-          <td><strong>Formation & documentation</strong></td>
-          <td>Formation équipe communication, guide d'utilisation du CMS</td>
-          <td>À définir</td>
-        </tr>
-        <tr class="total">
-          <td colspan="2"><strong>TOTAL DÉVELOPPEMENT</strong></td>
-          <td>Sur devis</td>
-        </tr>
+        <tr><td><strong>Conception & UX/UI</strong></td><td>Charte graphique, maquettes, design system, mode sombre</td><td>500 000</td></tr>
+        <tr><td><strong>Développement front-end</strong></td><td>20+ pages HTML/CSS/JS responsive, animations, PWA</td><td>700 000</td></tr>
+        <tr><td><strong>Base de données & CMS</strong></td><td>Supabase PostgreSQL, back-office admin, API REST</td><td>400 000</td></tr>
+        <tr><td><strong>Carte interactive</strong></td><td>SVG géographique 12 départements, projection réelle</td><td>250 000</td></tr>
+        <tr><td><strong>🔴 Live streaming</strong></td><td>Page diffusion, player YouTube, replays, programme</td><td>200 000</td></tr>
+        <tr><td><strong>🔔 Notifications push</strong></td><td>Alertes citoyens, abonnement, diffusion automatique</td><td>150 000</td></tr>
+        <tr><td><strong>Sécurité renforcée</strong></td><td>Architecture Jamstack, admin isolé, audit sécurité</td><td>150 000</td></tr>
+        <tr><td><strong>Déploiement & config</strong></td><td>Vercel CDN, HTTPS, DNS, robots.txt, sitemap, SEO</td><td>100 000</td></tr>
+        <tr class="total"><td colspan="2"><strong>TOTAL — Forfait tout compris</strong></td><td>2 500 000 FCFA</td></tr>
       </tbody>
     </table>
 
-    <div class="section-lbl" style="margin-top:24px;">Maintenance mensuelle</div>
-    <div class="maintenance-row">
-      <div class="maint-card">
-        <div class="maint-card__label">Essentiel</div>
-        <div class="maint-card__price">Basique</div>
-        <div class="maint-card__period">/ mois</div>
-        <ul class="maint-card__features">
-          <li>Hébergement Vercel</li>
-          <li>Mises à jour sécurité</li>
-          <li>Support par email</li>
-        </ul>
-      </div>
-      <div class="maint-card highlight">
-        <div class="maint-card__label">Recommandé</div>
-        <div class="maint-card__price">Standard</div>
-        <div class="maint-card__period">/ mois</div>
-        <ul class="maint-card__features">
-          <li>Tout Essentiel</li>
-          <li>Ajout de contenus</li>
-          <li>Évolutions mineures</li>
-          <li>Support prioritaire</li>
-        </ul>
-      </div>
-      <div class="maint-card">
-        <div class="maint-card__label">Premium</div>
-        <div class="maint-card__price">Complet</div>
-        <div class="maint-card__period">/ mois</div>
-        <ul class="maint-card__features">
-          <li>Tout Standard</li>
-          <li>Nouvelles fonctions</li>
-          <li>Rapports mensuels</li>
-          <li>Astreinte urgence</li>
-        </ul>
-      </div>
-    </div>
-    <div class="price-note">
-      Les tarifs exacts sont fournis sur devis personnalisé selon le budget de l'appel d'offre. Tous les prix s'entendent hors taxes. Paiement en 3 fois : 40 % à la commande, 40 % à la livraison, 20 % à la recette.
+    <div class="payment-note">
+      <strong>Modalités de paiement :</strong> 50 % à la signature du contrat (1 250 000 FCFA) · 50 % à la livraison finale (1 250 000 FCFA)<br>
+      <strong>Garantie :</strong> 3 mois de support et corrections inclus après livraison. · <strong>Propriété :</strong> Le code source est transféré à l'AN à la réception du solde.
     </div>
   </div>
   <span class="page-num">7 / 8</span>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PAGE 8 — POURQUOI NOUS & CONTACT
-══════════════════════════════════════════ -->
+<!-- ══ PAGE 8 — POURQUOI NOUS & CONTACT ══ -->
 <div class="page">
-  <div class="page-inner">
-    <div class="page-header">
-      <div class="page-header__num">07</div>
-      <div>
-        <div class="page-header__title">Pourquoi nous choisir</div>
-        <div class="page-header__sub">Nos engagements et nos atouts</div>
-      </div>
-    </div>
+  <div class="pi">
+    <div class="ph"><div class="ph__num">07</div><div><div class="ph__title">Pourquoi nous choisir</div><div class="ph__sub">Nos engagements et atouts</div></div></div>
 
-    <div class="why-grid">
-      <div class="why-card">
-        <div class="why-icon">🎯</div>
-        <div>
-          <div class="why-title">Spécialisation institutions</div>
-          <div class="why-text">Nous avons conçu ce site en comprenant les contraintes spécifiques d'une institution publique : rigueur, neutralité, accessibilité et pérennité.</div>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon rouge">⚡</div>
-        <div>
-          <div class="why-title">Performance garantie</div>
-          <div class="why-text">Architecture Jamstack choisie pour sa rapidité (< 1s de chargement), sa fiabilité (99,99 % uptime) et ses coûts réduits.</div>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon jaune">🔧</div>
-        <div>
-          <div class="why-title">Autonomie complète</div>
-          <div class="why-text">Le back-office permet à l'équipe de l'AN de gérer 100 % du contenu sans faire appel à un développeur pour les mises à jour courantes.</div>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon bleu">📱</div>
-        <div>
-          <div class="why-title">Adapté au contexte africain</div>
-          <div class="why-text">PWA, mode hors ligne, optimisation pour connexions lentes — conçu pour la réalité des usages numériques au Congo.</div>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🔒</div>
-        <div>
-          <div class="why-title">Sécurité institutionnelle</div>
-          <div class="why-text">Administration protégée, aucune donnée personnelle sensible exposée, configuration robots.txt et HTTPS obligatoire.</div>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon rouge">🤝</div>
-        <div>
-          <div class="why-title">Livraison & suivi</div>
-          <div class="why-text">Déploiements continus via GitHub, historique de toutes les modifications, disponibilité pour corrections et évolutions post-livraison.</div>
-        </div>
-      </div>
+    <div class="g2">
+      <div class="why-card"><div class="why-icon">🎯</div><div><div class="why-title">Spécialisation institutions</div><div class="why-text">Conçu pour les contraintes d'une institution publique : rigueur, neutralité, accessibilité et pérennité des choix techniques.</div></div></div>
+      <div class="why-card"><div class="why-icon r">🔒</div><div><div class="why-title">Sécurité avant tout</div><div class="why-text">Architecture pensée contre le piratage dès la conception. Pas de WordPress, pas de PHP exposé, admin isolé.</div></div></div>
+      <div class="why-card"><div class="why-icon y">⚡</div><div><div class="why-title">Performance africaine</div><div class="why-text">PWA, mode hors ligne, optimisé pour connexions lentes — conçu pour la réalité numérique du Congo.</div></div></div>
+      <div class="why-card"><div class="why-icon b">🔧</div><div><div class="why-title">Autonomie complète</div><div class="why-text">L'équipe de l'AN gère 100 % du contenu sans développeur. Formation incluse dans le prix.</div></div></div>
+      <div class="why-card"><div class="why-icon">📺</div><div><div class="why-title">Live unique en CEMAC</div><div class="why-text">Aucun parlement voisin ne diffuse ses séances en direct sur son site. Une avance démocratique réelle.</div></div></div>
+      <div class="why-card"><div class="why-icon r">🤝</div><div><div class="why-title">Livraison garantie</div><div class="why-text">Déploiements via GitHub, historique complet, 3 mois de support post-livraison inclus dans le tarif.</div></div></div>
     </div>
 
     <div class="contact-box">
-      <div class="contact-box__left">
-        <div class="contact-box__badge">Prêt à collaborer</div>
-        <div class="contact-box__title">Discutons de votre<br>projet ensemble</div>
+      <div>
+        <div class="contact-box__badge">Disponible immédiatement</div>
+        <div class="contact-box__title">Prêt à démarrer<br>dès signature</div>
       </div>
       <div class="contact-box__right">
         <div class="contact-item">✉ <strong>yvicdesigns@gmail.com</strong></div>
         <div class="contact-item">🌐 <strong>assemblee-nationale.vercel.app</strong></div>
-        <div class="contact-item">📅 <strong>Disponible — Juin 2026</strong></div>
+        <div class="contact-item">💰 <strong>2 500 000 FCFA — forfait unique</strong></div>
         <a href="mailto:yvicdesigns@gmail.com" class="contact-cta">Nous contacter →</a>
       </div>
     </div>
