@@ -728,11 +728,11 @@ section:nth-child(even) { background: var(--gris-c); }
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: conic-gradient(#009A44 0deg 120deg, #FBDE4A 120deg 240deg, #DC241F 240deg 360deg);
+  background: var(--gris-b);
 }
-.bh-president__photo { width: 140px; height: 140px; padding: 4px; }
-.bh-card-h__photo    { width: 76px;  height: 76px;  padding: 3px; }
-.bh-card-sm__photo   { width: 50px;  height: 50px;  padding: 2px; }
+.bh-president__photo { width: 140px; height: 140px; }
+.bh-card-h__photo    { width: 76px;  height: 76px;  }
+.bh-card-sm__photo   { width: 50px;  height: 50px;  }
 .bh-president__photo img,
 .bh-card-h__photo img,
 .bh-card-sm__photo img {
