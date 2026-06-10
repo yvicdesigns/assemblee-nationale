@@ -648,6 +648,8 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 }
 .live-btn:hover { background: #b01c18; color: var(--blanc); }
 .live-btn .live-dot { width: 10px; height: 10px; }
+.live-btn--yt { background: #fff; color: #1e293b; border: 1px solid rgba(255,255,255,.3); }
+.live-btn--yt:hover { background: #f1f5f9; color: #1e293b; }
 
 /* =========================================
    SECTIONS GÉNÉRALES
