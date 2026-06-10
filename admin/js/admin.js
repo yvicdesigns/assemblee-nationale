@@ -57,6 +57,7 @@ const TITLES = {
   deputes:    '🏛️ Les Députés',
   messages:   '✉️ Messages reçus',
   media:      '🖼️ Médiathèque',
+  live:       '🔴 En Direct',
   parametres: '⚙️ Paramètres généraux',
 };
 
@@ -82,6 +83,7 @@ async function loadSection(name) {
     case 'deputes':     await loadDeputes(); break;
     case 'messages':    await loadMessages(); break;
     case 'media':       await loadMediaLibrary(); break;
+    case 'live':        await loadLive(); break;
     case 'parametres':  await loadParametres(); break;
   }
 }
@@ -431,6 +433,102 @@ async function savePresident() {
   const { error } = await db.from('parametres').upsert(updates, { onConflict: 'key' });
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
   toast('✓ Informations du Président enregistrées', 'success');
+}
+
+// =========================================
+// EN DIRECT
+// =========================================
+async function loadLive() {
+  const keys = ['live_is_active','live_youtube_id','live_session_name','live_session_date','live_replays'];
+  const { data } = await db.from('parametres').select('*').in('key', keys);
+  data?.forEach(p => {
+    if (p.key === 'live_is_active') {
+      const cb = document.getElementById('live-is_active');
+      if (cb) {
+        cb.checked = p.value === 'true';
+        updateLiveLabel(cb.checked);
+      }
+    } else if (p.key === 'live_replays') {
+      try { renderReplays(JSON.parse(p.value || '[]')); } catch { renderReplays([]); }
+    } else {
+      const el = document.getElementById(`live-${p.key.replace('live_','')}`);
+      if (el) el.value = p.value || '';
+    }
+  });
+
+  // Toggle label live
+  document.getElementById('live-is_active')?.addEventListener('change', e => updateLiveLabel(e.target.checked));
+}
+
+function updateLiveLabel(isActive) {
+  const lbl = document.getElementById('live-status-label');
+  if (lbl) lbl.textContent = isActive ? '🔴 En antenne' : 'Hors antenne';
+}
+
+function renderReplays(replays) {
+  const list = document.getElementById('replays-list');
+  if (!list) return;
+  if (!replays.length) {
+    list.innerHTML = '<p style="font-size:.8rem;color:var(--muted);">Aucun replay. Cliquez sur "+ Ajouter" après chaque séance.</p>';
+    return;
+  }
+  list.innerHTML = replays.map((r, i) => `
+    <div class="replay-row" data-idx="${i}">
+      <input class="field-input" placeholder="ID YouTube" value="${r.youtubeId || ''}" data-field="youtubeId">
+      <input class="field-input" placeholder="Titre de la séance" value="${r.title || ''}" data-field="title">
+      <button class="btn btn-danger btn-sm" onclick="removeReplay(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addReplayRow() {
+  const list = document.getElementById('replays-list');
+  const existing = list.querySelectorAll('.replay-row');
+  const idx = existing.length;
+  const p = list.querySelector('p');
+  if (p) p.remove();
+  const row = document.createElement('div');
+  row.className = 'replay-row';
+  row.dataset.idx = idx;
+  row.innerHTML = `
+    <input class="field-input" placeholder="ID YouTube" data-field="youtubeId">
+    <input class="field-input" placeholder="Titre de la séance" data-field="title">
+    <button class="btn btn-danger btn-sm" onclick="this.closest('.replay-row').remove()">✕</button>`;
+  list.appendChild(row);
+}
+
+function removeReplay(idx) {
+  document.querySelector(`.replay-row[data-idx="${idx}"]`)?.remove();
+}
+
+function collectReplays() {
+  const rows = document.querySelectorAll('.replay-row');
+  const replays = [];
+  rows.forEach(row => {
+    const id    = row.querySelector('[data-field="youtubeId"]')?.value.trim();
+    const title = row.querySelector('[data-field="title"]')?.value.trim();
+    if (id) replays.push({ youtubeId: id, title: title || '' });
+  });
+  return replays;
+}
+
+async function saveLive() {
+  const isActive  = document.getElementById('live-is_active')?.checked ? 'true' : 'false';
+  const youtubeId = document.getElementById('live-youtube_id')?.value.trim() || '';
+  const sessName  = document.getElementById('live-session_name')?.value.trim() || '';
+  const sessDate  = document.getElementById('live-session_date')?.value.trim() || '';
+  const replays   = JSON.stringify(collectReplays());
+
+  const updates = [
+    { key: 'live_is_active',    value: isActive },
+    { key: 'live_youtube_id',   value: youtubeId },
+    { key: 'live_session_name', value: sessName },
+    { key: 'live_session_date', value: sessDate },
+    { key: 'live_replays',      value: replays },
+  ].map(u => ({ ...u, updated_at: new Date().toISOString() }));
+
+  const { error } = await db.from('parametres').upsert(updates, { onConflict: 'key' });
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(isActive === 'true' ? '🔴 Direct activé — le live est en ligne !' : '✓ Configuration enregistrée', 'success');
 }
 
 // =========================================

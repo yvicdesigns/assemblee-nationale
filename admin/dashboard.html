@@ -29,6 +29,18 @@
     .tc-table td { border:1px solid var(--border); padding:6px 10px; font-size:.85rem; }
     /* Modal doit permettre le scroll sans couper l'éditeur */
     .modal { overflow-y:auto; max-height:90vh; }
+    /* Toggle switch */
+    .toggle-switch { display:flex;align-items:center;gap:10px;cursor:pointer; }
+    .toggle-switch input { display:none; }
+    .toggle-slider { width:44px;height:24px;background:#cbd5e1;border-radius:12px;position:relative;transition:background .2s;flex-shrink:0; }
+    .toggle-slider::after { content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2); }
+    .toggle-switch input:checked + .toggle-slider { background:#dc2626; }
+    .toggle-switch input:checked + .toggle-slider::after { transform:translateX(20px); }
+    .toggle-label { font-size:.82rem;font-weight:600;color:var(--muted); }
+    .toggle-switch input:checked ~ .toggle-label { color:#dc2626; }
+    /* Replay row */
+    .replay-row { display:grid;grid-template-columns:1fr 2fr auto;gap:8px;align-items:center;background:var(--bg-alt);padding:10px 12px;border-radius:8px;border:1px solid var(--border); }
+    .replay-row input { font-size:.8rem; }
   </style>
 </head>
 <body>
@@ -100,6 +112,9 @@
       </button>
 
       <div class="sidebar-section-label">Configuration</div>
+      <button class="nav-item" data-section="live">
+        <span class="nav-icon">🔴</span> En Direct
+      </button>
       <button class="nav-item" data-section="parametres">
         <span class="nav-icon">⚙️</span> Paramètres généraux
       </button>
@@ -355,6 +370,69 @@
       </div>
 
       <!-- ==== PARAMÈTRES ==== -->
+      <!-- ══ EN DIRECT ══ -->
+      <div id="section-live" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🔴 Gestion du direct</div>
+            <button class="btn btn-primary" onclick="saveLive()">💾 Enregistrer</button>
+          </div>
+
+          <!-- TOGGLE ON/OFF -->
+          <div class="param-list">
+            <div class="param-item">
+              <div>
+                <div class="param-key">État de la diffusion</div>
+                <small style="color:var(--muted);font-size:.75rem;">Activer pour lancer le live sur le site public</small>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="live-is_active">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label" id="live-status-label">Hors antenne</span>
+              </label>
+            </div>
+
+            <!-- YOUTUBE ID -->
+            <div class="param-item">
+              <div>
+                <div class="param-key">ID de la vidéo YouTube</div>
+                <small style="color:var(--muted);font-size:.75rem;">Copier l'ID depuis l'URL YouTube : youtube.com/watch?v=<strong>CET_ID</strong></small>
+              </div>
+              <input class="field-input" id="live-youtube_id" placeholder="ex : dQw4w9WgXcQ" style="font-family:monospace;">
+            </div>
+
+            <!-- NOM SÉANCE -->
+            <div class="param-item">
+              <div>
+                <div class="param-key">Nom de la séance</div>
+                <small style="color:var(--muted);font-size:.75rem;">Affiché sous le player</small>
+              </div>
+              <input class="field-input" id="live-session_name" placeholder="ex : Ouverture Session Budgétaire 2026">
+            </div>
+
+            <!-- DATE SÉANCE -->
+            <div class="param-item">
+              <div>
+                <div class="param-key">Date / lieu</div>
+                <small style="color:var(--muted);font-size:.75rem;">Affiché sous le nom de la séance</small>
+              </div>
+              <input class="field-input" id="live-session_date" placeholder="ex : 15 octobre 2026 — Brazzaville">
+            </div>
+          </div>
+        </div>
+
+        <!-- REPLAYS -->
+        <div class="section-card" style="margin-top:20px;">
+          <div class="section-card-header">
+            <div class="section-card-title">▶ Replays des séances passées</div>
+            <button class="btn btn-secondary" onclick="addReplayRow()">+ Ajouter</button>
+          </div>
+          <div id="replays-list" style="display:flex;flex-direction:column;gap:10px;padding:16px;">
+            <p style="font-size:.8rem;color:var(--muted);">Aucun replay. Cliquez sur "+ Ajouter" après chaque séance.</p>
+          </div>
+        </div>
+      </div>
+
       <div id="section-parametres" class="section hidden">
         <div class="section-card">
           <div class="section-card-header">

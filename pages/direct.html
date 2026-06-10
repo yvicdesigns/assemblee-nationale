@@ -480,63 +480,61 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
 <script>
-// ═══════════════════════════════════════════════════
-// CONFIGURATION — À METTRE À JOUR PAR L'ÉQUIPE AN
-// ═══════════════════════════════════════════════════
-const LIVE_CONFIG = {
-  // Mettre isLive: true et l'ID YouTube quand une séance commence
-  isLive: false,
-  youtubeId: '',   // ex: 'dQw4w9WgXcQ'
-  sessionName: '15ᵉ Législature — Session Budgétaire',
-  sessionDate: 'Octobre 2026 — Assemblée Nationale, Brazzaville',
+const _sb = supabase.createClient(
+  'https://djqrmcuagrfvahmcwbro.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxNDkxOTcsImV4cCI6MjA1OTcyNTE5N30.xGOCRNjHCqgZm1MsmZBm6wSNGnuGmMc6MH-5FMWLQAU'
+);
 
-  // Replays — ajouter les séances passées ici
-  replays: [
-    // { youtubeId: 'ID_VIDEO', date: '30 déc. 2025', title: 'Clôture 10ᵉ Session Ordinaire' },
-  ]
-};
-// ═══════════════════════════════════════════════════
+async function initLive() {
+  const keys = ['live_is_active','live_youtube_id','live_session_name','live_session_date','live_replays'];
+  const { data } = await _sb.from('parametres').select('*').in('key', keys);
 
-(function () {
-  const badge     = document.getElementById('live-badge');
-  const badgeTxt  = document.getElementById('live-badge-text');
-  const offline   = document.getElementById('player-offline');
-  const wrap      = document.getElementById('player-wrap');
-  const sName     = document.getElementById('session-name');
-  const sDate     = document.getElementById('session-date');
+  const cfg = {};
+  data?.forEach(p => { cfg[p.key] = p.value; });
 
-  // Mise à jour badge + player
-  if (LIVE_CONFIG.isLive && LIVE_CONFIG.youtubeId) {
+  const isLive    = cfg.live_is_active === 'true';
+  const youtubeId = cfg.live_youtube_id || '';
+  const sessName  = cfg.live_session_name || '15ᵉ Législature — Session Budgétaire';
+  const sessDate  = cfg.live_session_date || 'Octobre 2026 — Assemblée Nationale, Brazzaville';
+  let   replays   = [];
+  try { replays = JSON.parse(cfg.live_replays || '[]'); } catch {}
+
+  const badge    = document.getElementById('live-badge');
+  const badgeTxt = document.getElementById('live-badge-text');
+  const offline  = document.getElementById('player-offline');
+  const wrap     = document.getElementById('player-wrap');
+
+  document.getElementById('session-name').textContent = (isLive ? '' : 'Prochaine séance : ') + sessName;
+  document.getElementById('session-date').textContent = sessDate;
+
+  if (isLive && youtubeId) {
     badge.classList.remove('offline');
     badgeTxt.textContent = 'En direct';
     offline.remove();
     const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube.com/embed/${LIVE_CONFIG.youtubeId}?autoplay=1&mute=0`;
+    iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
     iframe.allow = 'autoplay; fullscreen';
     iframe.allowFullscreen = true;
     wrap.appendChild(iframe);
   }
 
-  sName.textContent = 'Prochaine séance : ' + LIVE_CONFIG.sessionName;
-  sDate.textContent = LIVE_CONFIG.sessionDate;
-
-  // Replays
-  if (LIVE_CONFIG.replays.length > 0) {
-    const grid = document.getElementById('replay-grid');
-    grid.innerHTML = LIVE_CONFIG.replays.map(r => `
+  if (replays.length) {
+    document.getElementById('replay-grid').innerHTML = replays.map(r => `
       <div class="replay-card">
         <div class="replay-thumb">
           <iframe src="https://www.youtube.com/embed/${r.youtubeId}" allowfullscreen loading="lazy"></iframe>
         </div>
         <div class="replay-body">
-          <div class="replay-date">${r.date}</div>
           <div class="replay-title">${r.title}</div>
         </div>
       </div>`).join('');
   }
-})();
+}
+
+initLive();
 
 // ═══════════════════════════════════════════════════
 // NOTIFICATIONS PUSH (Web Notifications API)
