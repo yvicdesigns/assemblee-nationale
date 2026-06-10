@@ -1431,6 +1431,13 @@ section:nth-child(even) { background: var(--gris-c); }
   padding: 24px;
   text-align: center;
   border-bottom: 4px solid var(--vert);
+  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+  cursor: default;
+}
+.stat-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(0,0,0,.12);
+  background: var(--blanc);
 }
 .stat-card:nth-child(2) { border-color: var(--rouge); }
 .stat-card:nth-child(3) { border-color: var(--jaune); }
