@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔴 En Direct – Assemblée Nationale du Congo</title>
+  <meta name="description" content="Suivez les séances plénières de l'Assemblée Nationale du Congo en direct.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .live-hero {
+      background: #0a0f1a;
+      padding: 40px 0 0;
+    }
+    .live-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .live-title-block h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .live-title-block p {
+      font-size: .85rem;
+      color: rgba(255,255,255,.55);
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #dc2626;
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 6px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .live-badge .dot {
+      width: 8px; height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      animation: blink 1.2s infinite;
+    }
+    .live-badge.offline {
+      background: #475569;
+    }
+    .live-badge.offline .dot { animation: none; background: #94a3b8; }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* Player */
+    .player-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      background: #000;
+      border-radius: 8px 8px 0 0;
+      overflow: hidden;
+    }
+    .player-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .player-offline {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0a0f1a;
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      padding: 32px;
+    }
+    .player-offline__icon { font-size: 3rem; margin-bottom: 16px; }
+    .player-offline__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .player-offline__text { font-size: .82rem; line-height: 1.6; max-width: 320px; }
+
+    /* Info band */
+    .live-info-band {
+      background: #111827;
+      padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .live-info-band .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .live-info-band .session-name {
+      font-size: .85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .live-info-band .session-date {
+      font-size: .75rem;
+      color: rgba(255,255,255,.45);
+      margin-top: 2px;
+    }
+    .live-share {
+      display: flex;
+      gap: 8px;
+    }
+    .live-share a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.7);
+      transition: all .2s;
+    }
+    .live-share a:hover {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    /* Grille basse */
+    .live-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+      padding: 40px 0 60px;
+    }
+
+    /* Prochaines séances */
+    .schedule-card {
+      background: var(--blanc);
+      border: 1px solid var(--bord, #e2e8f0);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .schedule-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--noir, #0f172a);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--bord, #e2e8f0);
+    }
+    .schedule-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .schedule-item:last-child { border-bottom: none; }
+    .schedule-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #009A44;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .schedule-dot.next { background: #FBDE4A; }
+    .schedule-dot.future { background: #e2e8f0; }
+    .schedule-date {
+      font-size: .72rem;
+      font-weight: 700;
+      color: #009A44;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 3px;
+    }
+    .schedule-date.next { color: #d97706; }
+    .schedule-date.future { color: #94a3b8; }
+    .schedule-name { font-size: .85rem; font-weight: 600; color: #1e293b; }
+    .schedule-type { font-size: .72rem; color: #64748b; margin-top: 2px; }
+
+    /* Notifications */
+    .notif-card {
+      background: linear-gradient(135deg, #0f172a, #1e3a5f);
+      border-radius: 12px;
+      padding: 24px;
+      color: #fff;
+    }
+    .notif-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .notif-card p {
+      font-size: .78rem;
+      color: rgba(255,255,255,.6);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    #notif-btn {
+      width: 100%;
+      padding: 12px;
+      background: #009A44;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background .2s;
+    }
+    #notif-btn:hover { background: #007a36; }
+    #notif-btn:disabled {
+      background: #1e3a5f;
+      color: rgba(255,255,255,.4);
+      cursor: default;
+    }
+    .notif-status {
+      margin-top: 12px;
+      font-size: .72rem;
+      text-align: center;
+      min-height: 18px;
+      color: rgba(255,255,255,.5);
+    }
+    .notif-perms {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .notif-perm-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .72rem;
+      color: rgba(255,255,255,.55);
+    }
+    .notif-perm-item::before {
+      content: '✓';
+      color: #009A44;
+      font-weight: 700;
+    }
+
+    /* Replay */
+    .replay-section { padding: 0 0 60px; }
+    .replay-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--noir, #0f172a);
+      margin-bottom: 20px;
+    }
+    .replay-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .replay-card {
+      background: var(--blanc);
+      border: 1px solid var(--bord, #e2e8f0);
+      border-radius: 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow .2s;
+    }
+    .replay-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); }
+    .replay-thumb {
+      position: relative;
+      padding-bottom: 56.25%;
+      background: #1e293b;
+    }
+    .replay-thumb iframe {
+      position: absolute;
+      inset: 0; width: 100%; height: 100%;
+      border: none;
+    }
+    .replay-body { padding: 14px; }
+    .replay-date { font-size: .7rem; color: #64748b; margin-bottom: 4px; }
+    .replay-title { font-size: .82rem; font-weight: 700; color: #1e293b; }
+
+    @media (max-width: 768px) {
+      .live-grid { grid-template-columns: 1fr; }
+      .replay-grid { grid-template-columns: 1fr; }
+      .live-top { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="top-bar">
+    <div class="container top-bar__inner">
+      <div class="top-bar__left">
+        <span class="top-bar__date"></span>
+      </div>
+      <div class="top-bar__right">
+        <a href="../index.html" class="top-bar__link">Accueil</a>
+        <span class="top-bar__sep">|</span>
+        <a href="contact.html" class="top-bar__link">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="main-header">
+    <div class="container main-header__inner">
+      <a href="../index.html" class="site-logo">
+        <img src="../logo/logo.png" alt="Assemblée Nationale du Congo" class="site-logo__img">
+      </a>
+      <nav class="main-nav">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+          <li class="nav-item"><a href="deputes.html" class="nav-link">Les Députés</a></li>
+          <li class="nav-item"><a href="direct.html" class="nav-link active">🔴 En Direct</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button id="darkToggle" class="dark-toggle" aria-label="Mode sombre">
+          <span class="dark-toggle__icon">🌙</span>
+        </button>
+        <button class="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="nav-overlay"></div>
+
+<!-- Hero Live -->
+<section class="live-hero">
+  <div class="container">
+    <div class="live-top">
+      <div class="live-title-block">
+        <h1>Séances en Direct</h1>
+        <p>Suivez les travaux de l'Assemblée Nationale du Congo en temps réel</p>
+      </div>
+      <div id="live-badge" class="live-badge offline">
+        <span class="dot"></span>
+        <span id="live-badge-text">Hors antenne</span>
+      </div>
+    </div>
+
+    <!-- Player YouTube -->
+    <div class="player-wrap" id="player-wrap">
+      <!-- Quand hors ligne : message d'attente -->
+      <div class="player-offline" id="player-offline">
+        <div class="player-offline__icon">📺</div>
+        <div class="player-offline__title">Aucune séance en ce moment</div>
+        <div class="player-offline__text">
+          Les séances plénières sont diffusées en direct sur cette page.<br>
+          Activez les notifications pour être alerté au démarrage.
+        </div>
+      </div>
+      <!-- L'iframe YouTube est injectée ici par JS quand il y a un live -->
+    </div>
+  </div>
+
+  <div class="live-info-band">
+    <div class="container">
+      <div>
+        <div class="session-name" id="session-name">Prochaine séance : 15ᵉ Législature — Session Budgétaire</div>
+        <div class="session-date" id="session-date">Octobre 2026 — Assemblée Nationale, Brazzaville</div>
+      </div>
+      <div class="live-share">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://assemblee-nationale.vercel.app/pages/direct.html" target="_blank" rel="noopener">
+          📤 Partager
+        </a>
+        <a href="../index.html#agenda">📅 Agenda</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contenu principal -->
+<main>
+  <div class="container">
+    <div class="live-grid">
+
+      <!-- Prochaines séances -->
+      <div class="schedule-card">
+        <h2>Programme des séances</h2>
+
+        <div class="schedule-item">
+          <div class="schedule-dot next"></div>
+          <div>
+            <div class="schedule-date next">Octobre 2026 — Prochaine</div>
+            <div class="schedule-name">Ouverture de la 7ᵉ Session Ordinaire Budgétaire</div>
+            <div class="schedule-type">Séance plénière solennelle</div>
+          </div>
+        </div>
+
+        <div class="schedule-item">
+          <div class="schedule-dot future"></div>
+          <div>
+            <div class="schedule-date future">À programmer</div>
+            <div class="schedule-name">Examen du budget général de l'État 2027</div>
+            <div class="schedule-type">Séance budgétaire — Commission des finances</div>
+          </div>
+        </div>
+
+        <div class="schedule-item">
+          <div class="schedule-dot future"></div>
+          <div>
+            <div class="schedule-date future">À programmer</div>
+            <div class="schedule-name">Questions orales au Gouvernement</div>
+            <div class="schedule-type">Questions / Réponses — Séance publique</div>
+          </div>
+        </div>
+
+        <div class="schedule-item">
+          <div class="schedule-dot future"></div>
+          <div>
+            <div class="schedule-date future">À programmer</div>
+            <div class="schedule-name">Clôture de la session budgétaire</div>
+            <div class="schedule-type">Décembre 2026 — Vote du budget</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div>
+        <div class="notif-card">
+          <h3>🔔 Alertes séances</h3>
+          <p>Recevez une notification sur votre téléphone dès qu'une séance commence. Gratuit, désactivable à tout moment.</p>
+          <button id="notif-btn">
+            <span>🔔</span> Activer les alertes
+          </button>
+          <div class="notif-status" id="notif-status"></div>
+          <div class="notif-perms">
+            <div class="notif-perm-item">Séances plénières en direct</div>
+            <div class="notif-perm-item">Nouvelles lois votées</div>
+            <div class="notif-perm-item">Actualités de l'Assemblée</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Replays -->
+    <div class="replay-section" id="replay-section">
+      <h2>Replays des séances précédentes</h2>
+      <div class="replay-grid" id="replay-grid">
+        <!-- Injecté par JS depuis LIVE_SESSIONS -->
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;font-size:.85rem;">
+          Les replays des séances seront disponibles ici après chaque diffusion.
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2026 Assemblée Nationale de la République du Congo — Tous droits réservés</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+// CONFIGURATION — À METTRE À JOUR PAR L'ÉQUIPE AN
+// ═══════════════════════════════════════════════════
+const LIVE_CONFIG = {
+  // Mettre isLive: true et l'ID YouTube quand une séance commence
+  isLive: false,
+  youtubeId: '',   // ex: 'dQw4w9WgXcQ'
+  sessionName: '15ᵉ Législature — Session Budgétaire',
+  sessionDate: 'Octobre 2026 — Assemblée Nationale, Brazzaville',
+
+  // Replays — ajouter les séances passées ici
+  replays: [
+    // { youtubeId: 'ID_VIDEO', date: '30 déc. 2025', title: 'Clôture 10ᵉ Session Ordinaire' },
+  ]
+};
+// ═══════════════════════════════════════════════════
+
+(function () {
+  const badge     = document.getElementById('live-badge');
+  const badgeTxt  = document.getElementById('live-badge-text');
+  const offline   = document.getElementById('player-offline');
+  const wrap      = document.getElementById('player-wrap');
+  const sName     = document.getElementById('session-name');
+  const sDate     = document.getElementById('session-date');
+
+  // Mise à jour badge + player
+  if (LIVE_CONFIG.isLive && LIVE_CONFIG.youtubeId) {
+    badge.classList.remove('offline');
+    badgeTxt.textContent = 'En direct';
+    offline.remove();
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${LIVE_CONFIG.youtubeId}?autoplay=1&mute=0`;
+    iframe.allow = 'autoplay; fullscreen';
+    iframe.allowFullscreen = true;
+    wrap.appendChild(iframe);
+  }
+
+  sName.textContent = 'Prochaine séance : ' + LIVE_CONFIG.sessionName;
+  sDate.textContent = LIVE_CONFIG.sessionDate;
+
+  // Replays
+  if (LIVE_CONFIG.replays.length > 0) {
+    const grid = document.getElementById('replay-grid');
+    grid.innerHTML = LIVE_CONFIG.replays.map(r => `
+      <div class="replay-card">
+        <div class="replay-thumb">
+          <iframe src="https://www.youtube.com/embed/${r.youtubeId}" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="replay-body">
+          <div class="replay-date">${r.date}</div>
+          <div class="replay-title">${r.title}</div>
+        </div>
+      </div>`).join('');
+  }
+})();
+
+// ═══════════════════════════════════════════════════
+// NOTIFICATIONS PUSH (Web Notifications API)
+// ═══════════════════════════════════════════════════
+(function () {
+  const btn    = document.getElementById('notif-btn');
+  const status = document.getElementById('notif-status');
+
+  if (!('Notification' in window)) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>⚠️</span> Non supporté sur ce navigateur';
+    return;
+  }
+
+  function updateBtn(perm) {
+    if (perm === 'granted') {
+      btn.disabled = true;
+      btn.innerHTML = '<span>✅</span> Alertes activées';
+      status.textContent = 'Vous serez notifié au démarrage de chaque séance.';
+    } else if (perm === 'denied') {
+      btn.disabled = true;
+      btn.innerHTML = '<span>🚫</span> Notifications bloquées';
+      status.textContent = 'Autorisez les notifications dans les réglages de votre navigateur.';
+    }
+  }
+
+  // État initial
+  updateBtn(Notification.permission);
+
+  btn.addEventListener('click', async () => {
+    if (Notification.permission === 'default') {
+      const result = await Notification.requestPermission();
+      updateBtn(result);
+      if (result === 'granted') {
+        new Notification('Assemblée Nationale du Congo', {
+          body: 'Vous recevrez une alerte au démarrage de chaque séance. 🏛️',
+          icon: '/favicon.svg'
+        });
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
