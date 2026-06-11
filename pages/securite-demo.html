@@ -152,10 +152,55 @@
       cursor: pointer; letter-spacing: .4px;
       transition: all .15s;
     }
-    .btn-start { background: #009A44; color: #fff; box-shadow: 0 0 14px rgba(0,154,68,.4); }
+    .btn-start  { background: #009A44; color: #fff; box-shadow: 0 0 14px rgba(0,154,68,.4); }
     .btn-start:hover { background: #00b34e; }
-    .btn-stop { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid #ef4444; }
-    .btn-reset { background: rgba(100,116,139,.1); color: #64748b; border: 1px solid #1a2f4a; }
+    .btn-stop   { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid #ef4444; }
+    .btn-reset  { background: rgba(100,116,139,.1); color: #64748b; border: 1px solid #1a2f4a; }
+    .btn-disable { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid #ef4444; }
+    .btn-disable.compromis { background: #ef4444; color: #fff; box-shadow: 0 0 16px rgba(239,68,68,.6); animation: danger-pulse 1s infinite; }
+    .btn-enable { background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid #22c55e; }
+    .btn-clear  { background: rgba(251,191,36,.12); color: #FBDE4A; border: 1px solid #FBDE4A; }
+    .btn-clear:hover { background: rgba(251,191,36,.25); }
+    @keyframes danger-pulse { 0%,100%{box-shadow:0 0 16px rgba(239,68,68,.6)} 50%{box-shadow:0 0 30px rgba(239,68,68,1)} }
+
+    /* Serveur compromis */
+    .shield-svg-wrap.compromis { filter: drop-shadow(0 0 20px rgba(239,68,68,.8)) !important; }
+    .shield-svg-wrap.breach { animation: breach-shake .4s ease; }
+    @keyframes breach-shake {
+      0%  { transform: translateX(0); }
+      20% { transform: translateX(-6px) rotate(-3deg); }
+      40% { transform: translateX(6px) rotate(3deg); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+      100%{ transform: translateX(0); }
+    }
+
+    /* Pénétration label */
+    .penetré {
+      position: absolute; pointer-events: none; z-index: 30;
+      font-size: .72rem; font-weight: 900; font-family: sans-serif;
+      color: #ef4444; text-shadow: 0 0 10px #ef4444; white-space: nowrap;
+      animation: pen-anim .9s ease-out forwards;
+    }
+    @keyframes pen-anim {
+      0%   { transform: translate(-50%,-50%) scale(.5); opacity: 0; }
+      25%  { transform: translate(-50%,-80%) scale(1.2); opacity: 1; }
+      100% { transform: translate(-50%,-140%) scale(1); opacity: 0; }
+    }
+
+    /* Explosion rouge (breach) */
+    .breach-expl {
+      position: absolute; border-radius: 50%; pointer-events: none; z-index: 25;
+      animation: breach-expl-anim .6s ease-out forwards;
+    }
+    @keyframes breach-expl-anim {
+      0%   { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+      100% { transform: translate(-50%,-50%) scale(4); opacity: 0; }
+    }
+
+    /* Alerte header */
+    .live-dot.alerte { color: #ef4444; background: rgba(239,68,68,.1); border-color: #ef4444; }
+    .live-dot.alerte span { background: #ef4444; }
 
     /* Vitesse */
     .speed-bar {
@@ -328,14 +373,16 @@
           <text x="50" y="88" text-anchor="middle" fill="rgba(34,197,94,.5)" font-size="8" font-family="Georgia" font-weight="bold">AN</text>
         </svg>
       </div>
-      <div class="shield-lbl">🛡 FIREWALL ACTIF</div>
-      <div class="shield-sub">Jamstack · Supabase RLS · CDN Vercel</div>
+      <div class="shield-lbl" id="shieldLbl">🛡 FIREWALL ACTIF</div>
+      <div class="shield-sub" id="shieldSub">Jamstack · Supabase RLS · CDN Vercel</div>
     </div>
 
     <!-- Contrôles -->
     <div class="ctrl">
       <button class="btn btn-start" id="btnStart" onclick="startDemo()">▶ Lancer la simulation</button>
       <button class="btn btn-stop" id="btnStop" onclick="stopDemo()" style="display:none">⏹ Arrêter</button>
+      <button class="btn btn-disable" id="btnDisable" onclick="toggleSecurity()">🔓 Désactiver la sécurité</button>
+      <button class="btn btn-clear" onclick="clearAttacks()">🧹 Supprimer les attaques</button>
       <button class="btn btn-reset" onclick="resetDemo()">↺ Reset</button>
     </div>
 
@@ -385,11 +432,12 @@ const arena    = document.getElementById('arena');
 const shieldEl = document.getElementById('shieldEl');
 const logList  = document.getElementById('logList');
 
-let running = false;
-let timer   = null;
-let delay   = 800;
-let blocked = 0, detected = 0;
-let types   = new Set();
+let running  = false;
+let timer    = null;
+let delay    = 800;
+let blocked  = 0, detected = 0, breached = 0;
+let types    = new Set();
+let secureOn = true;
 
 function setSpd(d, btn) {
   delay = d;
@@ -413,14 +461,78 @@ function stopDemo() {
   document.getElementById('btnStop').style.display  = 'none';
 }
 
+function toggleSecurity() {
+  secureOn = !secureOn;
+  const btn = document.getElementById('btnDisable');
+  const liveDot = document.querySelector('.live-dot');
+  const shieldLbl = document.getElementById('shieldLbl');
+  const shieldSub = document.getElementById('shieldSub');
+
+  if (!secureOn) {
+    // Sécurité désactivée
+    btn.textContent = '🔒 Réactiver la sécurité';
+    btn.className = 'btn btn-disable compromis';
+    shieldEl.classList.add('compromis');
+    shieldLbl.innerHTML = '⚠️ SÉCURITÉ DÉSACTIVÉE';
+    shieldLbl.style.color = '#ef4444';
+    shieldSub.textContent = 'Système vulnérable — attaques non bloquées';
+    shieldSub.style.color = '#ef4444';
+    liveDot.classList.add('alerte');
+    liveDot.innerHTML = '<span></span> ⚠️ SYSTÈME COMPROMIS';
+    addLogAlert('⚠️ SÉCURITÉ DÉSACTIVÉE — Les attaques peuvent pénétrer le système');
+  } else {
+    // Sécurité réactivée
+    btn.textContent = '🔓 Désactiver la sécurité';
+    btn.className = 'btn btn-disable';
+    shieldEl.classList.remove('compromis');
+    shieldLbl.innerHTML = '🛡 FIREWALL ACTIF';
+    shieldLbl.style.color = '#22c55e';
+    shieldSub.textContent = 'Jamstack · Supabase RLS · CDN Vercel';
+    shieldSub.style.color = '';
+    liveDot.classList.remove('alerte');
+    liveDot.innerHTML = '<span></span> Système actif';
+    addLogAlert('✅ SÉCURITÉ RÉACTIVÉE — Firewall opérationnel');
+  }
+}
+
+function clearAttacks() {
+  // Supprime tous les projectiles en vol avec un effet de fade
+  arena.querySelectorAll('.proj').forEach(p => {
+    p.style.transition = 'opacity .3s';
+    p.style.opacity = '0';
+    setTimeout(() => p.remove(), 300);
+  });
+}
+
+function addLogAlert(msg) {
+  const row = document.createElement('div');
+  row.className = 'log-row';
+  row.style.background = secureOn ? 'rgba(34,197,94,.06)' : 'rgba(239,68,68,.08)';
+  const color = secureOn ? '#22c55e' : '#ef4444';
+  row.innerHTML = `<div style="font-size:.7rem;font-weight:800;color:${color};font-family:sans-serif;padding:2px 0">${msg}</div>`;
+  logList.insertBefore(row, logList.firstChild);
+}
+
 function resetDemo() {
   stopDemo();
-  blocked = 0; detected = 0; types.clear();
+  blocked = 0; detected = 0; breached = 0; types.clear();
+  secureOn = true;
   document.getElementById('sBlocked').textContent  = '0';
   document.getElementById('sDetected').textContent = '0';
   document.getElementById('sTypes').textContent    = '0';
+  // Remettre le bouclier en état normal
+  const btn = document.getElementById('btnDisable');
+  btn.textContent = '🔓 Désactiver la sécurité';
+  btn.className = 'btn btn-disable';
+  shieldEl.classList.remove('compromis');
+  document.getElementById('shieldLbl').innerHTML = '🛡 FIREWALL ACTIF';
+  document.getElementById('shieldLbl').style.color = '#22c55e';
+  document.getElementById('shieldSub').textContent = 'Jamstack · Supabase RLS · CDN Vercel';
+  document.getElementById('shieldSub').style.color = '';
+  document.querySelector('.live-dot').classList.remove('alerte');
+  document.querySelector('.live-dot').innerHTML = '<span></span> Système actif';
   logList.innerHTML = '<div style="color:#64748b;padding:24px 14px;font-family:sans-serif;font-size:.72rem;text-align:center;">Réinitialisé.</div>';
-  arena.querySelectorAll('.proj,.expl,.blk').forEach(e => e.remove());
+  arena.querySelectorAll('.proj,.expl,.blk,.penetré,.breach-expl').forEach(e => e.remove());
 }
 
 function fire() {
@@ -480,51 +592,113 @@ function fire() {
 
 function onImpact(atk, tx, ty, proj) {
   proj.remove();
-
-  // Explosion
-  const expl = document.createElement('div');
-  expl.className = 'expl';
-  expl.style.cssText = `left:${tx}px;top:${ty}px;width:54px;height:54px;
-    background:radial-gradient(circle,${atk.color}99,transparent 70%);
-    border:2px solid ${atk.color};`;
-  arena.appendChild(expl);
-
-  // Label bloqué
-  const blk = document.createElement('div');
-  blk.className = 'blk';
-  blk.textContent = '✓ BLOQUÉ';
-  blk.style.cssText = `left:${tx}px;top:${ty}px;`;
-  arena.appendChild(blk);
-
-  // Flash bouclier
-  shieldEl.classList.add('hit');
-  setTimeout(() => shieldEl.classList.remove('hit'), 350);
-
-  // Nettoyage
-  setTimeout(() => { expl.remove(); blk.remove(); }, 900);
-
-  // Stats
-  blocked++; detected++;
-  types.add(atk.type);
-  document.getElementById('sBlocked').textContent  = blocked;
-  document.getElementById('sDetected').textContent = detected;
-  document.getElementById('sTypes').textContent    = types.size;
-
-  // Log
   const now  = new Date();
   const time = now.toTimeString().slice(0, 8);
-  const row  = document.createElement('div');
-  row.className = 'log-row';
-  row.innerHTML = `
-    <div class="log-row-top">
-      <span class="log-badge" style="background:${atk.bg};color:${atk.color}">${atk.emoji} ${atk.type}</span>
-      <span class="log-ok">✓ BLOQUÉ</span>
-    </div>
-    <div class="log-desc">${atk.desc}</div>
-    <div class="log-why">→ ${atk.why}</div>
-    <div class="log-time">${time}</div>
-  `;
-  logList.insertBefore(row, logList.firstChild);
+
+  if (secureOn) {
+    // ── MODE SÉCURISÉ : blocage ──
+    const expl = document.createElement('div');
+    expl.className = 'expl';
+    expl.style.cssText = `left:${tx}px;top:${ty}px;width:54px;height:54px;
+      background:radial-gradient(circle,${atk.color}99,transparent 70%);
+      border:2px solid ${atk.color};`;
+    arena.appendChild(expl);
+
+    const blk = document.createElement('div');
+    blk.className = 'blk';
+    blk.textContent = '✓ BLOQUÉ';
+    blk.style.cssText = `left:${tx}px;top:${ty}px;`;
+    arena.appendChild(blk);
+
+    shieldEl.classList.add('hit');
+    setTimeout(() => shieldEl.classList.remove('hit'), 350);
+    setTimeout(() => { expl.remove(); blk.remove(); }, 900);
+
+    blocked++; detected++;
+    types.add(atk.type);
+    document.getElementById('sBlocked').textContent  = blocked;
+    document.getElementById('sDetected').textContent = detected;
+    document.getElementById('sTypes').textContent    = types.size;
+
+    const row = document.createElement('div');
+    row.className = 'log-row';
+    row.innerHTML = `
+      <div class="log-row-top">
+        <span class="log-badge" style="background:${atk.bg};color:${atk.color}">${atk.emoji} ${atk.type}</span>
+        <span class="log-ok">✓ BLOQUÉ</span>
+      </div>
+      <div class="log-desc">${atk.desc}</div>
+      <div class="log-why">→ ${atk.why}</div>
+      <div class="log-time">${time}</div>
+    `;
+    logList.insertBefore(row, logList.firstChild);
+
+  } else {
+    // ── MODE COMPROMIS : pénétration ──
+    const cx = arena.offsetWidth / 2;
+    const cy = arena.offsetHeight / 2;
+
+    // L'attaque continue jusqu'au centre
+    const pen = document.createElement('div');
+    pen.className = 'proj';
+    pen.style.cssText = `left:${tx}px;top:${ty}px;color:${atk.color};`;
+    pen.innerHTML = `<div class="proj-core" style="background:${atk.color};box-shadow:0 0 14px ${atk.color};width:14px;height:14px;"></div>`;
+    arena.appendChild(pen);
+
+    const ms2 = 300;
+    const st2 = performance.now();
+    function step2(now2) {
+      const t = Math.min(1, (now2 - st2) / ms2);
+      pen.style.left = (tx + (cx - tx) * t) + 'px';
+      pen.style.top  = (ty + (cy - ty) * t) + 'px';
+      if (t < 1) { requestAnimationFrame(step2); }
+      else {
+        pen.remove();
+        // Explosion rouge au centre
+        const bexpl = document.createElement('div');
+        bexpl.className = 'breach-expl';
+        bexpl.style.cssText = `left:${cx}px;top:${cy}px;width:80px;height:80px;
+          background:radial-gradient(circle,rgba(239,68,68,.7),transparent 70%);
+          border:2px solid #ef4444;`;
+        arena.appendChild(bexpl);
+
+        // Shake bouclier
+        shieldEl.classList.add('breach');
+        setTimeout(() => shieldEl.classList.remove('breach'), 400);
+
+        // Label PÉNÉTRÉ
+        const pen2 = document.createElement('div');
+        pen2.className = 'penetré';
+        pen2.textContent = '⚠ PÉNÉTRÉ !';
+        pen2.style.cssText = `left:${cx}px;top:${cy}px;`;
+        arena.appendChild(pen2);
+
+        setTimeout(() => { bexpl.remove(); pen2.remove(); }, 900);
+
+        breached++; detected++;
+        types.add(atk.type);
+        document.getElementById('sDetected').textContent = detected;
+        document.getElementById('sBlocked').textContent  = blocked;
+        document.getElementById('sTypes').textContent    = types.size;
+
+        const row = document.createElement('div');
+        row.className = 'log-row';
+        row.style.background = 'rgba(239,68,68,.07)';
+        row.innerHTML = `
+          <div class="log-row-top">
+            <span class="log-badge" style="background:rgba(239,68,68,.25);color:#ef4444">${atk.emoji} ${atk.type}</span>
+            <span style="font-size:.6rem;font-weight:800;color:#ef4444;letter-spacing:.5px">⚠ PÉNÉTRÉ</span>
+          </div>
+          <div class="log-desc">${atk.desc}</div>
+          <div style="font-size:.58rem;color:#ef4444;">→ Sécurité désactivée — accès non filtré</div>
+          <div class="log-time">${time}</div>
+        `;
+        logList.insertBefore(row, logList.firstChild);
+      }
+    }
+    requestAnimationFrame(step2);
+  }
+
   while (logList.children.length > 60) logList.removeChild(logList.lastChild);
 }
 
