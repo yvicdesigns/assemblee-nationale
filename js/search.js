@@ -1,36 +1,54 @@
-/* =========================================
+/* =============================================
    RECHERCHE GLOBALE — Assemblée Nationale
-   ========================================= */
+   Recherche : noms, pages, commissions,
+   articles, agenda, bureau, actualités
+   ============================================= */
 (function () {
 
   const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
 
-  // Données statiques indexées
   const STATIC_INDEX = [
-    { type: 'page', icon: '🏛️', name: 'Présidence',              sub: 'L\'Honorable Isidore MVOUBA',       url: 'pages/presidence.html' },
-    { type: 'page', icon: '👥', name: 'Bureau de l\'Assemblée',   sub: 'Vice-Présidents, Secrétaires…',    url: 'pages/bureau.html' },
-    { type: 'page', icon: '👤', name: 'Les 151 Députés',          sub: 'Liste et recherche par département',url: 'pages/deputes.html' },
-    { type: 'page', icon: '📰', name: 'Actualités & Blog',        sub: 'Publications parlementaires',       url: 'pages/blog.html' },
-    { type: 'page', icon: '📜', name: 'Histoire',                 sub: 'Histoire du parlement congolais',   url: 'pages/histoire.html' },
-    { type: 'page', icon: '🎯', name: 'Rôle & Missions',          sub: 'Fonctions constitutionnelles',      url: 'pages/role.html' },
-    { type: 'page', icon: '✉️', name: 'Contact',                  sub: 'Formulaire et coordonnées',         url: 'pages/contact.html' },
-    { type: 'commission', icon: '💰', name: 'Commission Économie & Finances',       sub: 'Eco-Fin, Budget', url: 'pages/commission-ecofin.html' },
-    { type: 'commission', icon: '⚖️', name: 'Commission Juridique',                sub: 'Lois, Constitution', url: 'pages/commission-juridique.html' },
-    { type: 'commission', icon: '🌍', name: 'Commission Affaires Étrangères',       sub: 'Coopération internationale', url: 'pages/commission-affaires-etrangeres.html' },
-    { type: 'commission', icon: '🛡️', name: 'Commission Défense & Sécurité',       sub: 'Sécurité nationale', url: 'pages/commission-defense.html' },
-    { type: 'commission', icon: '🎓', name: 'Commission Éducation & Culture',       sub: 'Sciences, Technologie', url: 'pages/commission-education.html' },
-    { type: 'commission', icon: '🏥', name: 'Commission Santé & Affaires Sociales', sub: 'Genre, Famille', url: 'pages/commission-sante.html' },
-    { type: 'commission', icon: '🏗️', name: 'Commission Plan & Infrastructures',   sub: 'Développement local', url: 'pages/commission-plan.html' },
-    { type: 'commission', icon: '🌿', name: 'Commission Environnement',             sub: 'Développement durable', url: 'pages/commission-environnement.html' },
+    // Pages principales
+    { type: 'page', icon: '🏛️', name: 'Présidence',                sub: 'Isidore MVOUBA, Président de l\'Assemblée',           url: 'pages/presidence.html' },
+    { type: 'page', icon: '👥', name: 'Bureau de l\'Assemblée',     sub: 'Vice-Présidents, Secrétaires, Questeurs',              url: 'pages/bureau.html' },
+    { type: 'page', icon: '👤', name: 'Les 151 Députés',            sub: 'Annuaire, recherche par nom, département, groupe',     url: 'pages/deputes.html' },
+    { type: 'page', icon: '🗺️', name: 'Carte des départements',     sub: 'Carte interactive des 12 départements',                url: 'pages/carte.html' },
+    { type: 'page', icon: '📰', name: 'Actualités & Blog',          sub: 'Publications, communiqués, séances plénières',         url: 'pages/blog.html' },
+    { type: 'page', icon: '📜', name: 'Histoire',                   sub: 'Histoire du parlement congolais',                     url: 'pages/histoire.html' },
+    { type: 'page', icon: '🎯', name: 'Rôle & Missions',            sub: 'Fonctions constitutionnelles, législation, contrôle',  url: 'pages/role.html' },
+    { type: 'page', icon: '🔴', name: 'Direct / Live',              sub: 'Diffusion en direct des séances plénières',            url: 'pages/direct.html' },
+    { type: 'page', icon: '✉️', name: 'Contact',                    sub: 'Formulaire, adresse, téléphone',                       url: 'pages/contact.html' },
+    { type: 'page', icon: '🏛️', name: 'Commissions',               sub: 'Les 8 commissions permanentes',                        url: 'pages/commissions.html' },
+    // Commissions
+    { type: 'commission', icon: '💰', name: 'Commission Économie & Finances',        sub: 'Budget, fiscalité, économie nationale',         url: 'pages/commission-ecofin.html' },
+    { type: 'commission', icon: '⚖️', name: 'Commission Juridique',                 sub: 'Lois, Constitution, droits',                    url: 'pages/commission-juridique.html' },
+    { type: 'commission', icon: '🌍', name: 'Commission Affaires Étrangères',        sub: 'Diplomatie, coopération internationale',         url: 'pages/commission-affaires-etrangeres.html' },
+    { type: 'commission', icon: '🛡️', name: 'Commission Défense & Sécurité',        sub: 'Armée, sécurité nationale, ordre public',        url: 'pages/commission-defense.html' },
+    { type: 'commission', icon: '🎓', name: 'Commission Éducation & Culture',        sub: 'Enseignement, sciences, culture, technologie',   url: 'pages/commission-education.html' },
+    { type: 'commission', icon: '🏥', name: 'Commission Santé & Affaires Sociales',  sub: 'Santé publique, famille, genre, travail',        url: 'pages/commission-sante.html' },
+    { type: 'commission', icon: '🏗️', name: 'Commission Plan & Infrastructures',    sub: 'Développement local, travaux publics',           url: 'pages/commission-plan.html' },
+    { type: 'commission', icon: '🌿', name: 'Commission Environnement',              sub: 'Développement durable, ressources naturelles',   url: 'pages/commission-environnement.html' },
+    // Départements (mots-clés carte)
+    { type: 'page', icon: '🗺️', name: 'Département Sangha',        sub: 'Carte — chef-lieu Ouésso',         url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Likouala',      sub: 'Carte — chef-lieu Impfondo',       url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Cuvette',       sub: 'Carte — chef-lieu Owando',         url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Cuvette-Ouest', sub: 'Carte — chef-lieu Ewo',            url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Plateaux',      sub: 'Carte — chef-lieu Djambala',       url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Lékoumou',      sub: 'Carte — chef-lieu Sibiti',         url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Bouenza',       sub: 'Carte — chef-lieu Madingou',       url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Niari',         sub: 'Carte — chef-lieu Dolisie',        url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Pool',          sub: 'Carte — chef-lieu Kinkala',        url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Département Kouilou',       sub: 'Carte — chef-lieu Loango',         url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Pointe-Noire',              sub: 'Carte — ville-département côtier', url: 'pages/carte.html' },
+    { type: 'page', icon: '🗺️', name: 'Brazzaville',               sub: 'Carte — capitale, ville-département', url: 'pages/carte.html' },
   ];
 
-  const LABELS = { page: 'Page', commission: 'Commission', depute: 'Député', article: 'Article', bureau: 'Bureau', agenda: 'Agenda' };
+  const LABELS = { page: 'Page', commission: 'Commission', depute: 'Député', article: 'Article', bureau: 'Bureau', agenda: 'Agenda', actualite: 'Actualité' };
 
   let overlay, input, results, clearBtn;
   let debounceTimer = null;
   let activeIndex = -1;
-  let currentItems = [];
 
   function init() {
     overlay  = document.getElementById('gsOverlay');
@@ -40,12 +58,15 @@
 
     if (!overlay) return;
 
-    // Toggle
     document.getElementById('searchToggle')?.addEventListener('click', open);
     overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-    clearBtn?.addEventListener('click', () => { input.value = ''; clearBtn.classList.remove('show'); results.innerHTML = '<div class="gs-hint">Tapez pour rechercher dans tout le site</div>'; input.focus(); });
+    clearBtn?.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.classList.remove('show');
+      results.innerHTML = '<div class="gs-hint">Tapez pour rechercher dans tout le site</div>';
+      input.focus();
+    });
 
-    // Keyboard
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); open(); }
       if (e.key === 'Escape' && overlay.classList.contains('open')) close();
@@ -65,8 +86,8 @@
         results.innerHTML = '<div class="gs-hint">Tapez au moins 2 caractères…</div>';
         return;
       }
-      results.innerHTML = '<div class="gs-hint">Recherche en cours…</div>';
-      debounceTimer = setTimeout(() => search(q), 220);
+      results.innerHTML = '<div class="gs-hint gs-loading">Recherche en cours…</div>';
+      debounceTimer = setTimeout(() => search(q), 200);
     });
   }
 
@@ -91,15 +112,14 @@
   }
 
   function selectActive() {
-    const items = results.querySelectorAll('.gs-item');
-    if (activeIndex >= 0 && items[activeIndex]) items[activeIndex].click();
+    results.querySelectorAll('.gs-item')[activeIndex]?.click();
   }
 
   async function search(q) {
     const ql = q.toLowerCase();
     const groups = {};
 
-    // Static index
+    // Index statique (pages, commissions, départements)
     const staticHits = STATIC_INDEX.filter(item =>
       item.name.toLowerCase().includes(ql) || item.sub.toLowerCase().includes(ql)
     );
@@ -108,35 +128,72 @@
       groups[item.type].push(item);
     });
 
-    // Supabase: députés
+    // Supabase
     try {
-      const { createClient } = supabase;
-      const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+      const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const [depRes, depDeptRes, depCircRes, depGroupRes, artRes, bureauRes, agendaRes] = await Promise.all([
-        // Députés — par nom
-        db.from('deputes').select('name, constituency, department, groupe').ilike('name', `%${q}%`).eq('active', true).limit(8),
+      const [
+        depNomRes, depDeptRes, depCircRes, depGroupeRes,
+        artRes, bureauRes, agendaRes, actRes
+      ] = await Promise.all([
+
+        // Députés — par nom (sans filtre active pour tout trouver)
+        db.from('deputes')
+          .select('name, constituency, department, groupe, photo_url')
+          .ilike('name', `%${q}%`)
+          .limit(10),
+
         // Députés — par département
-        db.from('deputes').select('name, constituency, department, groupe').ilike('department', `%${q}%`).eq('active', true).limit(4),
+        db.from('deputes')
+          .select('name, constituency, department, groupe, photo_url')
+          .ilike('department', `%${q}%`)
+          .limit(6),
+
         // Députés — par circonscription
-        db.from('deputes').select('name, constituency, department, groupe').ilike('constituency', `%${q}%`).eq('active', true).limit(4),
+        db.from('deputes')
+          .select('name, constituency, department, groupe, photo_url')
+          .ilike('constituency', `%${q}%`)
+          .limit(6),
+
         // Députés — par groupe politique
-        db.from('deputes').select('name, constituency, department, groupe').ilike('groupe', `%${q}%`).eq('active', true).limit(4),
+        db.from('deputes')
+          .select('name, constituency, department, groupe, photo_url')
+          .ilike('groupe', `%${q}%`)
+          .limit(6),
+
         // Articles
-        db.from('articles').select('title, excerpt, category').or(`title.ilike.%${q}%,excerpt.ilike.%${q}%,category.ilike.%${q}%`).eq('status', 'published').limit(5),
+        db.from('articles')
+          .select('title, excerpt, category, slug')
+          .or(`title.ilike.%${q}%,excerpt.ilike.%${q}%,category.ilike.%${q}%,content.ilike.%${q}%`)
+          .eq('status', 'published')
+          .limit(5),
+
         // Bureau
-        db.from('bureau').select('name, role_title, biography').or(`name.ilike.%${q}%,role_title.ilike.%${q}%`).eq('active', true).limit(4),
+        db.from('bureau')
+          .select('name, role_title, biography')
+          .or(`name.ilike.%${q}%,role_title.ilike.%${q}%,biography.ilike.%${q}%`)
+          .limit(5),
+
         // Agenda
-        db.from('agenda').select('title, event_date, description').ilike('title', `%${q}%`).limit(4),
+        db.from('agenda')
+          .select('title, event_date, description, location')
+          .or(`title.ilike.%${q}%,description.ilike.%${q}%,location.ilike.%${q}%`)
+          .limit(4),
+
+        // Actualités
+        db.from('actualites')
+          .select('title, excerpt, category')
+          .or(`title.ilike.%${q}%,excerpt.ilike.%${q}%,category.ilike.%${q}%`)
+          .limit(4),
       ]);
 
       // Fusion et dédoublonnage des députés
       const deputeMap = new Map();
-      [...(depRes.data||[]), ...(depDeptRes.data||[]), ...(depCircRes.data||[]), ...(depGroupRes.data||[])].forEach(d => {
-        if (!deputeMap.has(d.name)) deputeMap.set(d.name, d);
-      });
+      [...(depNomRes.data||[]), ...(depDeptRes.data||[]), ...(depCircRes.data||[]), ...(depGroupeRes.data||[])]
+        .forEach(d => { if (d.name && !deputeMap.has(d.name)) deputeMap.set(d.name, d); });
+
       if (deputeMap.size) {
-        groups['depute'] = [...deputeMap.values()].slice(0, 10).map(d => ({
+        groups['depute'] = [...deputeMap.values()].slice(0, 12).map(d => ({
           type: 'depute', icon: '👤',
           name: d.name,
           sub: [d.constituency, d.department].filter(Boolean).join(' — '),
@@ -150,7 +207,7 @@
           type: 'article', icon: '📰',
           name: a.title,
           sub: a.excerpt?.slice(0, 80) || a.category || '',
-          url: 'pages/blog.html'
+          url: `pages/blog.html${a.slug ? '#' + a.slug : ''}`
         }));
       }
 
@@ -167,18 +224,30 @@
         groups['agenda'] = agendaRes.data.map(a => ({
           type: 'agenda', icon: '📅',
           name: a.title,
-          sub: a.event_date ? new Date(a.event_date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : '',
+          sub: a.event_date
+            ? new Date(a.event_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+              + (a.location ? ' · ' + a.location : '')
+            : (a.location || ''),
           url: 'index.html#agenda'
         }));
       }
+
+      if (actRes.data?.length) {
+        groups['actualite'] = actRes.data.map(a => ({
+          type: 'actualite', icon: '📢',
+          name: a.title,
+          sub: a.excerpt?.slice(0, 80) || a.category || '',
+          url: 'pages/blog.html'
+        }));
+      }
+
     } catch (_) {}
 
     renderResults(groups, q);
   }
 
   function renderResults(groups, q) {
-    currentItems = [];
-    const order = ['depute', 'bureau', 'article', 'agenda', 'commission', 'page'];
+    const order = ['depute', 'bureau', 'article', 'actualite', 'agenda', 'commission', 'page'];
     let html = '';
 
     order.forEach(type => {
@@ -187,13 +256,13 @@
       html += `<div class="gs-section">
         <div class="gs-section-title">${LABELS[type]}s</div>`;
       items.forEach(item => {
-        currentItems.push(item);
         const name = highlight(item.name, q);
+        const sub  = item.sub ? highlight(item.sub, q) : '';
         html += `<a class="gs-item" href="${item.url}">
           <span class="gs-item-icon">${item.icon}</span>
           <div class="gs-item-body">
             <div class="gs-item-name">${name}</div>
-            ${item.sub ? `<div class="gs-item-sub">${item.sub}</div>` : ''}
+            ${sub ? `<div class="gs-item-sub">${sub}</div>` : ''}
           </div>
           ${item.badge ? `<span class="gs-item-badge">${item.badge}</span>` : ''}
         </a>`;
@@ -201,11 +270,11 @@
       html += `</div>`;
     });
 
-    results.innerHTML = html || `<div class="gs-empty">Aucun résultat pour "<strong>${q}</strong>"</div>`;
+    results.innerHTML = html || `<div class="gs-empty">Aucun résultat pour « <strong>${q}</strong> »</div>`;
   }
 
   function highlight(text, q) {
-    if (!q) return text;
+    if (!text || !q) return text || '';
     const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     return text.replace(re, '<mark style="background:#bbf7d0;border-radius:2px;padding:0 1px">$1</mark>');
   }
