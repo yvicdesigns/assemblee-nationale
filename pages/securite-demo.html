@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Démo Sécurité — Assemblée Nationale</title>
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --vert: #009A44;
+      --rouge: #DC241F;
+      --jaune: #FBDE4A;
+      --bg: #060d1a;
+      --surface: #0d1b2e;
+      --border: #1a2f4a;
+      --text: #e2e8f0;
+      --dim: #64748b;
+      --attack-sql:   #ef4444;
+      --attack-xss:   #f97316;
+      --attack-ddos:  #8b5cf6;
+      --attack-brute: #ec4899;
+      --attack-inject:#facc15;
+      --blocked: #22c55e;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      background: rgba(9,23,43,.95);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .hdr-left { display: flex; align-items: center; gap: 12px; }
+    .hdr-logo {
+      width: 36px; height: 36px;
+      background: var(--vert);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 13px; color: #fff;
+      font-family: Georgia, serif;
+    }
+    .hdr-title { font-size: .9rem; font-weight: 700; color: #fff; letter-spacing: .5px; }
+    .hdr-sub { font-size: .68rem; color: var(--dim); font-family: sans-serif; }
+    .hdr-badge {
+      background: rgba(34,197,94,.15);
+      border: 1px solid #22c55e;
+      color: #22c55e;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-family: sans-serif;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .hdr-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.8); }
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-cell {
+      background: var(--surface);
+      padding: 14px 20px;
+      text-align: center;
+    }
+    .stat-cell__num {
+      font-size: 1.8rem;
+      font-weight: 900;
+      font-family: 'Courier New', monospace;
+      color: #22c55e;
+      line-height: 1;
+    }
+    .stat-cell__num.red { color: var(--attack-sql); }
+    .stat-cell__num.purple { color: var(--attack-ddos); }
+    .stat-cell__num.yellow { color: var(--jaune); }
+    .stat-cell__label {
+      font-size: .65rem;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-family: sans-serif;
+      margin-top: 4px;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      height: calc(100vh - 110px);
+    }
+
+    /* ── ARENA (zone d'animation) ── */
+    .arena {
+      position: relative;
+      background: var(--bg);
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Grille de fond */
+    .arena::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,154,68,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,154,68,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Serveur cible (centre) */
+    .server {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      z-index: 20;
+    }
+    .shield {
+      width: 100px; height: 100px;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shield-svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 20px rgba(0,154,68,.5));
+      transition: filter .2s;
+    }
+    .shield.hit .shield-svg {
+      filter: drop-shadow(0 0 30px rgba(34,197,94,.9));
+      animation: shield-flash .3s ease;
+    }
+    @keyframes shield-flash {
+      0% { filter: drop-shadow(0 0 20px rgba(0,154,68,.5)); }
+      40% { filter: drop-shadow(0 0 50px rgba(34,197,94,1)); }
+      100% { filter: drop-shadow(0 0 20px rgba(0,154,68,.5)); }
+    }
+    .shield-label {
+      font-size: .65rem;
+      color: #22c55e;
+      letter-spacing: 1px;
+      font-family: sans-serif;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+    .shield-sublabel {
+      font-size: .58rem;
+      color: var(--dim);
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    /* Boutons contrôle */
+    .controls {
+      position: absolute;
+      bottom: 20px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 10px;
+      z-index: 30;
+    }
+    .btn-ctrl {
+      padding: 9px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: .78rem;
+      font-family: sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: all .2s;
+    }
+    .btn-ctrl.start {
+      background: var(--vert);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(0,154,68,.4);
+    }
+    .btn-ctrl.start:hover { background: #00b84f; box-shadow: 0 0 24px rgba(0,154,68,.6); }
+    .btn-ctrl.stop {
+      background: rgba(239,68,68,.15);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+    .btn-ctrl.stop:hover { background: rgba(239,68,68,.25); }
+    .btn-ctrl.reset {
+      background: rgba(100,116,139,.15);
+      color: var(--dim);
+      border: 1px solid var(--border);
+    }
+
+    /* ── PROJECTILES (attaques) ── */
+    .projectile {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .proj-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .proj-trail {
+      position: absolute;
+      width: 3px;
+      border-radius: 2px;
+      opacity: .5;
+    }
+    .proj-label {
+      font-size: .52rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      white-space: nowrap;
+      font-family: sans-serif;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(0,0,0,.6);
+    }
+
+    /* Explosion de blocage */
+    .explosion {
+      position: absolute;
+      pointer-events: none;
+      z-index: 25;
+      border-radius: 50%;
+      animation: explode .5s ease-out forwards;
+    }
+    @keyframes explode {
+      0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+      60% { opacity: .8; }
+      100% { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+    }
+
+    /* Label BLOQUÉ */
+    .blocked-label {
+      position: absolute;
+      pointer-events: none;
+      z-index: 30;
+      font-size: .7rem;
+      font-weight: 900;
+      font-family: sans-serif;
+      color: #22c55e;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #22c55e;
+      animation: blocked-anim .8s ease-out forwards;
+    }
+    @keyframes blocked-anim {
+      0% { transform: translate(-50%,-60%) scale(.5); opacity: 0; }
+      30% { transform: translate(-50%,-80%) scale(1.2); opacity: 1; }
+      100% { transform: translate(-50%,-120%) scale(1); opacity: 0; }
+    }
+
+    /* Scan circles */
+    .scan-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(0,154,68,.2);
+      top: 50%; left: 50%;
+      pointer-events: none;
+      animation: scan-expand 3s linear infinite;
+    }
+    @keyframes scan-expand {
+      0% { transform: translate(-50%,-50%) scale(0); opacity: .6; }
+      100% { transform: translate(-50%,-50%) scale(6); opacity: 0; }
+    }
+
+    /* ── LOG PANEL ── */
+    .log-panel {
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .log-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-family: sans-serif;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .log-header::before {
+      content: '●';
+      color: #22c55e;
+      animation: pulse-dot 1.5s infinite;
+    }
+    .log-entries {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .log-entries::-webkit-scrollbar { width: 4px; }
+    .log-entries::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .log-entry {
+      padding: 7px 16px;
+      border-bottom: 1px solid rgba(26,47,74,.5);
+      font-size: .68rem;
+      line-height: 1.5;
+      animation: log-slide .3s ease;
+    }
+    @keyframes log-slide {
+      from { opacity: 0; transform: translateX(10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .log-time { color: var(--dim); font-size: .6rem; }
+    .log-type { font-weight: 700; margin: 0 6px; padding: 1px 6px; border-radius: 3px; font-size: .6rem; }
+    .log-msg { color: #94a3b8; }
+    .log-status {
+      float: right;
+      font-size: .6rem;
+      font-weight: 700;
+      color: #22c55e;
+      letter-spacing: .5px;
+    }
+
+    /* ── LÉGENDE ── */
+    .legend {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .62rem;
+      color: var(--dim);
+      font-family: sans-serif;
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ── PANEL INFOS (bas gauche) ── */
+    .info-panel {
+      grid-column: 1;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .info-item { font-size: .7rem; font-family: sans-serif; color: var(--dim); }
+    .info-item strong { color: var(--text); }
+    .speed-btns { display: flex; gap: 6px; margin-left: auto; }
+    .speed-btn {
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--dim);
+      font-size: .68rem;
+      cursor: pointer;
+      font-family: monospace;
+      transition: all .15s;
+    }
+    .speed-btn.active, .speed-btn:hover {
+      border-color: var(--vert);
+      color: #22c55e;
+      background: rgba(0,154,68,.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; height: auto; }
+      .stats-bar { grid-template-columns: repeat(2,1fr); }
+      .log-panel { height: 280px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-logo">AN</div>
+    <div>
+      <div class="hdr-title">Centre de Sécurité — Assemblée Nationale</div>
+      <div class="hdr-sub">Simulation de protection en temps réel · Architecture Jamstack</div>
+    </div>
+  </div>
+  <div class="hdr-badge">Système actif</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-cell__num" id="statBlocked">0</div>
+    <div class="stat-cell__label">Attaques bloquées</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-cell__num red" id="statDetected">0</div>
+    <div class="stat-cell__label">Tentatives détectées</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-cell__num purple" id="statTypes">0</div>
+    <div class="stat-cell__label">Types d'attaques</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-cell__num yellow">100%</div>
+    <div class="stat-cell__label">Taux de blocage</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ARÈNE -->
+  <div class="arena" id="arena">
+    <!-- Scan rings -->
+    <div class="scan-ring" style="width:80px;height:80px;animation-delay:0s"></div>
+    <div class="scan-ring" style="width:80px;height:80px;animation-delay:1s"></div>
+    <div class="scan-ring" style="width:80px;height:80px;animation-delay:2s"></div>
+
+    <!-- Bouclier / serveur -->
+    <div class="server">
+      <div class="shield" id="shield">
+        <svg class="shield-svg" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 5 L90 22 L90 55 C90 78 72 96 50 105 C28 96 10 78 10 55 L10 22 Z"
+                fill="rgba(0,154,68,.15)" stroke="#009A44" stroke-width="2"/>
+          <path d="M50 18 L80 31 L80 55 C80 72 67 86 50 94 C33 86 20 72 20 55 L20 31 Z"
+                fill="rgba(0,154,68,.1)" stroke="rgba(0,154,68,.4)" stroke-width="1"/>
+          <!-- Verrou -->
+          <rect x="38" y="52" width="24" height="18" rx="3" fill="rgba(0,154,68,.6)" stroke="#22c55e" stroke-width="1.5"/>
+          <path d="M43 52 L43 47 C43 42 57 42 57 47 L57 52" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="50" cy="60" r="3" fill="#22c55e"/>
+          <!-- AN -->
+          <text x="50" y="88" text-anchor="middle" fill="rgba(0,154,68,.6)" font-size="9" font-family="Georgia" font-weight="bold">AN</text>
+        </svg>
+      </div>
+      <div class="shield-label">🛡 FIREWALL ACTIF</div>
+      <div class="shield-sublabel">Architecture Jamstack · Admin isolé</div>
+    </div>
+
+    <!-- Contrôles -->
+    <div class="controls">
+      <button class="btn-ctrl start" id="btnStart" onclick="startDemo()">▶ Lancer la simulation</button>
+      <button class="btn-ctrl stop" id="btnStop" onclick="stopDemo()" style="display:none">⏹ Arrêter</button>
+      <button class="btn-ctrl reset" onclick="resetDemo()">↺ Réinitialiser</button>
+    </div>
+  </div>
+
+  <!-- LOG PANEL -->
+  <div class="log-panel">
+    <div class="log-header">Journal de sécurité en direct</div>
+    <div class="log-entries" id="logEntries">
+      <div class="log-entry" style="color:var(--dim);padding:20px 16px;font-family:sans-serif;font-size:.75rem;text-align:center;">
+        En attente de la simulation…<br>
+        <span style="font-size:.65rem;opacity:.6">Cliquez sur "Lancer la simulation"</span>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--attack-sql)"></div>SQL Injection</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--attack-xss)"></div>XSS</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--attack-ddos)"></div>DDoS</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--attack-brute)"></div>Brute Force</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--attack-inject)"></div>Injection</div>
+    </div>
+  </div>
+
+  <!-- INFO BAR -->
+  <div class="info-panel">
+    <div class="info-item">Protection : <strong>Jamstack + CDN Vercel</strong></div>
+    <div class="info-item">Base de données : <strong>Supabase (RLS activé)</strong></div>
+    <div class="info-item">Admin : <strong>Chemin isolé + token</strong></div>
+    <div class="info-item">HTTPS : <strong>TLS 1.3 forcé</strong></div>
+    <div class="speed-btns">
+      <button class="speed-btn active" onclick="setSpeed(1,this)">×1</button>
+      <button class="speed-btn" onclick="setSpeed(2,this)">×2</button>
+      <button class="speed-btn" onclick="setSpeed(3,this)">×3</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ATTACKS = [
+  { type: 'SQL Injection',  color: '#ef4444', bg: 'rgba(239,68,68,.2)',  emoji: '💉', desc: 'SELECT * FROM users WHERE 1=1--',      why: 'Requête SQL rejetée par RLS Supabase' },
+  { type: 'XSS',           color: '#f97316', bg: 'rgba(249,115,22,.2)', emoji: '🪲', desc: '<script>document.cookie</script>',     why: 'Échappement HTML automatique côté serveur' },
+  { type: 'DDoS',          color: '#8b5cf6', bg: 'rgba(139,92,246,.2)', emoji: '🌊', desc: '14 000 req/s depuis 89.207.x.x',       why: 'Rate limiting Vercel Edge + CDN absorbe le flux' },
+  { type: 'Brute Force',   color: '#ec4899', bg: 'rgba(236,72,153,.2)', emoji: '🔨', desc: '/admin — 500 tentatives de connexion', why: 'Token admin + verrouillage après 5 essais' },
+  { type: 'Path Traversal',color: '#facc15', bg: 'rgba(250,204,21,.2)', emoji: '📁', desc: '../../etc/passwd — accès refusé',       why: 'Jamstack : aucun système de fichiers exposé' },
+  { type: 'CSRF',          color: '#06b6d4', bg: 'rgba(6,182,212,.2)',  emoji: '🎭', desc: 'Faux token de formulaire détecté',     why: 'CSRF token validé côté Supabase auth' },
+  { type: 'Bot Scan',      color: '#a78bfa', bg: 'rgba(167,139,250,.2)',emoji: '🤖', desc: 'Scan automatisé — nikto v2.1.6',       why: 'robots.txt + Vercel WAF bloque le scanner' },
+  { type: 'Data Exfil',    color: '#fb923c', bg: 'rgba(251,146,60,.2)', emoji: '📤', desc: 'Exfiltration de données — 2MB/s',      why: 'RLS Supabase : accès limité aux données publiques' },
+];
+
+const arena = document.getElementById('arena');
+const shield = document.getElementById('shield');
+const logEntries = document.getElementById('logEntries');
+let running = false;
+let interval = null;
+let speed = 1;
+let countBlocked = 0;
+let countDetected = 0;
+let typesHit = new Set();
+
+function setSpeed(s, btn) {
+  speed = s;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (running) { stopInterval(); startInterval(); }
+}
+
+function startDemo() {
+  running = true;
+  document.getElementById('btnStart').style.display = 'none';
+  document.getElementById('btnStop').style.display = '';
+  logEntries.innerHTML = '';
+  startInterval();
+}
+
+function startInterval() {
+  interval = setInterval(launchAttack, Math.max(400, 1200 / speed));
+}
+
+function stopInterval() {
+  clearInterval(interval);
+  interval = null;
+}
+
+function stopDemo() {
+  running = false;
+  stopInterval();
+  document.getElementById('btnStart').style.display = '';
+  document.getElementById('btnStop').style.display = 'none';
+}
+
+function resetDemo() {
+  stopDemo();
+  countBlocked = 0;
+  countDetected = 0;
+  typesHit = new Set();
+  document.getElementById('statBlocked').textContent = '0';
+  document.getElementById('statDetected').textContent = '0';
+  document.getElementById('statTypes').textContent = '0';
+  logEntries.innerHTML = '<div style="color:var(--dim);padding:20px 16px;font-family:sans-serif;font-size:.75rem;text-align:center;">Réinitialisé. Cliquez sur "Lancer la simulation"</div>';
+  document.querySelectorAll('.projectile,.explosion,.blocked-label').forEach(e => e.remove());
+}
+
+function launchAttack() {
+  const atk = ATTACKS[Math.floor(Math.random() * ATTACKS.length)];
+  const arenaRect = arena.getBoundingClientRect();
+  const W = arena.offsetWidth;
+  const H = arena.offsetHeight;
+  const cx = W / 2;
+  const cy = H / 2;
+
+  // Origine aléatoire sur les bords
+  const side = Math.floor(Math.random() * 4);
+  let sx, sy;
+  if (side === 0) { sx = Math.random() * W; sy = -20; }
+  else if (side === 1) { sx = W + 20; sy = Math.random() * H; }
+  else if (side === 2) { sx = Math.random() * W; sy = H + 20; }
+  else { sx = -20; sy = Math.random() * H; }
+
+  // Créer le projectile
+  const proj = document.createElement('div');
+  proj.className = 'projectile';
+  proj.style.left = sx + 'px';
+  proj.style.top = sy + 'px';
+  proj.style.color = atk.color;
+
+  proj.innerHTML = `
+    <div class="proj-dot" style="background:${atk.color};box-shadow:0 0 10px ${atk.color}"></div>
+    <div class="proj-label" style="color:${atk.color}">${atk.emoji} ${atk.type}</div>
+  `;
+  arena.appendChild(proj);
+
+  // Arrêt 60px avant le centre (le bouclier bloque)
+  const dx = cx - sx;
+  const dy = cy - sy;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  const stopRatio = Math.max(0, (dist - 60) / dist);
+  const tx = sx + dx * stopRatio;
+  const ty = sy + dy * stopRatio;
+
+  const duration = Math.max(600, 1200 - speed * 200);
+
+  // Animation du projectile
+  proj.animate([
+    { transform: `translate(0,0)`, opacity: 1 },
+    { transform: `translate(${tx - sx}px, ${ty - sy}px)`, opacity: 1 }
+  ], { duration, easing: 'ease-in', fill: 'forwards' }).onfinish = () => {
+    // Explosion
+    const exp = document.createElement('div');
+    exp.className = 'explosion';
+    exp.style.left = tx + 'px';
+    exp.style.top = ty + 'px';
+    exp.style.width = '60px';
+    exp.style.height = '60px';
+    exp.style.background = `radial-gradient(circle, ${atk.color}88, transparent 70%)`;
+    exp.style.border = `2px solid ${atk.color}`;
+    arena.appendChild(exp);
+
+    // Label BLOQUÉ
+    const lbl = document.createElement('div');
+    lbl.className = 'blocked-label';
+    lbl.textContent = '✓ BLOQUÉ';
+    lbl.style.left = tx + 'px';
+    lbl.style.top = ty + 'px';
+    arena.appendChild(lbl);
+
+    // Flash bouclier
+    shield.classList.add('hit');
+    setTimeout(() => shield.classList.remove('hit'), 300);
+
+    // Nettoyage
+    proj.remove();
+    setTimeout(() => { exp.remove(); lbl.remove(); }, 800);
+
+    // Stats
+    countBlocked++;
+    countDetected++;
+    typesHit.add(atk.type);
+    document.getElementById('statBlocked').textContent = countBlocked;
+    document.getElementById('statDetected').textContent = countDetected;
+    document.getElementById('statTypes').textContent = typesHit.size;
+
+    // Log
+    addLog(atk);
+  };
+}
+
+function addLog(atk) {
+  const now = new Date();
+  const time = now.toTimeString().slice(0,8);
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `
+    <span class="log-time">${time}</span>
+    <span class="log-type" style="background:${atk.bg};color:${atk.color}">${atk.type}</span>
+    <span class="log-status">✓ BLOQUÉ</span>
+    <div class="log-msg" style="margin-top:3px">${atk.emoji} ${atk.desc}</div>
+    <div style="font-size:.6rem;color:#22c55e;margin-top:2px">→ ${atk.why}</div>
+  `;
+  logEntries.insertBefore(entry, logEntries.firstChild);
+
+  // Limiter à 50 entrées
+  while (logEntries.children.length > 50) {
+    logEntries.removeChild(logEntries.lastChild);
+  }
+}
+</script>
+</body>
+</html>
