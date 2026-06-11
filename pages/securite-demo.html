@@ -496,11 +496,9 @@ function toggleSecurity() {
 }
 
 function clearAttacks() {
-  // Supprime tous les projectiles en vol avec un effet de fade
   arena.querySelectorAll('.proj').forEach(p => {
-    p.style.transition = 'opacity .3s';
-    p.style.opacity = '0';
-    setTimeout(() => p.remove(), 300);
+    p.dataset.killed = '1';
+    p.remove();
   });
 }
 
@@ -575,8 +573,9 @@ function fire() {
   // Animer avec requestAnimationFrame
   const startTime = performance.now();
   function step(now) {
+    if (proj.dataset.killed || !proj.isConnected) return; // supprimé
     const t = Math.min(1, (now - startTime) / ms);
-    const ease = t * t; // ease-in
+    const ease = t * t;
     const x = sx + (tx - sx) * ease;
     const y = sy + (ty - sy) * ease;
     proj.style.left = x + 'px';
@@ -591,6 +590,7 @@ function fire() {
 }
 
 function onImpact(atk, tx, ty, proj) {
+  if (proj.dataset.killed) return; // supprimé par clearAttacks
   proj.remove();
   const now  = new Date();
   const time = now.toTimeString().slice(0, 8);
