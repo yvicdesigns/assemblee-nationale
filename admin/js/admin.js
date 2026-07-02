@@ -535,8 +535,18 @@ async function saveLive() {
 // PARAMÈTRES
 // =========================================
 async function loadParametres() {
-  const { data } = await db.from('parametres').select('*').in('key', ['site_address', 'live_url', 'site_logo']);
+  const { data } = await db.from('parametres').select('*').in('key', ['site_address', 'live_url', 'site_logo', 'maintenance_mode']);
   data?.forEach(p => {
+    if (p.key === 'maintenance_mode') {
+      const cb = document.getElementById('param-maintenance_mode');
+      const st = document.getElementById('maintenance-status');
+      if (cb) cb.checked = p.value === 'true';
+      if (st) {
+        st.textContent = p.value === 'true' ? '🔴 ACTIVÉ — Site en maintenance' : 'Désactivé';
+        st.style.color  = p.value === 'true' ? '#dc2626' : '#9ca3af';
+      }
+      return;
+    }
     const el = document.getElementById(`param-${p.key}`);
     if (el) el.value = p.value || '';
     if (p.key === 'site_logo' && p.value) {
@@ -589,6 +599,24 @@ async function saveParametres() {
   const { error } = await db.from('parametres').upsert(updates, { onConflict: 'key' });
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
   toast('✓ Paramètres enregistrés', 'success');
+}
+
+async function toggleMaintenance(active) {
+  const st = document.getElementById('maintenance-status');
+  const { error } = await db.from('parametres').upsert(
+    [{ key: 'maintenance_mode', value: String(active), updated_at: new Date().toISOString() }],
+    { onConflict: 'key' }
+  );
+  if (error) {
+    toast('Erreur : ' + error.message, 'error');
+    document.getElementById('param-maintenance_mode').checked = !active;
+    return;
+  }
+  if (st) {
+    st.textContent = active ? '🔴 ACTIVÉ — Site en maintenance' : 'Désactivé';
+    st.style.color  = active ? '#dc2626' : '#9ca3af';
+  }
+  toast(active ? '🚧 Mode maintenance activé — site indisponible pour les visiteurs' : '✅ Site remis en ligne', active ? 'error' : 'success');
 }
 
 // =========================================

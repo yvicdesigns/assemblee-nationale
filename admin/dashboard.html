@@ -465,6 +465,21 @@
               </div>
             </div>
 
+            <!-- MODE MAINTENANCE -->
+            <div class="param-item" style="background:#fff8f8;border:1px solid #fecaca;border-radius:10px;padding:16px 20px;">
+              <div>
+                <div class="param-key" style="color:#dc2626;">🚧 Mode Maintenance</div>
+                <small style="color:#ef4444;font-size:.75rem;">Quand activé, les visiteurs voient la page de maintenance. L'admin reste accessible.</small>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                <label class="toggle">
+                  <input type="checkbox" id="param-maintenance_mode" onchange="toggleMaintenance(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span id="maintenance-status" style="font-size:.7rem;font-weight:700;color:#9ca3af;">Désactivé</span>
+              </div>
+            </div>
+
             <!-- ADRESSE -->
             <div class="param-item">
               <div>
