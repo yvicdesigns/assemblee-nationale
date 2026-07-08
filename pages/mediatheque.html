@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Médiathèque – Assemblée Nationale</title>
+  <meta name="description" content="Galerie photos et vidéos de l'Assemblée nationale de la République du Congo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Tabs ── */
+    .media-tabs {
+      display: flex;
+      gap: 4px;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 5px;
+      width: fit-content;
+      margin: 32px 0 28px;
+    }
+    .media-tab {
+      padding: 9px 24px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      font-size: .9rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .media-tab.active {
+      background: #fff;
+      color: #009A44;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+
+    /* ── Filters ── */
+    .media-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 2px solid var(--vert);
+      background: transparent;
+      color: var(--vert);
+      font-weight: 600;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn.active,
+    .filter-btn:hover { background: var(--vert); color: #fff; }
+
+    /* ── Photo grid ── */
+    .photo-grid {
+      columns: 3;
+      column-gap: 16px;
+      margin-bottom: 60px;
+    }
+    @media (max-width: 900px) { .photo-grid { columns: 2; } }
+    @media (max-width: 560px) { .photo-grid { columns: 1; } }
+
+    .photo-card {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      background: #e2e8f0;
+    }
+    .photo-card img {
+      width: 100%;
+      display: block;
+      transition: transform .35s ease;
+    }
+    .photo-card:hover img { transform: scale(1.04); }
+    .photo-card__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity .25s;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+    .photo-card:hover .photo-card__overlay { opacity: 1; }
+    .photo-card__title {
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .photo-card__cat {
+      display: inline-block;
+      font-size: .7rem;
+      background: #009A44;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+    }
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #0a3d1f, #1a6b36);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+
+    /* ── Video grid ── */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .video-card {
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .video-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,.12); }
+    .video-thumb {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: #0f172a;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .video-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .3s;
+    }
+    .video-card:hover .video-thumb img { transform: scale(1.04); }
+    .video-play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.3);
+      transition: background .2s;
+    }
+    .video-card:hover .video-play { background: rgba(0,0,0,.5); }
+    .video-play-btn {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    }
+    .video-play-btn svg { fill: #009A44; margin-left: 4px; }
+    .video-body { padding: 16px; }
+    .video-cat {
+      display: inline-block;
+      font-size: .7rem;
+      background: #dcfce7;
+      color: #166534;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .video-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .video-date { font-size: .78rem; color: #64748b; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .lightbox-caption {
+      color: #fff;
+      margin-top: 12px;
+      font-size: .9rem;
+      text-align: center;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      z-index: 10000;
+    }
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,.15);
+      border: none;
+      color: #fff;
+      font-size: 1.8rem;
+      width: 48px;
+      height: 64px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+      z-index: 10000;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,.3); }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
+
+    /* ── Video modal ── */
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.9);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .video-modal.open { opacity: 1; pointer-events: all; }
+    .video-modal-inner {
+      position: relative;
+      width: min(860px, 92vw);
+    }
+    .video-modal-frame {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 10px;
+      border: none;
+    }
+    .video-modal-close {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      z-index: 10000;
+    }
+
+    /* ── Empty state ── */
+    .media-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: #64748b;
+      grid-column: 1 / -1;
+    }
+    .media-empty-icon { font-size: 3rem; margin-bottom: 16px; }
+
+    /* ── Section panel ── */
+    #panel-photos { display: block; }
+    #panel-videos { display: none; }
+
+    /* ── Count badge ── */
+    .tab-count {
+      background: #009A44;
+      color: #fff;
+      font-size: .7rem;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date"></span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" title="YouTube">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" title="Facebook">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
+        </a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo">
+      <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale — République du Congo" class="site-logo__img">
+    </a>
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item"><a href="deputes.html" class="nav-link">Les Députés <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="bureau.html" class="dropdown-link">Le Bureau</a>
+            <a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a>
+            <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
+            <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="blog.html" class="nav-link">Publications</a></li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link active">Médiathèque</a></li>
+        <li class="nav-item"><a href="role.html" class="nav-link">Découvrir <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="role.html" class="dropdown-link">Rôle de l'Assemblée nationale</a>
+            <a href="histoire.html" class="dropdown-link">Notre histoire</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div id="gsOverlay" class="gs-overlay">
+  <div class="gs-box">
+    <div class="gs-search-row">
+      <svg class="gs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="gsInput" type="text" placeholder="Rechercher…" autocomplete="off" spellcheck="false">
+      <button id="gsClear" class="gs-clear" title="Effacer">✕</button>
+    </div>
+    <div id="gsResults" class="gs-results">
+      <div class="gs-hint">Tapez pour rechercher dans tout le site</div>
+    </div>
+    <div class="gs-footer">
+      <kbd>↑↓</kbd> Naviguer &nbsp;·&nbsp; <kbd>↵</kbd> Ouvrir &nbsp;·&nbsp; <kbd>Esc</kbd> Fermer &nbsp;·&nbsp; <kbd>Ctrl K</kbd> Recherche rapide
+    </div>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb">
+      <a href="../index.html">Accueil</a><span>›</span><span>Médiathèque</span>
+    </div>
+    <h1 class="page-hero__title">Médiathèque</h1>
+    <p class="page-hero__sub">Galerie photos et vidéos de l'Assemblée Nationale de la République du Congo</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="container">
+
+    <!-- Tabs -->
+    <div class="media-tabs" role="tablist">
+      <button class="media-tab active" id="tab-photos" role="tab" aria-selected="true" onclick="switchTab('photos')">
+        📷 Photos <span class="tab-count" id="count-photos">—</span>
+      </button>
+      <button class="media-tab" id="tab-videos" role="tab" aria-selected="false" onclick="switchTab('videos')">
+        🎬 Vidéos <span class="tab-count" id="count-videos">—</span>
+      </button>
+    </div>
+
+    <!-- === PHOTOS === -->
+    <div id="panel-photos">
+      <div class="media-filters" id="photo-filters">
+        <button class="filter-btn active" data-cat="tout" onclick="filterPhotos('tout', this)">Tout</button>
+        <button class="filter-btn" data-cat="Session" onclick="filterPhotos('Session', this)">Sessions</button>
+        <button class="filter-btn" data-cat="Visites officielles" onclick="filterPhotos('Visites officielles', this)">Visites officielles</button>
+        <button class="filter-btn" data-cat="Événements" onclick="filterPhotos('Événements', this)">Événements</button>
+        <button class="filter-btn" data-cat="Commissions" onclick="filterPhotos('Commissions', this)">Commissions</button>
+      </div>
+      <div class="photo-grid" id="photoGrid">
+        <div style="column-span:all;text-align:center;padding:60px 20px;color:#64748b;">
+          <div style="font-size:2rem;margin-bottom:12px;">📷</div>
+          Chargement de la galerie…
+        </div>
+      </div>
+    </div>
+
+    <!-- === VIDÉOS === -->
+    <div id="panel-videos" style="display:none">
+      <div class="media-filters" id="video-filters">
+        <button class="filter-btn active" data-cat="tout" onclick="filterVideos('tout', this)">Tout</button>
+        <button class="filter-btn" data-cat="Séances plénières" onclick="filterVideos('Séances plénières', this)">Séances plénières</button>
+        <button class="filter-btn" data-cat="Commissions" onclick="filterVideos('Commissions', this)">Commissions</button>
+        <button class="filter-btn" data-cat="Congrès" onclick="filterVideos('Congrès', this)">Congrès</button>
+        <button class="filter-btn" data-cat="Conférences" onclick="filterVideos('Conférences', this)">Conférences</button>
+      </div>
+      <div class="video-grid" id="videoGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#64748b;">
+          <div style="font-size:2rem;margin-bottom:12px;">🎬</div>
+          Chargement des vidéos…
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lightbox photos -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <button class="lightbox-nav lightbox-prev" onclick="lbNav(-1,event)">&#8249;</button>
+  <button class="lightbox-nav lightbox-next" onclick="lbNav(1,event)">&#8250;</button>
+  <div class="lightbox-inner">
+    <img class="lightbox-img" id="lbImg" src="" alt="">
+    <div class="lightbox-caption" id="lbCaption"></div>
+  </div>
+</div>
+
+<!-- Video modal -->
+<div class="video-modal" id="videoModal" onclick="closeVideoModal(event)">
+  <button class="video-modal-close" onclick="closeVideoModal()">&times;</button>
+  <div class="video-modal-inner">
+    <iframe class="video-modal-frame" id="videoFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <img src="../logo/logo-footer.png" alt="Assemblée Nationale" class="footer-logo" onerror="this.style.display='none'">
+        <p>Portail officiel de l'Assemblée Nationale de la République du Congo.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="../index.html">Accueil</a></li>
+          <li><a href="deputes.html">Les Députés</a></li>
+          <li><a href="blog.html">Publications</a></li>
+          <li><a href="mediatheque.html">Médiathèque</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>L'Assemblée</h4>
+        <ul>
+          <li><a href="presidence.html">Le Président</a></li>
+          <li><a href="bureau.html">Le Bureau</a></li>
+          <li><a href="commissions.html">Les Commissions</a></li>
+          <li><a href="histoire.html">Notre histoire</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>Rond-point de la place de la République (ex CCF)</li>
+          <li>Brazzaville, République du Congo</li>
+          <li><a href="contact.html">Formulaire de contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Assemblée Nationale – République du Congo. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/search.js"></script>
+<script src="../js/main.js"></script>
+<script>
+const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allPhotos = [];
+let allVideos = [];
+let lbIndex  = 0;
+let lbItems  = [];
+
+/* ── Tab switch ── */
+function switchTab(tab) {
+  document.getElementById('panel-photos').style.display = tab === 'photos' ? 'block' : 'none';
+  document.getElementById('panel-videos').style.display = tab === 'videos' ? 'block' : 'none';
+  document.getElementById('tab-photos').classList.toggle('active', tab === 'photos');
+  document.getElementById('tab-videos').classList.toggle('active', tab === 'videos');
+  document.getElementById('tab-photos').setAttribute('aria-selected', tab === 'photos');
+  document.getElementById('tab-videos').setAttribute('aria-selected', tab === 'videos');
+}
+
+/* ── Load ── */
+async function load() {
+  const [photoRes, videoRes] = await Promise.all([
+    db.from('media_photos').select('*').order('taken_at', { ascending: false }),
+    db.from('media_videos').select('*').order('published_at', { ascending: false }),
+  ]);
+  allPhotos = photoRes.data || [];
+  allVideos = videoRes.data || [];
+
+  document.getElementById('count-photos').textContent = allPhotos.length || 0;
+  document.getElementById('count-videos').textContent = allVideos.length || 0;
+
+  renderPhotos(allPhotos);
+  renderVideos(allVideos);
+}
+
+/* ── Photos ── */
+function renderPhotos(photos) {
+  const grid = document.getElementById('photoGrid');
+  if (!photos.length) {
+    grid.innerHTML = `<div style="column-span:all;text-align:center;padding:80px 20px;color:#64748b;">
+      <div style="font-size:3rem;margin-bottom:12px">📷</div>
+      <div>Aucune photo disponible pour l'instant.</div>
+    </div>`;
+    return;
+  }
+  lbItems = photos;
+  grid.innerHTML = photos.map((p, i) => `
+    <div class="photo-card" onclick="openLightbox(${i})" title="${p.title}">
+      ${p.photo_url
+        ? `<img src="${p.photo_url}" alt="${p.title}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=photo-placeholder>📷</div>'">`
+        : `<div class="photo-placeholder">📷</div>`}
+      <div class="photo-card__overlay">
+        <div>
+          <div class="photo-card__cat">${p.category}</div>
+          <div class="photo-card__title">${p.title}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterPhotos(cat, btn) {
+  document.querySelectorAll('#photo-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat === 'tout' ? allPhotos : allPhotos.filter(p => p.category === cat);
+  renderPhotos(filtered);
+}
+
+/* ── Lightbox ── */
+function openLightbox(i) {
+  lbIndex = i;
+  const p = lbItems[i];
+  document.getElementById('lbImg').src = p.photo_url;
+  document.getElementById('lbCaption').textContent = p.title + (p.description ? ' — ' + p.description : '');
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbNav(dir, e) {
+  e?.stopPropagation();
+  lbIndex = (lbIndex + dir + lbItems.length) % lbItems.length;
+  openLightbox(lbIndex);
+}
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft')  lbNav(-1, null);
+  if (e.key === 'ArrowRight') lbNav(1, null);
+  if (e.key === 'Escape')     { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
+});
+
+/* ── Videos ── */
+function renderVideos(videos) {
+  const grid = document.getElementById('videoGrid');
+  if (!videos.length) {
+    grid.innerHTML = `<div class="media-empty" style="grid-column:1/-1">
+      <div class="media-empty-icon">🎬</div>
+      <div>Aucune vidéo disponible pour l'instant.</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = videos.map(v => `
+    <div class="video-card" onclick="openVideo('${v.youtube_id}')">
+      <div class="video-thumb">
+        <img src="https://img.youtube.com/vi/${v.youtube_id}/hqdefault.jpg"
+             alt="${v.title}" loading="lazy"
+             onerror="this.style.background='#0f172a';this.style.display='none'">
+        <div class="video-play">
+          <div class="video-play-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-body">
+        <span class="video-cat">${v.category}</span>
+        <div class="video-title">${v.title}</div>
+        ${v.published_at ? `<div class="video-date">${new Date(v.published_at).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterVideos(cat, btn) {
+  document.querySelectorAll('#video-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat === 'tout' ? allVideos : allVideos.filter(v => v.category === cat);
+  renderVideos(filtered);
+}
+
+function openVideo(ytId) {
+  document.getElementById('videoFrame').src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1`;
+  document.getElementById('videoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeVideoModal(e) {
+  if (e && e.target !== document.getElementById('videoModal') && !e.target.classList.contains('video-modal-close')) return;
+  document.getElementById('videoFrame').src = '';
+  document.getElementById('videoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('videoModal').classList.contains('open')) closeVideoModal();
+});
+
+load();
+</script>
+</body>
+</html>

@@ -82,7 +82,7 @@ async function loadSection(name) {
     case 'agenda':      await loadAgenda(); break;
     case 'deputes':     await loadDeputes(); break;
     case 'messages':    await loadMessages(); break;
-    case 'media':       await loadMediaLibrary(); break;
+    case 'media':       await loadMediaSection(); break;
     case 'live':        await loadLive(); break;
     case 'parametres':  await loadParametres(); break;
   }
@@ -1399,50 +1399,200 @@ function exportMessagesCSV() {
 // =========================================
 // MÉDIATHÈQUE
 // =========================================
-async function loadMediaLibrary() {
-  const el = document.getElementById('media-list');
+// =============================================
+// MÉDIATHÈQUE — Photos & Vidéos
+// =============================================
+
+async function loadMediaSection() {
+  await Promise.all([loadMediaPhotos(), loadMediaVideos()]);
+}
+
+function switchMediaTab(tab) {
+  document.getElementById('media-panel-photos').style.display = tab === 'photos' ? 'block' : 'none';
+  document.getElementById('media-panel-videos').style.display = tab === 'videos' ? 'block' : 'none';
+  document.getElementById('media-tab-photos').className = 'btn ' + (tab === 'photos' ? 'btn-primary' : 'btn-ghost');
+  document.getElementById('media-tab-videos').className = 'btn ' + (tab === 'videos' ? 'btn-primary' : 'btn-ghost');
+}
+
+/* ── PHOTOS ── */
+async function loadMediaPhotos() {
+  const el = document.getElementById('media-photo-list');
   if (!el) return;
   el.innerHTML = loadingHTML();
+  const { data, error } = await db.from('media_photos').select('*').order('taken_at', { ascending: false });
+  if (error) { el.innerHTML = emptyHTML('Erreur : ' + error.message); return; }
+  if (!data?.length) { el.innerHTML = emptyHTML('Aucune photo. Cliquez sur « Ajouter une photo ».'); return; }
 
-  const folders = ['slides', 'actualites', 'bureau', 'general'];
-  const allFiles = [];
-
-  for (const folder of folders) {
-    const { data, error } = await db.storage.from(BUCKET).list(folder, {
-      limit: 100,
-      sortBy: { column: 'created_at', order: 'desc' },
-    });
-    if (!error && data) {
-      data.filter(f => f.name && !f.name.startsWith('.')).forEach(f => {
-        const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(`${folder}/${f.name}`);
-        allFiles.push({ ...f, folder, publicUrl });
-      });
-    }
-  }
-
-  if (!allFiles.length) {
-    el.innerHTML = emptyHTML('Aucun fichier dans la médiathèque. Uploadez des images via les formulaires.');
-    return;
-  }
-
-  el.innerHTML = `
-    <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:#fafafa;">
-      <span style="font-size:.85rem;color:var(--muted);">${allFiles.length} fichier(s)</span>
-      <span style="font-size:.75rem;color:#94a3b8;">Cliquez sur « Copier URL » pour insérer une image dans un article.</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;padding:20px;">
-      ${allFiles.map(f => `
-        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;">
-          <div style="height:120px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-            <img src="${esc(f.publicUrl)}" alt="${esc(f.name)}" style="max-width:100%;max-height:120px;object-fit:cover;" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='🖼️'">
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:20px;">
+    ${data.map(p => `
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;">
+        <div style="height:140px;background:#f1f5f9;overflow:hidden;">
+          ${p.photo_url
+            ? `<img src="${esc(p.photo_url)}" alt="${esc(p.title)}" style="width:100%;height:140px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'">`
+            : `<div style="height:140px;display:flex;align-items:center;justify-content:center;font-size:2rem;">📷</div>`}
+        </div>
+        <div style="padding:10px;">
+          <p style="font-size:.82rem;font-weight:600;margin:0 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.title)}</p>
+          <p style="font-size:.72rem;color:var(--muted);margin:0 0 8px;">
+            <span style="background:#dcfce7;color:#166534;padding:1px 7px;border-radius:10px;font-size:.68rem;">${esc(p.category)}</span>
+            ${p.taken_at ? ' · ' + new Date(p.taken_at).toLocaleDateString('fr-FR') : ''}
+          </p>
+          <div style="display:flex;gap:6px;">
+            <button onclick="editMediaPhoto('${p.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">✏️ Modifier</button>
+            <button onclick="deleteMediaPhoto('${p.id}')" class="btn btn-sm" style="flex:1;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑️</button>
           </div>
-          <div style="padding:8px;">
-            <p style="font-size:.7rem;color:var(--muted);margin:0 0 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.name)}">${esc(f.name)}</p>
-            <p style="font-size:.68rem;color:#94a3b8;margin:0 0 8px;">📁 ${f.folder}</p>
-            <button onclick="copyToClipboard('${esc(f.publicUrl)}')" class="btn btn-ghost btn-sm" style="width:100%;font-size:.72rem;padding:5px;">📋 Copier URL</button>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function openMediaPhotoModal(photo) {
+  document.getElementById('photoModalTitle').textContent = photo ? 'Modifier la photo' : 'Ajouter une photo';
+  document.getElementById('photo-id').value = photo?.id || '';
+  document.getElementById('photo-title').value = photo?.title || '';
+  document.getElementById('photo-url').value = photo?.photo_url || '';
+  document.getElementById('photo-category').value = photo?.category || 'Session';
+  document.getElementById('photo-taken-at').value = photo?.taken_at || '';
+  document.getElementById('photo-description').value = photo?.description || '';
+  previewPhoto(photo?.photo_url || '');
+  document.getElementById('modalMediaPhoto').classList.remove('hidden');
+}
+
+function closeMediaPhotoModal() { document.getElementById('modalMediaPhoto').classList.add('hidden'); }
+
+function previewPhoto(url) {
+  const img = document.getElementById('photo-preview');
+  if (url && url.startsWith('http')) { img.src = url; img.style.display = 'block'; }
+  else { img.style.display = 'none'; }
+}
+
+async function editMediaPhoto(id) {
+  const { data } = await db.from('media_photos').select('*').eq('id', id).single();
+  if (data) openMediaPhotoModal(data);
+}
+
+async function savePhoto() {
+  const id    = document.getElementById('photo-id').value;
+  const title = document.getElementById('photo-title').value.trim();
+  const url   = document.getElementById('photo-url').value.trim();
+  if (!title || !url) { toast('Titre et URL sont obligatoires', 'error'); return; }
+
+  const payload = {
+    title,
+    photo_url:   url,
+    category:    document.getElementById('photo-category').value,
+    taken_at:    document.getElementById('photo-taken-at').value || null,
+    description: document.getElementById('photo-description').value.trim() || null,
+  };
+
+  const { error } = id
+    ? await db.from('media_photos').update(payload).eq('id', id)
+    : await db.from('media_photos').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('✓ Photo enregistrée', 'success');
+  closeMediaPhotoModal();
+  loadMediaPhotos();
+}
+
+async function deleteMediaPhoto(id) {
+  if (!confirm('Supprimer cette photo ?')) return;
+  const { error } = await db.from('media_photos').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Photo supprimée', 'success');
+  loadMediaPhotos();
+}
+
+/* ── VIDÉOS ── */
+async function loadMediaVideos() {
+  const el = document.getElementById('media-video-list');
+  if (!el) return;
+  el.innerHTML = loadingHTML();
+  const { data, error } = await db.from('media_videos').select('*').order('published_at', { ascending: false });
+  if (error) { el.innerHTML = emptyHTML('Erreur : ' + error.message); return; }
+  if (!data?.length) { el.innerHTML = emptyHTML('Aucune vidéo. Cliquez sur « Ajouter une vidéo ».'); return; }
+
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:20px;">
+    ${data.map(v => `
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;">
+        <div style="position:relative;aspect-ratio:16/9;background:#0f172a;overflow:hidden;">
+          <img src="https://img.youtube.com/vi/${esc(v.youtube_id)}/mqdefault.jpg" alt="${esc(v.title)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;">
+            <a href="https://youtu.be/${esc(v.youtube_id)}" target="_blank" rel="noopener" style="width:40px;height:40px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#009A44" style="margin-left:3px"><path d="M8 5v14l11-7z"/></svg>
+            </a>
           </div>
-        </div>`).join('')}
-    </div>`;
+        </div>
+        <div style="padding:10px;">
+          <p style="font-size:.82rem;font-weight:600;margin:0 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(v.title)}</p>
+          <p style="font-size:.72rem;color:var(--muted);margin:0 0 8px;">
+            <span style="background:#dcfce7;color:#166534;padding:1px 7px;border-radius:10px;font-size:.68rem;">${esc(v.category)}</span>
+            ${v.published_at ? ' · ' + new Date(v.published_at).toLocaleDateString('fr-FR') : ''}
+          </p>
+          <div style="display:flex;gap:6px;">
+            <button onclick="editMediaVideo('${v.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">✏️ Modifier</button>
+            <button onclick="deleteMediaVideo('${v.id}')" class="btn btn-sm" style="flex:1;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑️</button>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function openMediaVideoModal(video) {
+  document.getElementById('videoModalTitle').textContent = video ? 'Modifier la vidéo' : 'Ajouter une vidéo';
+  document.getElementById('video-id').value = video?.id || '';
+  document.getElementById('video-title').value = video?.title || '';
+  document.getElementById('video-youtube-id').value = video?.youtube_id || '';
+  document.getElementById('video-category').value = video?.category || 'Séances plénières';
+  document.getElementById('video-published-at').value = video?.published_at || '';
+  document.getElementById('video-description').value = video?.description || '';
+  previewVideo(video?.youtube_id || '');
+  document.getElementById('modalMediaVideo').classList.remove('hidden');
+}
+
+function closeMediaVideoModal() { document.getElementById('modalMediaVideo').classList.add('hidden'); }
+
+function previewVideo(ytId) {
+  const img = document.getElementById('video-preview');
+  if (ytId && ytId.length >= 6) { img.src = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`; img.style.display = 'block'; }
+  else { img.style.display = 'none'; }
+}
+
+async function editMediaVideo(id) {
+  const { data } = await db.from('media_videos').select('*').eq('id', id).single();
+  if (data) openMediaVideoModal(data);
+}
+
+async function saveVideo() {
+  const id    = document.getElementById('video-id').value;
+  const title = document.getElementById('video-title').value.trim();
+  const ytId  = document.getElementById('video-youtube-id').value.trim();
+  if (!title || !ytId) { toast('Titre et ID YouTube sont obligatoires', 'error'); return; }
+
+  const payload = {
+    title,
+    youtube_id:   ytId,
+    category:     document.getElementById('video-category').value,
+    published_at: document.getElementById('video-published-at').value || null,
+    description:  document.getElementById('video-description').value.trim() || null,
+  };
+
+  const { error } = id
+    ? await db.from('media_videos').update(payload).eq('id', id)
+    : await db.from('media_videos').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('✓ Vidéo enregistrée', 'success');
+  closeMediaVideoModal();
+  loadMediaVideos();
+}
+
+async function deleteMediaVideo(id) {
+  if (!confirm('Supprimer cette vidéo ?')) return;
+  const { error } = await db.from('media_videos').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Vidéo supprimée', 'success');
+  loadMediaVideos();
 }
 
 function copyToClipboard(text) {

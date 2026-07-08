@@ -356,15 +356,126 @@
 
       <!-- ==== MÉDIATHÈQUE ==== -->
       <div id="section-media" class="section hidden">
-        <div class="section-card">
-          <div class="section-card-header">
-            <div class="section-card-title">🖼️ Médiathèque</div>
+
+        <!-- TABS -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;">
+          <button class="btn btn-primary" id="media-tab-photos" onclick="switchMediaTab('photos')">📷 Photos</button>
+          <button class="btn btn-ghost" id="media-tab-videos" onclick="switchMediaTab('videos')">🎬 Vidéos</button>
+        </div>
+
+        <!-- ── PHOTOS ── -->
+        <div id="media-panel-photos">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="section-card-title">📷 Galerie Photos</div>
+              <button class="btn btn-primary" onclick="openMediaPhotoModal()">+ Ajouter une photo</button>
+            </div>
+            <div id="media-photo-list">
+              <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+            </div>
           </div>
-          <div style="padding:16px 20px 8px;background:#eff6ff;border-bottom:1px solid var(--border);font-size:.82rem;color:#1e40af;">
-            💡 Toutes les images uploadées via les formulaires sont listées ici. Copiez l'URL pour l'insérer dans vos articles.
+        </div>
+
+        <!-- ── VIDÉOS ── -->
+        <div id="media-panel-videos" style="display:none">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="section-card-title">🎬 Galerie Vidéos YouTube</div>
+              <button class="btn btn-primary" onclick="openMediaVideoModal()">+ Ajouter une vidéo</button>
+            </div>
+            <div style="padding:12px 20px;background:#eff6ff;border-bottom:1px solid var(--border);font-size:.8rem;color:#1e40af;">
+              💡 Entrez uniquement l'ID YouTube (ex : <strong>dQw4w9WgXcQ</strong> dans youtube.com/watch?v=<strong>dQw4w9WgXcQ</strong>)
+            </div>
+            <div id="media-video-list">
+              <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+            </div>
           </div>
-          <div id="media-list">
-            <div class="loading-state"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+        </div>
+
+      </div>
+
+      <!-- Modal Photo -->
+      <div class="modal-overlay hidden" id="modalMediaPhoto">
+        <div class="modal" style="max-width:560px">
+          <div class="modal-header">
+            <h2 class="modal-title" id="photoModalTitle">Ajouter une photo</h2>
+            <button class="modal-close" onclick="closeMediaPhotoModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="photo-id">
+            <div class="form-group">
+              <label class="form-label">Titre *</label>
+              <input type="text" class="form-input" id="photo-title" placeholder="Ex : Séance plénière — Budget 2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label">URL de la photo *</label>
+              <input type="url" class="form-input" id="photo-url" placeholder="https://…" oninput="previewPhoto(this.value)">
+              <img id="photo-preview" src="" alt="" style="display:none;margin-top:8px;max-height:180px;border-radius:8px;object-fit:cover;width:100%">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Catégorie</label>
+              <select class="form-input" id="photo-category">
+                <option>Session</option>
+                <option>Visites officielles</option>
+                <option>Événements</option>
+                <option>Commissions</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date de la prise de vue</label>
+              <input type="date" class="form-input" id="photo-taken-at">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description (optionnel)</label>
+              <textarea class="form-input" id="photo-description" rows="2" placeholder="Légende de la photo…"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeMediaPhotoModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="savePhoto()">💾 Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Vidéo -->
+      <div class="modal-overlay hidden" id="modalMediaVideo">
+        <div class="modal" style="max-width:560px">
+          <div class="modal-header">
+            <h2 class="modal-title" id="videoModalTitle">Ajouter une vidéo</h2>
+            <button class="modal-close" onclick="closeMediaVideoModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="video-id">
+            <div class="form-group">
+              <label class="form-label">Titre *</label>
+              <input type="text" class="form-input" id="video-title" placeholder="Ex : Séance plénière — Janvier 2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ID YouTube *</label>
+              <input type="text" class="form-input" id="video-youtube-id" placeholder="dQw4w9WgXcQ" oninput="previewVideo(this.value)">
+              <img id="video-preview" src="" alt="" style="display:none;margin-top:8px;border-radius:8px;width:100%;aspect-ratio:16/9;object-fit:cover">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Catégorie</label>
+              <select class="form-input" id="video-category">
+                <option>Séances plénières</option>
+                <option>Commissions</option>
+                <option>Congrès</option>
+                <option>Conférences</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date de publication</label>
+              <input type="date" class="form-input" id="video-published-at">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description (optionnel)</label>
+              <textarea class="form-input" id="video-description" rows="2" placeholder="Description de la vidéo…"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeMediaVideoModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveVideo()">💾 Enregistrer</button>
           </div>
         </div>
       </div>
