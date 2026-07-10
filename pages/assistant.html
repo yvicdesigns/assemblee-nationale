@@ -343,7 +343,7 @@
         </div>
 
         <div class="cs-footer">
-          Propulsé par l'IA Claude · Anthropic<br>
+          Propulsé par Google Gemini · IA gratuite<br>
           Les réponses sont à titre informatif
         </div>
       </aside>
@@ -424,11 +424,59 @@
 <script src="../js/search.js"></script>
 <script src="../js/main.js"></script>
 <script>
-const EDGE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co/functions/v1/assistant-ia';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+// ── Clé Gemini gratuite — obtenir sur https://aistudio.google.com/apikey ──
+const GEMINI_KEY = 'VOTRE_CLE_GEMINI_ICI'; // https://aistudio.google.com/apikey
 
-let messages = []; // { role: 'user'|'assistant', content: string }
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+
+const SYSTEM_PROMPT = `Tu es AssistAN, l'assistant officiel numérique de l'Assemblée Nationale de la République du Congo (15ème Législature, 2022-2027). Tu aides les citoyens congolais à comprendre leur institution parlementaire.
+
+TU PEUX RÉPONDRE SUR :
+- Le rôle, l'histoire et le fonctionnement de l'Assemblée Nationale
+- La Constitution de la République du Congo (promulguée le 6 novembre 2015)
+- Les procédures législatives : dépôt de projet de loi, lecture, vote, promulgation
+- Les 151 députés élus au suffrage universel direct et leurs circonscriptions
+- Les 8 commissions permanentes et leurs attributions
+- Le Bureau de l'Assemblée (Président, Vice-Présidents, Secrétaires, Questeurs)
+- Les sessions parlementaires : session de mars (printemps) et session d'octobre (automne)
+- Les traités ratifiés, décrets, lois organiques et lois ordinaires
+- Les droits des pétitionnaires et voies de recours des citoyens
+
+INFORMATIONS CLÉS :
+- 151 députés, mandat de 5 ans, 15ème Législature 2022-2027
+- Siège : Rond-point de la place de la République, Brazzaville
+- 12 départements : Brazzaville, Pointe-Noire, Bouenza, Cuvette, Cuvette-Ouest, Kouilou, Lékoumou, Likouala, Niari, Plateaux, Sangha, Pool
+- 8 commissions permanentes : Économie et Finances, Lois et Libertés, Affaires étrangères, Défense nationale, Santé et Action sociale, Éducation et Culture, Agriculture et Développement rural, Infrastructure et Aménagement du territoire
+
+RÈGLES :
+1. Réponds TOUJOURS en français, avec un langage clair et accessible
+2. Sois précis, professionnel, bienveillant — tu représentes une institution de la République
+3. Ne prends JAMAIS position politiquement
+4. Si tu n'as pas une information précise : "Je n'ai pas cette information précise, contactez le greffe de l'Assemblée Nationale"
+5. Limite tes réponses à 2-4 paragraphes sauf si une liste est plus claire
+6. Ne réponds pas aux questions hors sujet parlementaire congolais`;
+
+let messages = [];
 let isLoading = false;
+
+async function callGemini(msgs) {
+  const contents = msgs.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
+  const res = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: contents.slice(-12),
+      generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Erreur de réponse de l'IA.";
+}
 
 function now() {
   return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
@@ -460,63 +508,43 @@ function clearChat() {
 }
 
 function appendMessage(role, text) {
-  const wb = document.getElementById('welcomeBlock');
-  if (wb) wb.remove();
-
+  document.getElementById('welcomeBlock')?.remove();
   const box = document.getElementById('chatMessages');
   const div = document.createElement('div');
   div.className = 'msg ' + role;
-
-  const avatarIcon = role === 'bot' ? '🤖' : '👤';
+  const icon   = role === 'bot' ? '🤖' : '👤';
   const bubble = role === 'bot' ? formatText(text) : escHtml(text);
-
   div.innerHTML = `
-    <div class="msg-avatar">${avatarIcon}</div>
+    <div class="msg-avatar">${icon}</div>
     <div>
       <div class="msg-bubble">${bubble}</div>
       <div class="msg-time">${now()}</div>
     </div>`;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
-  return div;
 }
 
 function showTyping() {
-  const wb = document.getElementById('welcomeBlock');
-  if (wb) wb.remove();
+  document.getElementById('welcomeBlock')?.remove();
   const box = document.getElementById('chatMessages');
   const div = document.createElement('div');
-  div.className = 'msg bot';
-  div.id = 'typing-indicator';
-  div.innerHTML = `
-    <div class="msg-avatar">🤖</div>
-    <div>
-      <div class="msg-bubble">
-        <div class="typing-dots"><span></span><span></span><span></span></div>
-      </div>
-    </div>`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+  div.className = 'msg bot'; div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar">🤖</div>
+    <div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+  box.appendChild(div); box.scrollTop = box.scrollHeight;
 }
 
-function removeTyping() {
-  document.getElementById('typing-indicator')?.remove();
-}
+function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
 
-function formatText(text) {
-  // Simple markdown-like formatting
-  return text
+function formatText(t) {
+  return t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^### (.+)$/gm, '<strong>$1</strong>')
-    .replace(/^## (.+)$/gm, '<strong>$1</strong>')
-    .replace(/^# (.+)$/gm, '<strong>$1</strong>')
-    .replace(/^- (.+)$/gm, '• $1')
-    .replace(/^\d+\. (.+)$/gm, (m, p) => m)
-    .replace(/\n{2,}/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>').replace(/$/, '</p>');
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>')
+    .replace(/^- (.+)$/gm,'• $1')
+    .replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>')
+    .replace(/^/,'<p>').replace(/$/,'</p>');
 }
 
 function escHtml(t) {
@@ -526,42 +554,25 @@ function escHtml(t) {
 async function sendMessage() {
   if (isLoading) return;
   const input = document.getElementById('chatInput');
-  const text = input.value.trim();
+  const text  = input.value.trim();
   if (!text) return;
 
-  input.value = '';
-  input.style.height = 'auto';
+  input.value = ''; input.style.height = 'auto';
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
 
   appendMessage('user', text);
   messages.push({ role: 'user', content: text });
-
   showTyping();
 
   try {
-    const res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'apikey': SUPABASE_KEY,
-      },
-      body: JSON.stringify({ messages }),
-    });
-
-    const data = await res.json();
+    const reply = await callGemini(messages);
     removeTyping();
-
-    if (data.reply) {
-      messages.push({ role: 'assistant', content: data.reply });
-      appendMessage('bot', data.reply);
-    } else {
-      appendMessage('bot', "Je suis désolé, je n'ai pas pu traiter votre demande. Veuillez réessayer.");
-    }
-  } catch {
+    messages.push({ role: 'assistant', content: reply });
+    appendMessage('bot', reply);
+  } catch (err) {
     removeTyping();
-    appendMessage('bot', "❌ Une erreur de connexion s'est produite. Vérifiez votre connexion internet et réessayez.");
+    appendMessage('bot', `❌ Erreur : ${err.message}. Vérifiez que la clé Gemini est correctement configurée.`);
   }
 
   isLoading = false;

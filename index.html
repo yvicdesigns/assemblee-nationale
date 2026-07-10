@@ -1651,8 +1651,31 @@ async function subscribeNewsletter(e) {
 
 <script>
 (function () {
-  const EDGE_URL  = 'https://djqrmcuagrfvahmcwbro.supabase.co/functions/v1/assistant-ia';
-  const ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+  // ── Même clé que pages/assistant.html ──
+  const GEMINI_KEY = 'VOTRE_CLE_GEMINI_ICI'; // https://aistudio.google.com/apikey
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+
+  const SYS = `Tu es AssistAN, l'assistant officiel numérique de l'Assemblée Nationale de la République du Congo (15ème Législature 2022-2027). Tu aides les citoyens congolais à comprendre leur institution parlementaire : rôle de l'AN, Constitution 2015, procédure législative, 151 députés, 8 commissions permanentes, sessions parlementaires, traités, lois organiques. Réponds TOUJOURS en français, de façon professionnelle et accessible. Ne prends jamais position politiquement. Maximum 3 paragraphes.`;
+
+  async function callGemini(msgs) {
+    const contents = msgs.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
+    const res = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: SYS }] },
+        contents: contents.slice(-8),
+        generationConfig: { maxOutputTokens: 512, temperature: 0.7 }
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Erreur de réponse.";
+  }
+
   let cwpMsgs = [];
   let cwpLoading = false;
 
@@ -1684,19 +1707,13 @@ async function subscribeNewsletter(e) {
     cwpShowTyping();
 
     try {
-      const res  = await fetch(EDGE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ANON_KEY, 'apikey': ANON_KEY },
-        body: JSON.stringify({ messages: cwpMsgs }),
-      });
-      const data = await res.json();
+      const reply = await callGemini(cwpMsgs);
       cwpRemoveTyping();
-      const reply = data.reply || "Je suis désolé, une erreur s'est produite.";
       cwpMsgs.push({ role: 'assistant', content: reply });
       cwpAppend('bot', reply);
-    } catch {
+    } catch (err) {
       cwpRemoveTyping();
-      cwpAppend('bot', "❌ Erreur de connexion. Réessayez dans un instant.");
+      cwpAppend('bot', "❌ Erreur IA. Vérifiez la clé Gemini ou réessayez.");
     }
 
     cwpLoading  = false;
@@ -1707,9 +1724,10 @@ async function subscribeNewsletter(e) {
     const box = document.getElementById('cwpMessages');
     const d   = document.createElement('div');
     d.className = 'cwp-msg ' + role;
-    const icon   = role === 'bot' ? '🤖' : '👤';
+    const icon    = role === 'bot' ? '🤖' : '👤';
     const content = role === 'bot'
-      ? text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')
+      ? text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')
       : text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     d.innerHTML = `<div class="cwp-msg-av">${icon}</div><div class="cwp-bubble">${content}</div>`;
     box.appendChild(d);
