@@ -1,5 +1,5 @@
-// Vercel Serverless Function — proxy Gemini API
-// La clé est dans Vercel Dashboard → Settings → Environment Variables → GEMINI_KEY
+// Vercel Serverless Function — proxy Groq API (gratuit, aucune CB)
+// La clé est dans Vercel Dashboard → Settings → Environment Variables → GROQ_KEY
 
 const SYSTEM = `Tu es AssistAN, l'assistant officiel numérique de l'Assemblée Nationale de la République du Congo (15ème Législature, 2022-2027). Tu aides les citoyens congolais à comprendre leur institution parlementaire.
 
@@ -36,46 +36,41 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const GEMINI_KEY = process.env.GEMINI_KEY;
-  if (!GEMINI_KEY) {
-    return res.status(500).json({ error: 'Clé API non configurée dans Vercel' });
+  const GROQ_KEY = process.env.GROQ_KEY;
+  if (!GROQ_KEY) {
+    return res.status(500).json({ error: 'Clé GROQ_KEY non configurée dans Vercel Dashboard' });
   }
 
   try {
     const { messages } = req.body;
     if (!messages?.length) return res.status(400).json({ error: 'Messages manquants' });
 
-    const contents = messages.slice(-12).map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
-    }));
+    const groqMessages = [
+      { role: 'system', content: SYSTEM },
+      ...messages.slice(-12).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content }))
+    ];
 
-    // Modèles disponibles gratuits sur AI Studio (ordre de préférence)
-    const models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite'];
-    const errors = [];
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: groqMessages,
+        max_tokens: 1024,
+        temperature: 0.7
+      })
+    });
 
-    for (const model of models) {
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            system_instruction: { parts: [{ text: SYSTEM }] },
-            contents,
-            generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
-          })
-        }
-      );
+    const data = await groqRes.json();
+    if (data.error) return res.status(500).json({ error: data.error.message });
 
-      const data = await geminiRes.json();
-      if (data.error) { errors.push(`[${model}] ${data.error.message}`); continue; }
+    const reply = data.choices?.[0]?.message?.content;
+    if (!reply) return res.status(500).json({ error: 'Réponse vide du modèle' });
 
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (reply) return res.status(200).json({ reply });
-    }
-
-    return res.status(500).json({ error: errors[0] || 'Tous les modèles ont échoué', details: errors });
+    return res.status(200).json({ reply });
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
