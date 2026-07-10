@@ -2651,6 +2651,11 @@ section:nth-child(even) { background: var(--gris-c); }
   background: rgba(0,154,68,0.4) !important;
   transform: translateX(-50%) scale(1.1) !important;
 }
+/* Cacher le bouton collapse quand le menu hamburger est ouvert */
+.site-header:has(.main-nav.open) .nav-collapse-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .nav-collapse-icon {
   display: block;
   width: 14px; height: 2px;
