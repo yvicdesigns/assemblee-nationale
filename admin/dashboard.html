@@ -121,6 +121,11 @@
         <span class="nav-badge" id="badge-seances">—</span>
       </button>
 
+      <button class="nav-item" data-section="groupes">
+        <span class="nav-icon">🎯</span> Groupes parlementaires
+        <span class="nav-badge" id="badge-groupes">—</span>
+      </button>
+
       <div class="sidebar-section-label">Médias</div>
       <button class="nav-item" data-section="media">
         <span class="nav-icon">🖼️</span> Médiathèque
@@ -736,6 +741,76 @@
           <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeSeanceModal()">Annuler</button>
             <button class="btn btn-primary" onclick="saveSeance()">💾 Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== GROUPES PARLEMENTAIRES ==== -->
+      <div id="section-groupes" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🎯 Groupes parlementaires</div>
+            <button class="btn btn-primary" onclick="openGroupeModal()">+ Ajouter un groupe</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Couleur</th><th>Sigle</th><th>Nom</th><th>Président</th><th>Membres</th><th style="width:100px">Actions</th>
+              </tr></thead>
+              <tbody id="groupe-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Modal Groupe ── -->
+      <div class="modal-overlay hidden" id="groupeModalOverlay" onclick="if(event.target===this)closeGroupeModal()">
+        <div class="modal" style="max-width:520px">
+          <div class="modal-header">
+            <div class="modal-title" id="groupeModalTitle">Nouveau groupe</div>
+            <button class="modal-close" onclick="closeGroupeModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="form-group">
+                <label class="form-label">Nom complet *</label>
+                <input id="grp-nom" class="input" placeholder="Nom du groupe">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sigle</label>
+                <input id="grp-sigle" class="input" placeholder="RCD, PCT…" maxlength="10">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+              <div class="form-group">
+                <label class="form-label">Couleur</label>
+                <input id="grp-couleur" class="input" type="color" value="#009A44" style="height:38px;padding:2px 6px;cursor:pointer">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nb membres</label>
+                <input id="grp-membres" class="input" type="number" min="0" max="151" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ordre d'affichage</label>
+                <input id="grp-ordre" class="input" type="number" min="0" placeholder="1">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Président du groupe</label>
+              <input id="grp-president" class="input" placeholder="Prénom NOM">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Secrétaire du groupe</label>
+              <input id="grp-secretaire" class="input" placeholder="Prénom NOM">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea id="grp-description" class="input" rows="3" style="resize:vertical" placeholder="Courte description du groupe…"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeGroupeModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveGroupe()">💾 Enregistrer</button>
           </div>
         </div>
       </div>

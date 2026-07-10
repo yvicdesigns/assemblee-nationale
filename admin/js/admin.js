@@ -60,6 +60,7 @@ const TITLES = {
   live:       '🔴 En Direct',
   archives:   '📂 Archives & Documents',
   seances:    '🏛️ Séances plénières',
+  groupes:    '🎯 Groupes parlementaires',
   parametres: '⚙️ Paramètres généraux',
 };
 
@@ -88,6 +89,7 @@ async function loadSection(name) {
     case 'media':       await loadMediaSection(); break;
     case 'archives':    await loadArchives(); break;
     case 'seances':     await loadSeances(); break;
+    case 'groupes':     await loadGroupes(); break;
     case 'live':        await loadLive(); break;
     case 'parametres':  await loadParametres(); break;
   }
@@ -1988,4 +1990,114 @@ async function deleteSeance(id) {
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
   toast('Séance supprimée', 'success');
   loadSeances();
+}
+
+// =========================================
+// GROUPES PARLEMENTAIRES
+// =========================================
+let groupesData = [];
+let groupeEditingId = null;
+
+async function loadGroupes() {
+  const el = document.getElementById('groupe-list');
+  if (el) el.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('groupes_parlementaires')
+    .select('*').order('ordre', { ascending: true });
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  groupesData = data || [];
+
+  const badge = document.getElementById('badge-groupes');
+  if (badge) badge.textContent = groupesData.length;
+
+  renderGroupes();
+}
+
+function renderGroupes() {
+  const el = document.getElementById('groupe-list');
+  if (!el) return;
+  if (!groupesData.length) {
+    el.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Aucun groupe</td></tr>';
+    return;
+  }
+  el.innerHTML = groupesData.map(g => `<tr>
+    <td><div style="width:24px;height:24px;border-radius:6px;background:${g.couleur}"></div></td>
+    <td><strong>${g.sigle || '—'}</strong></td>
+    <td style="font-size:.82rem">${g.nom}</td>
+    <td style="font-size:.78rem">${g.president || '—'}</td>
+    <td><span class="status-badge status-published">${g.nb_membres} sièges</span></td>
+    <td>
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:.75rem" onclick="editGroupe('${g.id}')">✏️</button>
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:.75rem;color:#dc2626" onclick="deleteGroupe('${g.id}')">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+
+function openGroupeModal() {
+  groupeEditingId = null;
+  document.getElementById('groupeModalTitle').textContent = 'Nouveau groupe';
+  document.getElementById('grp-nom').value         = '';
+  document.getElementById('grp-sigle').value       = '';
+  document.getElementById('grp-couleur').value     = '#009A44';
+  document.getElementById('grp-membres').value     = '';
+  document.getElementById('grp-ordre').value       = '';
+  document.getElementById('grp-president').value   = '';
+  document.getElementById('grp-secretaire').value  = '';
+  document.getElementById('grp-description').value = '';
+  document.getElementById('groupeModalOverlay').classList.remove('hidden');
+}
+
+async function editGroupe(id) {
+  const g = groupesData.find(x => x.id === id);
+  if (!g) return;
+  groupeEditingId = id;
+  document.getElementById('groupeModalTitle').textContent  = 'Modifier le groupe';
+  document.getElementById('grp-nom').value         = g.nom || '';
+  document.getElementById('grp-sigle').value       = g.sigle || '';
+  document.getElementById('grp-couleur').value     = g.couleur || '#009A44';
+  document.getElementById('grp-membres').value     = g.nb_membres || 0;
+  document.getElementById('grp-ordre').value       = g.ordre || 0;
+  document.getElementById('grp-president').value   = g.president || '';
+  document.getElementById('grp-secretaire').value  = g.secretaire || '';
+  document.getElementById('grp-description').value = g.description || '';
+  document.getElementById('groupeModalOverlay').classList.remove('hidden');
+}
+
+function closeGroupeModal() {
+  document.getElementById('groupeModalOverlay').classList.add('hidden');
+  groupeEditingId = null;
+}
+
+async function saveGroupe() {
+  const nom = document.getElementById('grp-nom').value.trim();
+  if (!nom) { toast('Le nom est obligatoire', 'error'); return; }
+
+  const payload = {
+    nom,
+    sigle:       document.getElementById('grp-sigle').value.trim() || null,
+    couleur:     document.getElementById('grp-couleur').value,
+    nb_membres:  parseInt(document.getElementById('grp-membres').value) || 0,
+    ordre:       parseInt(document.getElementById('grp-ordre').value) || 0,
+    president:   document.getElementById('grp-president').value.trim() || null,
+    secretaire:  document.getElementById('grp-secretaire').value.trim() || null,
+    description: document.getElementById('grp-description').value.trim() || null,
+  };
+
+  const { error } = groupeEditingId
+    ? await db.from('groupes_parlementaires').update(payload).eq('id', groupeEditingId)
+    : await db.from('groupes_parlementaires').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(groupeEditingId ? 'Groupe mis à jour' : 'Groupe ajouté', 'success');
+  closeGroupeModal();
+  loadGroupes();
+}
+
+async function deleteGroupe(id) {
+  if (!confirm('Supprimer ce groupe ?')) return;
+  const { error } = await db.from('groupes_parlementaires').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Groupe supprimé', 'success');
+  loadGroupes();
 }
