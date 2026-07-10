@@ -2145,9 +2145,9 @@ section:nth-child(even) { background: var(--gris-c); }
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
   max-width: 1480px !important;
-  background: rgba(8,12,15,0.72) !important;
-  backdrop-filter: blur(28px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  background: rgba(8,12,15,0.96) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
   border: 1px solid rgba(255,255,255,0.1) !important;
   border-radius: 50px !important;
   box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08) !important;
@@ -2511,9 +2511,9 @@ section:nth-child(even) { background: var(--gris-c); }
 
   /* ── Nav : pill avec hauteur généreuse ── */
   .site-header .main-nav {
-    background: rgba(8,12,15,0.80) !important;
-    backdrop-filter: blur(28px) saturate(190%) !important;
-    -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+    background: rgba(8,12,15,0.96) !important;
+    backdrop-filter: blur(12px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     border-radius: 50px !important;
     box-shadow: 0 6px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07) !important;
@@ -2670,46 +2670,60 @@ section:nth-child(even) { background: var(--gris-c); }
   pointer-events: none !important;
 }
 
-/* Mini pill flottante quand nav cachée */
+/* Bulle flottante quand nav cachée */
 .nav-restore-btn {
   position: fixed;
-  top: 16px;
+  top: 20px;
   left: 50%;
-  transform: translateX(-50%) translateY(-20px);
+  transform: translateX(-50%) translateY(-90px) scale(0.5);
   z-index: 1002;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 20px;
-  background: rgba(8,12,15,0.85);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 50px;
-  box-shadow: 0 6px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #0d2b14, #0a3d1f);
+  border: 2px solid rgba(0,184,74,0.4);
+  box-shadow: 0 8px 24px rgba(0,154,68,0.4), 0 2px 8px rgba(0,0,0,0.5);
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: opacity 0.3s ease, transform 0.45s cubic-bezier(0.34,1.4,0.64,1);
 }
 .nav-restore-btn.visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%) translateY(0) scale(1);
+  animation: navBubbleFloat 3s ease-in-out infinite;
 }
-.nav-restore-flag { font-size: 1rem; }
-.nav-restore-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: rgba(255,255,255,0.8);
-  letter-spacing: 0.3px;
-  font-family: var(--font);
+/* Anneaux pulsants */
+.nav-restore-btn::before,
+.nav-restore-btn::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,184,74,0.3);
+  pointer-events: none;
+  animation: navBubbleRing 3s ease-in-out infinite;
 }
-.nav-restore-arrow {
-  font-size: 0.7rem;
-  color: #00e676;
-  font-weight: 700;
+.nav-restore-btn::before { inset: -9px; }
+.nav-restore-btn::after  { inset: -18px; border-color: rgba(0,184,74,0.14); animation-delay: 0.4s; }
+
+@keyframes navBubbleFloat {
+  0%,100% { transform: translateX(-50%) translateY(0)    scale(1);    box-shadow: 0 8px 24px rgba(0,154,68,.4), 0 2px 8px rgba(0,0,0,.5); }
+  50%      { transform: translateX(-50%) translateY(-6px) scale(1.04); box-shadow: 0 14px 32px rgba(0,154,68,.55), 0 4px 12px rgba(0,0,0,.5); }
 }
+@keyframes navBubbleRing {
+  0%,100% { transform: scale(1);    opacity: 0.65; }
+  50%      { transform: scale(1.14); opacity: 0; }
+}
+
+.nav-restore-flag  { font-size: 1.15rem; line-height: 1; }
+.nav-restore-label { display: none; }
+.nav-restore-arrow { font-size: 0.58rem; color: #00e676; font-weight: 800; line-height: 1; }
 
 /* Assurer que le site-header a position relative pour le bouton absolu */
 .site-header { position: fixed !important; }
