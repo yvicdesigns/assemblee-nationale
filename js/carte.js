@@ -81,7 +81,7 @@
       if (client) {
         const { data } = await client
           .from('deputes').select('name, constituency, department, groupe, photo_url')
-          .ilike('department', `%${dept}%`).eq('active', true).order('name');
+          .ilike('department', `%${dept}%`).order('name');
         if (data) deputies = data;
       }
     } catch (_) {}
