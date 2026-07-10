@@ -1792,11 +1792,11 @@ async function exportIcal() {
   ];
 
   try {
-    const res  = await fetch(`${SUPA_URL}/rest/v1/slider?select=*&active=eq.true&order=ordre.asc`, {
+    const res  = await fetch(`${SUPA_URL}/rest/v1/slides?select=*&active=eq.true&order=display_order.asc`, {
       headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
     });
     const data = await res.json();
-    // Si la table n'existe pas encore ou est vide → utilise les démos
+    // Si la table est vide ou inaccessible → utilise les démos
     const rows = (Array.isArray(data) && data.length) ? data : DEMO_SLIDES;
     if (!rows.length) return;
 
@@ -1818,6 +1818,8 @@ async function exportIcal() {
         bg.style.backgroundImage = `url('${row.image_url}')`;
         bg.style.backgroundSize  = 'cover';
         bg.style.backgroundPosition = 'center';
+      } else if (row.bg_gradient) {
+        bg.style.background = row.bg_gradient;
       } else {
         bg.style.background = FALLBACK_GRADIENTS[i % FALLBACK_GRADIENTS.length];
       }
@@ -1828,39 +1830,41 @@ async function exportIcal() {
       const content = document.createElement('div');
       content.className = 'slide-content';
 
-      // badge / eyebrow
-      if (row.eyebrow) {
+      // badge — colonne "category" ou "eyebrow"
+      const badgeText = row.category || row.eyebrow;
+      if (badgeText) {
         const badge = document.createElement('span');
         badge.className = 'slide-badge';
-        badge.textContent = row.eyebrow;
+        badge.textContent = badgeText;
         content.appendChild(badge);
       }
 
-      // titre
+      // titre — colonne "title" ou "titre"
+      const titleText = row.title || row.titre || '';
+      const accentText = row.titre_accent || '';
       const title = document.createElement('h2');
       title.className = 'slide-title';
-      title.innerHTML = row.titre + (row.titre_accent ? ` <em style="color:var(--jaune,#c9a227);font-style:normal">${row.titre_accent}</em>` : '');
+      title.innerHTML = titleText + (accentText ? ` <em style="color:var(--jaune,#c9a227);font-style:normal">${accentText}</em>` : '');
       content.appendChild(title);
 
-      // description
-      if (row.description) {
-        const desc = document.createElement('p');
-        desc.className = 'slide-date';
-        desc.textContent = row.description;
-        content.appendChild(desc);
+      // date / description — colonne "date_text" ou "description"
+      const metaText = row.date_text || row.description || '';
+      if (metaText) {
+        const meta = document.createElement('p');
+        meta.className = 'slide-date';
+        meta.textContent = metaText ? '📅 ' + metaText : metaText;
+        content.appendChild(meta);
       }
 
-      // CTA buttons
+      // CTA buttons (colonnes cta1_label / cta1_url)
       if (row.cta1_label) {
         const ctas = document.createElement('div');
         ctas.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;margin-top:18px';
-
         const btn1 = document.createElement('a');
         btn1.href = row.cta1_url || '#';
         btn1.textContent = row.cta1_label;
         btn1.style.cssText = 'display:inline-flex;align-items:center;background:var(--vert,#1a7a3c);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:11px 22px;border-radius:8px;transition:background .2s';
         ctas.appendChild(btn1);
-
         if (row.cta2_label) {
           const btn2 = document.createElement('a');
           btn2.href = row.cta2_url || '#';
