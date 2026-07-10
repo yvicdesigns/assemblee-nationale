@@ -21,6 +21,24 @@ const CATS_COLOR = {
   'Présidence': 'badge-gris',
 };
 const SLIDE_EMOJIS = ['🏛️','📜','🎙️','📢','🤝','🌍','⚖️'];
+
+// Lien principal et secondaire par catégorie
+const SLIDE_CTA = {
+  'Plénière':                   { primary: ['Voir la séance →', 'pages/pleniere.html'],    glass: ['Travaux parlementaires', 'pages/pleniere.html'] },
+  'Actualité':                  { primary: ['En savoir plus →', 'pages/actualites.html'],  glass: ['Travaux parlementaires', 'pages/pleniere.html'] },
+  'Audience':                   { primary: ["Lire l'article →", 'pages/actualites.html'],  glass: ['Coopération', 'pages/actualites.html'] },
+  'Audition':                   { primary: ["Lire l'article →", 'pages/actualites.html'],  glass: ['Les commissions', 'pages/commissions.html'] },
+  'Conférence des Présidents':  { primary: ['En savoir plus →', 'pages/actualites.html'],  glass: ['Agenda', 'pages/agenda.html'] },
+  'Commissions':                { primary: ['Voir les commissions →', 'pages/commissions.html'], glass: ['Les travaux', 'pages/pleniere.html'] },
+};
+const SLIDE_CTA_DEFAULT = { primary: ['En savoir plus →', 'pages/actualites.html'], glass: ['Travaux parlementaires', 'pages/pleniere.html'] };
+
+// Titre avec accent vert sur la partie après « : » ou « — »
+function buildSlideTitle(raw) {
+  const m = raw.match(/^(.*?)\s*(?::\s+|\s+—\s+)(.+)$/);
+  if (!m) return esc(raw);
+  return esc(m[1]) + (raw.includes(':') ? ' : ' : ' — ') + '<span class="slide-title-accent">' + esc(m[2]) + '</span>';
+}
 const NEWS_EMOJIS  = ['🏛️','📋','📊','📜','🌱','🎙️','🏥','🎉','🤝','🏢','🌐','📱','📢','🗓️','📅','⚡','⚖️','🎤','📰'];
 const FALLBACK_GRADIENT = 'linear-gradient(135deg, #0a3d1f, #1a6b36)';
 
@@ -67,6 +85,7 @@ async function loadCMSSlides() {
       ? ''
       : (slide.bg_gradient || FALLBACK_GRADIENT);
 
+    const cta = SLIDE_CTA[slide.category] || SLIDE_CTA_DEFAULT;
     el.innerHTML = `
       <div class="slide-bg" style="${slide.image_url
         ? `background-image:url('${slide.image_url}');background-size:cover;background-position:center;`
@@ -74,8 +93,12 @@ async function loadCMSSlides() {
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <span class="slide-badge">${esc(slide.category || 'Actualité')}</span>
-        <h2 class="slide-title">${esc(slide.title)}</h2>
+        <h2 class="slide-title">${buildSlideTitle(slide.title || '')}</h2>
         ${slide.date_text ? `<p class="slide-date">📅 ${esc(slide.date_text)}</p>` : ''}
+        <div class="slide-cta-group">
+          <a href="${cta.primary[1]}" class="slide-btn-primary">${cta.primary[0]}</a>
+          <a href="${cta.glass[1]}" class="slide-btn-glass">${cta.glass[0]}</a>
+        </div>
       </div>`;
     slider.insertBefore(el, slider.querySelector('.slider-controls'));
   });
