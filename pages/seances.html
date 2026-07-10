@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Séances plénières — Assemblée Nationale</title>
+  <meta name="description" content="Ordre du jour, comptes rendus et archives des séances plénières de l'Assemblée Nationale de la République du Congo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Filtres ── */
+    .seances-filters {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 28px; align-items: center;
+    }
+    .filter-pill {
+      padding: 7px 16px; border-radius: 20px;
+      border: 1.5px solid #e2e8f0; background: #fff;
+      color: #374151; font-size: .8rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .18s;
+    }
+    .filter-pill:hover  { border-color: #009A44; color: #009A44; }
+    .filter-pill.active { background: #009A44; border-color: #009A44; color: #fff; }
+    .filter-pill.active-rouge { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+    /* ── Séances liste ── */
+    .seances-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .seance-card {
+      background: #fff; border: 1px solid #e2e8f0;
+      border-radius: 12px; overflow: hidden;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .seance-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,.09); border-color: #c7e8d3; }
+
+    .seance-card__head {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 22px; cursor: pointer;
+    }
+
+    .seance-date-block {
+      flex-shrink: 0; width: 60px; text-align: center;
+      background: linear-gradient(135deg, #009A44, #1a6b36);
+      color: #fff; border-radius: 10px; padding: 10px 6px;
+    }
+    .seance-date-block.future { background: linear-gradient(135deg, #1d4ed8, #1e40af); }
+    .seance-date-block.extra  { background: linear-gradient(135deg, #9333ea, #7e22ce); }
+    .sdb-day   { font-size: 1.5rem; font-weight: 900; line-height: 1; }
+    .sdb-month { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+    .sdb-year  { font-size: .6rem; color: rgba(255,255,255,.7); margin-top: 1px; }
+
+    .seance-info { flex: 1; min-width: 0; }
+    .seance-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .seance-tag {
+      font-size: .66rem; font-weight: 700; padding: 2px 9px;
+      border-radius: 10px; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .tag-ordinaire    { background: #dcfce7; color: #166534; }
+    .tag-extraordinaire { background: #f3e8ff; color: #7e22ce; }
+    .tag-congres      { background: #fef3c7; color: #d97706; }
+    .tag-terminee     { background: #f1f5f9; color: #64748b; }
+    .tag-a-venir      { background: #dbeafe; color: #1d4ed8; }
+    .tag-en-cours     { background: #fef9c3; color: #854d0e; }
+
+    .seance-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700; color: #1a1a2e;
+      line-height: 1.4; margin-bottom: 6px;
+    }
+    .seance-meta {
+      font-size: .75rem; color: #64748b;
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+    .seance-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .seance-actions {
+      display: flex; flex-direction: column; gap: 6px;
+      align-items: flex-end; flex-shrink: 0;
+    }
+    .btn-odj {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 12px; border-radius: 7px;
+      border: 1.5px solid #e2e8f0; background: #fff;
+      color: #374151; font-size: .75rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .18s;
+      white-space: nowrap;
+    }
+    .btn-odj:hover { border-color: #009A44; color: #009A44; background: #f0fdf4; }
+    .btn-cr {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 12px; border-radius: 7px;
+      background: #009A44; color: #fff;
+      font-size: .75rem; font-weight: 700;
+      text-decoration: none; border: none;
+      cursor: pointer; font-family: inherit; transition: background .18s;
+      white-space: nowrap;
+    }
+    .btn-cr:hover { background: #007a36; }
+    .btn-cr.unavail { background: #f1f5f9; color: #94a3b8; cursor: default; }
+
+    /* Ordre du jour expandable */
+    .seance-odj {
+      border-top: 1px solid #f1f5f9;
+      padding: 0 22px; max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .25s;
+    }
+    .seance-odj.open { max-height: 600px; padding: 18px 22px; }
+    .odj-title {
+      font-size: .78rem; font-weight: 700; color: #009A44;
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;
+    }
+    .odj-lines { list-style: none; padding: 0; margin: 0; }
+    .odj-lines li {
+      padding: 7px 0; border-bottom: 1px solid #f1f5f9;
+      font-size: .82rem; color: #374151; display: flex; gap: 10px;
+    }
+    .odj-lines li:last-child { border-bottom: none; }
+    .odj-num { color: #009A44; font-weight: 700; flex-shrink: 0; min-width: 20px; }
+
+    /* Stats header */
+    .seances-stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px; margin-bottom: 28px;
+    }
+    .stat-pill {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+      padding: 14px 16px; text-align: center;
+    }
+    .stat-pill-num { font-size: 1.6rem; font-weight: 900; color: #009A44; line-height: 1; }
+    .stat-pill-lbl { font-size: .72rem; color: #64748b; margin-top: 4px; }
+
+    .seances-empty {
+      text-align: center; padding: 60px 20px; color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date"></span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" title="YouTube">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" title="Facebook">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
+        </a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo">
+      <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale — République du Congo" class="site-logo__img">
+    </a>
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item"><a href="deputes.html" class="nav-link">Les Députés <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="bureau.html" class="dropdown-link">Le Bureau</a>
+            <a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a>
+            <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
+            <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="blog.html" class="nav-link">Publications</a></li>
+        <li class="nav-item"><a href="seances.html" class="nav-link active">Séances plénières</a></li>
+        <li class="nav-item"><a href="archives.html" class="nav-link">Archives</a></li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link">Médiathèque</a></li>
+        <li class="nav-item"><a href="assistant.html" class="nav-link">🤖 AssistAN</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div id="gsOverlay" class="gs-overlay">
+  <div class="gs-box">
+    <div class="gs-search-row">
+      <svg class="gs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="gsInput" type="text" placeholder="Rechercher…" autocomplete="off" spellcheck="false">
+      <button id="gsClear" class="gs-clear" title="Effacer">✕</button>
+    </div>
+    <div id="gsResults" class="gs-results"><div class="gs-hint">Tapez pour rechercher dans tout le site</div></div>
+    <div class="gs-footer"><kbd>↑↓</kbd> Naviguer &nbsp;·&nbsp; <kbd>↵</kbd> Ouvrir &nbsp;·&nbsp; <kbd>Esc</kbd> Fermer</div>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb">
+      <a href="../index.html">Accueil</a><span>›</span><span>Séances plénières</span>
+    </div>
+    <h1 class="page-hero__title">Séances plénières</h1>
+    <p class="page-hero__sub">Ordre du jour, comptes rendus et archives des séances de l'Assemblée Nationale — 15ème Législature</p>
+  </div>
+</div>
+
+<div class="page-content" style="padding-top: 32px">
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="seances-stats" id="seancesStats">
+      <div class="stat-pill"><div class="stat-pill-num" id="st-total">—</div><div class="stat-pill-lbl">Séances au total</div></div>
+      <div class="stat-pill"><div class="stat-pill-num" id="st-avenir">—</div><div class="stat-pill-lbl">À venir</div></div>
+      <div class="stat-pill"><div class="stat-pill-num" id="st-terminee">—</div><div class="stat-pill-lbl">Tenues</div></div>
+      <div class="stat-pill"><div class="stat-pill-num" id="st-cr">—</div><div class="stat-pill-lbl">Comptes rendus</div></div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="seances-filters">
+      <button class="filter-pill active" data-f="tout" onclick="setFilter('tout',this)">Toutes</button>
+      <button class="filter-pill" data-f="A venir" onclick="setFilter('A venir',this)">📅 À venir</button>
+      <button class="filter-pill" data-f="Terminee" onclick="setFilter('Terminee',this)">✅ Terminées</button>
+      <button class="filter-pill" data-f="Ordinaire" onclick="setFilter('Ordinaire',this)">⚖️ Ordinaires</button>
+      <button class="filter-pill" data-f="Extraordinaire" onclick="setFilter('Extraordinaire',this)">⚡ Extraordinaires</button>
+    </div>
+
+    <!-- Liste -->
+    <div class="seances-list" id="seancesList">
+      <div style="text-align:center;padding:60px;color:#64748b">Chargement…</div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <img src="../logo/logo-footer.png" alt="Assemblée Nationale" class="footer-logo" onerror="this.style.display='none'">
+        <p>Portail officiel de l'Assemblée Nationale de la République du Congo.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Travaux parlementaires</h4>
+        <ul>
+          <li><a href="seances.html">Séances plénières</a></li>
+          <li><a href="archives.html?cat=Compte+rendu">Comptes rendus</a></li>
+          <li><a href="archives.html?cat=Loi">Lois votées</a></li>
+          <li><a href="archives.html">Archives</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>L'Assemblée</h4>
+        <ul>
+          <li><a href="presidence.html">Le Président</a></li>
+          <li><a href="bureau.html">Le Bureau</a></li>
+          <li><a href="commissions.html">Les Commissions</a></li>
+          <li><a href="deputes.html">Les 151 Députés</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>Rond-point de la place de la République</li>
+          <li>Brazzaville, République du Congo</li>
+          <li><a href="contact.html">Formulaire de contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Assemblée Nationale – République du Congo. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/search.js"></script>
+<script src="../js/main.js"></script>
+<script>
+const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const MONTHS = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+let allSeances = [];
+let activeFilter = 'tout';
+
+async function load() {
+  const { data } = await db.from('seances_plenieres')
+    .select('*').order('date_seance', { ascending: false });
+  allSeances = data || [];
+
+  // Stats
+  const total    = allSeances.length;
+  const avenir   = allSeances.filter(s => s.statut === 'A venir').length;
+  const terminee = allSeances.filter(s => s.statut === 'Terminee').length;
+  const cr       = allSeances.filter(s => s.compte_rendu_url).length;
+  document.getElementById('st-total').textContent    = total;
+  document.getElementById('st-avenir').textContent   = avenir;
+  document.getElementById('st-terminee').textContent = terminee;
+  document.getElementById('st-cr').textContent       = cr;
+
+  render();
+}
+
+function setFilter(f, btn) {
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active','active-rouge'));
+  btn.classList.add('active');
+  activeFilter = f;
+  render();
+}
+
+function render() {
+  const list = document.getElementById('seancesList');
+  const filtered = activeFilter === 'tout'
+    ? allSeances
+    : allSeances.filter(s => s.statut === activeFilter || s.type_seance === activeFilter);
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="seances-empty"><div style="font-size:2.5rem;margin-bottom:12px">📋</div><p>Aucune séance pour ce filtre.</p></div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((s, i) => {
+    const d   = new Date(s.date_seance + 'T00:00:00');
+    const day = d.getDate();
+    const mon = MONTHS[d.getMonth()];
+    const yr  = d.getFullYear();
+
+    const isFuture = s.statut === 'A venir';
+    const isExtra  = s.type_seance === 'Extraordinaire';
+    const dateClass = isExtra ? 'extra' : isFuture ? 'future' : '';
+
+    const typeTag   = `<span class="seance-tag tag-${s.type_seance.toLowerCase().replace(' ','-')}">${s.type_seance}</span>`;
+    const statutTag = `<span class="seance-tag tag-${s.statut.toLowerCase().replace(' ','-').replace('é','e')}">${s.statut === 'A venir' ? '📅 À venir' : s.statut === 'Terminee' ? '✅ Terminée' : s.statut}</span>`;
+
+    const heure = s.heure ? s.heure.slice(0,5) : '';
+
+    const odj = s.ordre_du_jour
+      ? s.ordre_du_jour.split('\n').filter(l => l.trim()).map((line, idx) => {
+          const match = line.match(/^(\d+)\.\s*(.+)/);
+          return match
+            ? `<li><span class="odj-num">${match[1]}.</span>${match[2]}</li>`
+            : `<li><span class="odj-num">•</span>${line}</li>`;
+        }).join('')
+      : '<li><span class="odj-num">—</span>Ordre du jour non disponible</li>';
+
+    const crBtn = s.compte_rendu_url
+      ? `<a href="${s.compte_rendu_url}" class="btn-cr" target="_blank" download>⬇️ Compte rendu</a>`
+      : `<span class="btn-cr unavail">📄 En cours</span>`;
+
+    return `<div class="seance-card">
+      <div class="seance-card__head" onclick="toggleOdj('odj-${i}')">
+        <div class="seance-date-block ${dateClass}">
+          <div class="sdb-day">${day}</div>
+          <div class="sdb-month">${mon}</div>
+          <div class="sdb-year">${yr}</div>
+        </div>
+        <div class="seance-info">
+          <div class="seance-tags">${typeTag}${statutTag}</div>
+          <div class="seance-title">${s.titre}</div>
+          <div class="seance-meta">
+            ${heure ? `<span>🕘 ${heure}</span>` : ''}
+            ${s.session ? `<span>🏛️ ${s.session}</span>` : ''}
+            ${s.description ? `<span style="color:#94a3b8;font-style:italic">${s.description.slice(0,80)}${s.description.length > 80 ? '…' : ''}</span>` : ''}
+          </div>
+        </div>
+        <div class="seance-actions">
+          <button class="btn-odj" onclick="event.stopPropagation();toggleOdj('odj-${i}')">📋 Ordre du jour</button>
+          ${crBtn}
+        </div>
+      </div>
+      <div class="seance-odj" id="odj-${i}">
+        <div class="odj-title">📋 Ordre du jour</div>
+        <ul class="odj-lines">${odj}</ul>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleOdj(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+load();
+</script>
+</body>
+</html>

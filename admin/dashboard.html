@@ -116,6 +116,11 @@
         <span class="nav-badge" id="badge-archives">—</span>
       </button>
 
+      <button class="nav-item" data-section="seances">
+        <span class="nav-icon">🏛️</span> Séances plénières
+        <span class="nav-badge" id="badge-seances">—</span>
+      </button>
+
       <div class="sidebar-section-label">Médias</div>
       <button class="nav-item" data-section="media">
         <span class="nav-icon">🖼️</span> Médiathèque
@@ -633,6 +638,104 @@
           <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeArchiveModal()">Annuler</button>
             <button class="btn btn-primary" onclick="saveArchive()">💾 Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== SÉANCES PLÉNIÈRES ==== -->
+      <div id="section-seances" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">🏛️ Séances plénières</div>
+            <button class="btn btn-primary" onclick="openSeanceModal()">+ Ajouter une séance</button>
+          </div>
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input id="seance-search" class="input" placeholder="Rechercher…" style="width:200px" oninput="filterSeances()">
+            <select id="seance-statut-filter" class="input" style="width:150px" onchange="filterSeances()">
+              <option value="">Tous statuts</option>
+              <option>A venir</option>
+              <option>Terminee</option>
+              <option>En cours</option>
+            </select>
+            <select id="seance-type-filter" class="input" style="width:160px" onchange="filterSeances()">
+              <option value="">Tous types</option>
+              <option>Ordinaire</option>
+              <option>Extraordinaire</option>
+              <option>Congrès</option>
+            </select>
+            <span style="margin-left:auto;font-size:.8rem;color:var(--muted)"><span id="seance-count">—</span> séance(s)</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Date</th><th>Titre</th><th>Type</th><th>Statut</th><th>Compte rendu</th><th style="width:100px">Actions</th>
+              </tr></thead>
+              <tbody id="seance-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Modal Séance ── -->
+      <div class="modal-overlay hidden" id="seanceModalOverlay" onclick="if(event.target===this)closeSeanceModal()">
+        <div class="modal" style="max-width:600px">
+          <div class="modal-header">
+            <div class="modal-title" id="seanceModalTitle">Nouvelle séance</div>
+            <button class="modal-close" onclick="closeSeanceModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Titre *</label>
+              <input id="sc-titre" class="input" placeholder="Séance plénière — …">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+              <div class="form-group">
+                <label class="form-label">Date *</label>
+                <input id="sc-date" class="input" type="date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Heure</label>
+                <input id="sc-heure" class="input" type="time" value="09:00">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type</label>
+                <select id="sc-type" class="input">
+                  <option>Ordinaire</option>
+                  <option>Extraordinaire</option>
+                  <option>Congrès</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="form-group">
+                <label class="form-label">Session</label>
+                <input id="sc-session" class="input" value="15ème Législature">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Statut</label>
+                <select id="sc-statut" class="input">
+                  <option value="A venir">À venir</option>
+                  <option value="En cours">En cours</option>
+                  <option value="Terminee">Terminée</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description courte</label>
+              <input id="sc-description" class="input" placeholder="Objet principal de la séance">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ordre du jour (une ligne = un point)</label>
+              <textarea id="sc-odj" class="input" rows="6" placeholder="1. Ouverture de la séance&#10;2. Adoption du procès-verbal&#10;3. Discussion générale&#10;4. Vote&#10;5. Levée de séance" style="resize:vertical;font-family:monospace;font-size:.8rem"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">URL Compte rendu PDF</label>
+              <input id="sc-cr-url" class="input" placeholder="https://… (laisser vide si non disponible)">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeSeanceModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveSeance()">💾 Enregistrer</button>
           </div>
         </div>
       </div>

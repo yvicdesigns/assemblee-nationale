@@ -59,6 +59,7 @@ const TITLES = {
   media:      '🖼️ Médiathèque',
   live:       '🔴 En Direct',
   archives:   '📂 Archives & Documents',
+  seances:    '🏛️ Séances plénières',
   parametres: '⚙️ Paramètres généraux',
 };
 
@@ -86,6 +87,7 @@ async function loadSection(name) {
     case 'newsletter':  await loadNewsletter(); break;
     case 'media':       await loadMediaSection(); break;
     case 'archives':    await loadArchives(); break;
+    case 'seances':     await loadSeances(); break;
     case 'live':        await loadLive(); break;
     case 'parametres':  await loadParametres(); break;
   }
@@ -1839,4 +1841,151 @@ async function deleteArchive(id) {
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
   toast('Document supprimé', 'success');
   loadArchives();
+}
+
+// =========================================
+// SÉANCES PLÉNIÈRES
+// =========================================
+let seancesData = [];
+let seanceEditingId = null;
+const MONTHS_FR = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+
+async function loadSeances() {
+  const el = document.getElementById('seance-list');
+  if (el) el.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('seances_plenieres')
+    .select('*').order('date_seance', { ascending: false });
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  seancesData = data || [];
+
+  const badge = document.getElementById('badge-seances');
+  if (badge) badge.textContent = seancesData.length;
+
+  filterSeances();
+}
+
+function filterSeances() {
+  const q  = (document.getElementById('seance-search')?.value || '').toLowerCase();
+  const st = document.getElementById('seance-statut-filter')?.value || '';
+  const ty = document.getElementById('seance-type-filter')?.value || '';
+
+  const filtered = seancesData.filter(s => {
+    if (st && s.statut !== st) return false;
+    if (ty && s.type_seance !== ty) return false;
+    if (q  && !s.titre.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  document.getElementById('seance-count').textContent = filtered.length;
+  renderSeances(filtered);
+}
+
+function renderSeances(list) {
+  const el = document.getElementById('seance-list');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Aucune séance</td></tr>';
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const d   = new Date(s.date_seance + 'T00:00:00');
+    const df  = `${d.getDate()} ${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}`;
+    const statutBadge = s.statut === 'Terminee'
+      ? '<span class="status-badge" style="background:#f1f5f9;color:#64748b">Terminée</span>'
+      : s.statut === 'A venir'
+        ? '<span class="status-badge" style="background:#dbeafe;color:#1d4ed8">À venir</span>'
+        : '<span class="status-badge status-published">En cours</span>';
+    const typeBadge = s.type_seance === 'Extraordinaire'
+      ? '<span class="status-badge" style="background:#f3e8ff;color:#7e22ce">Extraordinaire</span>'
+      : `<span class="status-badge status-published">${s.type_seance}</span>`;
+    const crLink = s.compte_rendu_url
+      ? `<a href="${s.compte_rendu_url}" target="_blank" style="color:#009A44;font-size:.75rem">📄 Voir</a>`
+      : '<span style="color:var(--muted);font-size:.75rem">—</span>';
+    return `<tr>
+      <td style="font-size:.8rem;white-space:nowrap">${df}</td>
+      <td><strong style="font-size:.82rem">${s.titre}</strong></td>
+      <td>${typeBadge}</td>
+      <td>${statutBadge}</td>
+      <td>${crLink}</td>
+      <td>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:.75rem" onclick="editSeance('${s.id}')">✏️</button>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:.75rem;color:#dc2626" onclick="deleteSeance('${s.id}')">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openSeanceModal() {
+  seanceEditingId = null;
+  document.getElementById('seanceModalTitle').textContent = 'Nouvelle séance';
+  document.getElementById('sc-titre').value = '';
+  document.getElementById('sc-date').value  = '';
+  document.getElementById('sc-heure').value = '09:00';
+  document.getElementById('sc-type').value  = 'Ordinaire';
+  document.getElementById('sc-session').value = '15ème Législature';
+  document.getElementById('sc-statut').value = 'A venir';
+  document.getElementById('sc-description').value = '';
+  document.getElementById('sc-odj').value = '';
+  document.getElementById('sc-cr-url').value = '';
+  document.getElementById('seanceModalOverlay').classList.remove('hidden');
+}
+
+async function editSeance(id) {
+  const s = seancesData.find(x => x.id === id);
+  if (!s) return;
+  seanceEditingId = id;
+  document.getElementById('seanceModalTitle').textContent = 'Modifier la séance';
+  document.getElementById('sc-titre').value       = s.titre || '';
+  document.getElementById('sc-date').value        = s.date_seance || '';
+  document.getElementById('sc-heure').value       = (s.heure || '09:00').slice(0,5);
+  document.getElementById('sc-type').value        = s.type_seance || 'Ordinaire';
+  document.getElementById('sc-session').value     = s.session || '15ème Législature';
+  document.getElementById('sc-statut').value      = s.statut || 'A venir';
+  document.getElementById('sc-description').value = s.description || '';
+  document.getElementById('sc-odj').value         = s.ordre_du_jour || '';
+  document.getElementById('sc-cr-url').value      = s.compte_rendu_url || '';
+  document.getElementById('seanceModalOverlay').classList.remove('hidden');
+}
+
+function closeSeanceModal() {
+  document.getElementById('seanceModalOverlay').classList.add('hidden');
+  seanceEditingId = null;
+}
+
+async function saveSeance() {
+  const titre = document.getElementById('sc-titre').value.trim();
+  const date  = document.getElementById('sc-date').value;
+  if (!titre) { toast('Le titre est obligatoire', 'error'); return; }
+  if (!date)  { toast('La date est obligatoire', 'error'); return; }
+
+  const payload = {
+    titre,
+    date_seance:    date,
+    heure:          document.getElementById('sc-heure').value || '09:00',
+    type_seance:    document.getElementById('sc-type').value,
+    session:        document.getElementById('sc-session').value.trim() || null,
+    statut:         document.getElementById('sc-statut').value,
+    description:    document.getElementById('sc-description').value.trim() || null,
+    ordre_du_jour:  document.getElementById('sc-odj').value.trim() || null,
+    compte_rendu_url: document.getElementById('sc-cr-url').value.trim() || null,
+  };
+
+  const { error } = seanceEditingId
+    ? await db.from('seances_plenieres').update(payload).eq('id', seanceEditingId)
+    : await db.from('seances_plenieres').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(seanceEditingId ? 'Séance mise à jour' : 'Séance ajoutée', 'success');
+  closeSeanceModal();
+  loadSeances();
+}
+
+async function deleteSeance(id) {
+  if (!confirm('Supprimer cette séance ?')) return;
+  const { error } = await db.from('seances_plenieres').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Séance supprimée', 'success');
+  loadSeances();
 }
