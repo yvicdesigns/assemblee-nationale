@@ -2727,3 +2727,16 @@ section:nth-child(even) { background: var(--gris-c); }
 
 /* Assurer que le site-header a position relative pour le bouton absolu */
 .site-header { position: fixed !important; }
+
+/* Bande opaque au-dessus de la nav pill — empêche le contenu d'être visible dans le gap de 16px */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: #080c0f;
+  z-index: 999;
+  pointer-events: none;
+}
