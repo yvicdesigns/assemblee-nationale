@@ -2225,15 +2225,21 @@ section:nth-child(even) { background: var(--gris-c); }
   min-height: 600px !important;
 }
 
-/* Slides centrées verticalement */
+/* Slides — contenu centré absolument (robust, indépendant du flex parent) */
 .slide { align-items: center !important; }
 .slide-content {
-  padding: 0 40px !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 90% !important;
+  max-width: 820px !important;
+  padding: 0 24px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   text-align: center !important;
-  max-width: 800px !important;
+  z-index: 3 !important;
 }
 
 /* Badge → glass */
