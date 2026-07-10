@@ -2462,3 +2462,76 @@ section:nth-child(even) { background: var(--gris-c); }
     justify-content: center;
   }
 }
+
+/* ══════════════════════════════════════════════
+   TABLETTE (769px – 1099px)
+   Logo pill en haut, nav pill en dessous
+   ══════════════════════════════════════════════ */
+@media (min-width: 769px) and (max-width: 1099px) {
+
+  /* Header : fond transparent, layout colonne centré */
+  .site-header {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    top: 10px !important;
+    width: calc(100% - 24px) !important;
+    max-width: 900px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .site-header .container {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* ── Logo : sa propre pill au-dessus ── */
+  .site-header .site-logo {
+    background: rgba(8,12,15,0.80) !important;
+    backdrop-filter: blur(22px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
+    border: 1px solid rgba(255,255,255,0.13) !important;
+    border-radius: 50px !important;
+    padding: 8px 22px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    order: -1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── Nav : sa propre pill en dessous ── */
+  .site-header .main-nav {
+    background: rgba(8,12,15,0.80) !important;
+    backdrop-filter: blur(28px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 50px !important;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+    padding: 5px 14px !important;
+    width: 100% !important;
+    order: 1 !important;
+    justify-content: center !important;
+  }
+
+  /* Liens légèrement plus compacts */
+  .site-header .nav-link {
+    font-size: 0.73rem !important;
+    padding: 5px 9px !important;
+  }
+
+  /* ── Masquer sur tablette : drapeau, date, loupe, lune ── */
+  .site-header .nav-flag,
+  .site-header .nav-date-pill,
+  .site-header .search-toggle,
+  .site-header .dark-toggle {
+    display: none !important;
+  }
+}
