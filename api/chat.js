@@ -50,9 +50,9 @@ export default async function handler(req, res) {
       parts: [{ text: m.content }]
     }));
 
-    // Essaie gemini-1.5-flash (stable, gratuit) puis gemini-2.0-flash en fallback
-    const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-latest'];
-    let lastError = null;
+    // Modèles disponibles gratuits sur AI Studio (ordre de préférence)
+    const models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite'];
+    const errors = [];
 
     for (const model of models) {
       const geminiRes = await fetch(
@@ -69,13 +69,13 @@ export default async function handler(req, res) {
       );
 
       const data = await geminiRes.json();
-      if (data.error) { lastError = data.error.message; continue; }
+      if (data.error) { errors.push(`[${model}] ${data.error.message}`); continue; }
 
       const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (reply) return res.status(200).json({ reply });
     }
 
-    return res.status(500).json({ error: lastError || 'Tous les modèles ont échoué' });
+    return res.status(500).json({ error: errors[0] || 'Tous les modèles ont échoué', details: errors });
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
