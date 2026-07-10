@@ -2494,7 +2494,7 @@ section:nth-child(even) { background: var(--gris-c); }
     width: 100% !important;
   }
 
-  /* ── Logo : flottant sans fond ── */
+  /* ── Logo : flottant sans fond, agrandi ── */
   .site-header .site-logo {
     background: transparent !important;
     backdrop-filter: none !important;
@@ -2504,6 +2504,9 @@ section:nth-child(even) { background: var(--gris-c); }
     padding: 4px 0 !important;
     order: -1 !important;
     flex-shrink: 0 !important;
+  }
+  .site-header .site-logo .site-logo__img {
+    height: 72px !important;
   }
 
   /* ── Nav : pill avec hauteur généreuse ── */
