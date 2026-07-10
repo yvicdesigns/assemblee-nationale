@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archives & Documents — Assemblée Nationale</title>
+  <meta name="description" content="Constitution, lois, traités, décrets et comptes rendus de l'Assemblée Nationale de la République du Congo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Layout ── */
+    .archives-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+      padding: 36px 0 72px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .archives-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Sidebar filtres ── */
+    .archives-sidebar { position: sticky; top: 88px; }
+    .filter-panel {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      overflow: hidden;
+    }
+    .filter-panel__head {
+      background: linear-gradient(135deg, #0a3d1f, #1a6b36);
+      color: #fff;
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: .88rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-group { padding: 16px 18px; border-bottom: 1px solid #f1f5f9; }
+    .filter-group:last-child { border-bottom: none; }
+    .filter-group__title {
+      font-size: .72rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 10px;
+    }
+    .filter-cat-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-size: .82rem;
+      color: #374151;
+      cursor: pointer;
+      transition: background .15s;
+      font-family: inherit;
+    }
+    .filter-cat-btn:hover { background: #f0fdf4; color: #009A44; }
+    .filter-cat-btn.active { background: #dcfce7; color: #166534; font-weight: 700; }
+    .filter-cat-btn .cat-count {
+      margin-left: auto;
+      background: #e2e8f0;
+      color: #64748b;
+      font-size: .68rem;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .filter-cat-btn.active .cat-count { background: #009A44; color: #fff; }
+
+    .filter-year-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .filter-year-btn {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      font-size: .78rem;
+      color: #374151;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      font-family: inherit;
+    }
+    .filter-year-btn:hover { border-color: #009A44; color: #009A44; }
+    .filter-year-btn.active { background: #009A44; border-color: #009A44; color: #fff; font-weight: 700; }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      background: #fff;
+      transition: border-color .2s;
+    }
+    .search-box:focus-within { border-color: #009A44; box-shadow: 0 0 0 3px rgba(0,154,68,.1); }
+    .search-box input {
+      border: none;
+      outline: none;
+      font-size: .84rem;
+      color: #111;
+      flex: 1;
+      background: transparent;
+      font-family: inherit;
+    }
+    .search-box svg { flex-shrink: 0; color: #9ca3af; }
+
+    /* ── Documents grid ── */
+    .archives-main {}
+    .archives-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .archives-count { font-size: .84rem; color: #64748b; }
+    .archives-count strong { color: #009A44; }
+
+    .doc-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .doc-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .doc-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); border-color: #c7e8d3; }
+
+    .doc-icon {
+      width: 48px;
+      height: 56px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.4rem;
+      position: relative;
+    }
+    .doc-icon::after {
+      content: 'PDF';
+      position: absolute;
+      bottom: 3px;
+      font-size: .5rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+    }
+    .doc-icon.cat-constitution { background: #fef3c7; color: #d97706; }
+    .doc-icon.cat-constitution::after { color: #d97706; }
+    .doc-icon.cat-loi { background: #eff6ff; color: #2563eb; }
+    .doc-icon.cat-loi::after { color: #2563eb; }
+    .doc-icon.cat-loi-organique { background: #f0f9ff; color: #0284c7; }
+    .doc-icon.cat-loi-organique::after { color: #0284c7; }
+    .doc-icon.cat-traite { background: #f0fdf4; color: #16a34a; }
+    .doc-icon.cat-traite::after { color: #16a34a; }
+    .doc-icon.cat-decret { background: #fdf4ff; color: #9333ea; }
+    .doc-icon.cat-decret::after { color: #9333ea; }
+    .doc-icon.cat-compte-rendu { background: #fff7ed; color: #ea580c; }
+    .doc-icon.cat-compte-rendu::after { color: #ea580c; }
+    .doc-icon.cat-rapport { background: #f8fafc; color: #475569; }
+    .doc-icon.cat-rapport::after { color: #475569; }
+
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-cat {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .doc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: .95rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+    .doc-meta {
+      font-size: .74rem;
+      color: #94a3b8;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .doc-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .doc-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+    .doc-dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #009A44;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-size: .78rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+    .doc-dl-btn:hover { background: #007a36; }
+    .doc-dl-btn.unavailable {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: default;
+    }
+    .doc-size { font-size: .7rem; color: #9ca3af; text-align: center; }
+
+    /* Catégorie couleurs */
+    .cat-badge-constitution  { background: #fef3c7; color: #d97706; }
+    .cat-badge-loi           { background: #eff6ff; color: #2563eb; }
+    .cat-badge-loi-organique { background: #f0f9ff; color: #0284c7; }
+    .cat-badge-traite        { background: #f0fdf4; color: #16a34a; }
+    .cat-badge-decret        { background: #fdf4ff; color: #9333ea; }
+    .cat-badge-compte-rendu  { background: #fff7ed; color: #ea580c; }
+    .cat-badge-rapport       { background: #f8fafc; color: #475569; }
+
+    .archives-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: #64748b;
+    }
+    .archives-empty-icon { font-size: 3rem; margin-bottom: 16px; }
+
+    .load-more-btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      color: #374151;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    .load-more-btn:hover { background: #009A44; color: #fff; border-color: #009A44; }
+  </style>
+</head>
+<body>
+
+<div class="tricolor-bar"></div>
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date"></span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" title="YouTube">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" title="Facebook">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
+        </a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo">
+      <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale — République du Congo" class="site-logo__img">
+    </a>
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item"><a href="deputes.html" class="nav-link">Les Députés <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="bureau.html" class="dropdown-link">Le Bureau</a>
+            <a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a>
+            <a href="deputes.html" class="dropdown-link">151 Députés siégeant</a>
+            <a href="commissions.html" class="dropdown-link">Les Commissions permanentes</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="blog.html" class="nav-link">Publications</a></li>
+        <li class="nav-item"><a href="archives.html" class="nav-link active">Archives <span class="arrow">▾</span></a>
+          <div class="dropdown"><div class="dropdown-section">
+            <a href="archives.html?cat=Constitution" class="dropdown-link">📜 Constitution</a>
+            <a href="archives.html?cat=Loi" class="dropdown-link">⚖️ Lois votées</a>
+            <a href="archives.html?cat=Traité" class="dropdown-link">🤝 Traités ratifiés</a>
+            <a href="archives.html?cat=Décret" class="dropdown-link">📄 Décrets d'application</a>
+            <a href="archives.html?cat=Compte+rendu" class="dropdown-link">📝 Comptes rendus</a>
+            <a href="archives.html?cat=Rapport" class="dropdown-link">📊 Rapports parlementaires</a>
+          </div></div>
+        </li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link">Médiathèque</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div id="gsOverlay" class="gs-overlay">
+  <div class="gs-box">
+    <div class="gs-search-row">
+      <svg class="gs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="gsInput" type="text" placeholder="Rechercher…" autocomplete="off" spellcheck="false">
+      <button id="gsClear" class="gs-clear" title="Effacer">✕</button>
+    </div>
+    <div id="gsResults" class="gs-results"><div class="gs-hint">Tapez pour rechercher dans tout le site</div></div>
+    <div class="gs-footer"><kbd>↑↓</kbd> Naviguer &nbsp;·&nbsp; <kbd>↵</kbd> Ouvrir &nbsp;·&nbsp; <kbd>Esc</kbd> Fermer</div>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb">
+      <a href="../index.html">Accueil</a><span>›</span><span>Archives & Documents</span>
+    </div>
+    <h1 class="page-hero__title">Archives & Documents officiels</h1>
+    <p class="page-hero__sub">Constitution, lois, traités, décrets, comptes rendus et rapports de l'Assemblée Nationale</p>
+  </div>
+</div>
+
+<div class="page-content" style="padding-top:0">
+  <div class="container">
+    <div class="archives-layout">
+
+      <!-- ── SIDEBAR FILTRES ── -->
+      <aside class="archives-sidebar">
+        <div class="filter-panel">
+          <div class="filter-panel__head">🔍 Filtrer les documents</div>
+
+          <!-- Recherche -->
+          <div class="filter-group">
+            <div class="filter-group__title">Recherche</div>
+            <div class="search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input type="text" id="archSearch" placeholder="Titre, mot-clé…" oninput="applyFilters()">
+            </div>
+          </div>
+
+          <!-- Catégories -->
+          <div class="filter-group">
+            <div class="filter-group__title">Catégorie</div>
+            <div id="catFilters" style="display:flex;flex-direction:column;gap:4px;">
+              <button class="filter-cat-btn active" data-cat="tout" onclick="setCat('tout',this)">
+                📂 Tous les documents <span class="cat-count" id="cnt-tout">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Constitution" onclick="setCat('Constitution',this)">
+                📜 Constitution <span class="cat-count" id="cnt-Constitution">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Loi" onclick="setCat('Loi',this)">
+                ⚖️ Lois <span class="cat-count" id="cnt-Loi">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Loi organique" onclick="setCat('Loi organique',this)">
+                📋 Lois organiques <span class="cat-count" id="cnt-Loi organique">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Traité" onclick="setCat('Traité',this)">
+                🤝 Traités <span class="cat-count" id="cnt-Traité">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Décret" onclick="setCat('Décret',this)">
+                📄 Décrets <span class="cat-count" id="cnt-Décret">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Compte rendu" onclick="setCat('Compte rendu',this)">
+                📝 Comptes rendus <span class="cat-count" id="cnt-Compte rendu">—</span>
+              </button>
+              <button class="filter-cat-btn" data-cat="Rapport" onclick="setCat('Rapport',this)">
+                📊 Rapports <span class="cat-count" id="cnt-Rapport">—</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Années -->
+          <div class="filter-group">
+            <div class="filter-group__title">Année</div>
+            <div class="filter-year-grid" id="yearFilters"></div>
+          </div>
+
+          <!-- Reset -->
+          <div class="filter-group">
+            <button onclick="resetFilters()" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:7px;background:#fff;color:#64748b;font-size:.8rem;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='#009A44';this.style.color='#009A44'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
+              ↺ Réinitialiser les filtres
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── CONTENU PRINCIPAL ── -->
+      <main class="archives-main">
+        <div class="archives-toolbar">
+          <div class="archives-count" id="archCount">Chargement…</div>
+        </div>
+        <div class="doc-grid" id="docGrid">
+          <div style="text-align:center;padding:60px 20px;color:#64748b;">
+            <div style="font-size:2rem;margin-bottom:12px">📂</div>
+            Chargement des documents…
+          </div>
+        </div>
+        <button class="load-more-btn" id="loadMoreBtn" style="display:none" onclick="loadMore()">
+          Charger plus de documents ↓
+        </button>
+      </main>
+
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <img src="../logo/logo-footer.png" alt="Assemblée Nationale" class="footer-logo" onerror="this.style.display='none'">
+        <p>Portail officiel de l'Assemblée Nationale de la République du Congo.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Archives</h4>
+        <ul>
+          <li><a href="archives.html?cat=Constitution">Constitution</a></li>
+          <li><a href="archives.html?cat=Loi">Lois votées</a></li>
+          <li><a href="archives.html?cat=Traité">Traités ratifiés</a></li>
+          <li><a href="archives.html?cat=Compte+rendu">Comptes rendus</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>L'Assemblée</h4>
+        <ul>
+          <li><a href="presidence.html">Le Président</a></li>
+          <li><a href="bureau.html">Le Bureau</a></li>
+          <li><a href="commissions.html">Les Commissions</a></li>
+          <li><a href="deputes.html">Les 151 Députés</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>Rond-point de la place de la République</li>
+          <li>Brazzaville, République du Congo</li>
+          <li><a href="contact.html">Formulaire de contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Assemblée Nationale – République du Congo. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/search.js"></script>
+<script src="../js/main.js"></script>
+<script>
+const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const CATS = ['Constitution','Loi','Loi organique','Traité','Décret','Compte rendu','Rapport'];
+const CAT_ICONS = {
+  'Constitution': '📜', 'Loi': '⚖️', 'Loi organique': '📋',
+  'Traité': '🤝', 'Décret': '📄', 'Compte rendu': '📝', 'Rapport': '📊'
+};
+const CAT_CSS = {
+  'Constitution': 'constitution', 'Loi': 'loi', 'Loi organique': 'loi-organique',
+  'Traité': 'traite', 'Décret': 'decret', 'Compte rendu': 'compte-rendu', 'Rapport': 'rapport'
+};
+
+let allDocs = [];
+let filtered = [];
+let activeCat = 'tout';
+let activeYear = null;
+let displayed = 0;
+const PER_PAGE = 12;
+
+async function load() {
+  const { data } = await db.from('archives_documents')
+    .select('*').order('published_at', { ascending: false });
+  allDocs = data || [];
+
+  // Compteurs par catégorie
+  document.getElementById('cnt-tout').textContent = allDocs.length;
+  CATS.forEach(c => {
+    const el = document.getElementById('cnt-' + c);
+    if (el) el.textContent = allDocs.filter(d => d.category === c).length;
+  });
+
+  // Années disponibles
+  const years = [...new Set(allDocs.map(d => d.year).filter(Boolean))].sort((a,b) => b - a);
+  document.getElementById('yearFilters').innerHTML = years.map(y =>
+    `<button class="filter-year-btn" data-year="${y}" onclick="setYear(${y},this)">${y}</button>`
+  ).join('');
+
+  // Lire paramètre URL
+  const urlCat = new URLSearchParams(window.location.search).get('cat');
+  if (urlCat) {
+    const btn = document.querySelector(`[data-cat="${urlCat}"]`);
+    if (btn) setCat(urlCat, btn);
+    else applyFilters();
+  } else {
+    applyFilters();
+  }
+}
+
+function setCat(cat, btn) {
+  document.querySelectorAll('.filter-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = cat;
+  activeYear = null;
+  document.querySelectorAll('.filter-year-btn').forEach(b => b.classList.remove('active'));
+  applyFilters();
+}
+
+function setYear(year, btn) {
+  const wasActive = btn.classList.contains('active');
+  document.querySelectorAll('.filter-year-btn').forEach(b => b.classList.remove('active'));
+  if (!wasActive) { btn.classList.add('active'); activeYear = year; }
+  else activeYear = null;
+  applyFilters();
+}
+
+function resetFilters() {
+  activeCat = 'tout';
+  activeYear = null;
+  document.getElementById('archSearch').value = '';
+  document.querySelectorAll('.filter-cat-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-cat="tout"]').classList.add('active');
+  document.querySelectorAll('.filter-year-btn').forEach(b => b.classList.remove('active'));
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('archSearch').value.toLowerCase();
+  filtered = allDocs.filter(d => {
+    if (activeCat !== 'tout' && d.category !== activeCat) return false;
+    if (activeYear && d.year !== activeYear) return false;
+    if (q && !d.title.toLowerCase().includes(q) && !(d.description||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  displayed = 0;
+  renderDocs(true);
+}
+
+function loadMore() {
+  renderDocs(false);
+}
+
+function renderDocs(reset) {
+  const grid = document.getElementById('docGrid');
+  const count = document.getElementById('archCount');
+  const btn   = document.getElementById('loadMoreBtn');
+
+  count.innerHTML = `<strong>${filtered.length}</strong> document${filtered.length !== 1 ? 's' : ''} trouvé${filtered.length !== 1 ? 's' : ''}`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="archives-empty"><div class="archives-empty-icon">📂</div><p>Aucun document ne correspond à votre recherche.</p></div>`;
+    btn.style.display = 'none';
+    return;
+  }
+
+  const slice = filtered.slice(displayed, displayed + PER_PAGE);
+  const html = slice.map(doc => {
+    const css = CAT_CSS[doc.category] || 'rapport';
+    const icon = CAT_ICONS[doc.category] || '📄';
+    const date = doc.published_at ? new Date(doc.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+    const dlBtn = doc.file_url
+      ? `<a href="${doc.file_url}" target="_blank" rel="noopener" class="doc-dl-btn" download>⬇️ Télécharger</a>`
+      : `<span class="doc-dl-btn unavailable">🔒 Bientôt disponible</span>`;
+    return `<div class="doc-card">
+      <div class="doc-icon cat-${css}">${icon}</div>
+      <div class="doc-info">
+        <span class="doc-cat cat-badge-${css}">${doc.category}</span>
+        <div class="doc-title">${doc.title}</div>
+        ${doc.description ? `<div class="doc-meta" style="margin-bottom:4px;font-size:.78rem;color:#475569;">${doc.description}</div>` : ''}
+        <div class="doc-meta">
+          <span>📅 ${date}</span>
+          ${doc.legislature ? `<span>🏛️ ${doc.legislature}</span>` : ''}
+          ${doc.file_size ? `<span>📦 ${doc.file_size}</span>` : ''}
+        </div>
+      </div>
+      <div class="doc-actions">
+        ${dlBtn}
+        ${doc.file_size ? `<div class="doc-size">${doc.file_size}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  if (reset) grid.innerHTML = html;
+  else grid.insertAdjacentHTML('beforeend', html);
+
+  displayed += slice.length;
+  btn.style.display = displayed < filtered.length ? 'block' : 'none';
+  btn.textContent = `Charger plus (${filtered.length - displayed} restants) ↓`;
+}
+
+load();
+</script>
+</body>
+</html>

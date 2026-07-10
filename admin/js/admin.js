@@ -58,6 +58,7 @@ const TITLES = {
   messages:   '✉️ Messages reçus',
   media:      '🖼️ Médiathèque',
   live:       '🔴 En Direct',
+  archives:   '📂 Archives & Documents',
   parametres: '⚙️ Paramètres généraux',
 };
 
@@ -84,6 +85,7 @@ async function loadSection(name) {
     case 'messages':    await loadMessages(); break;
     case 'newsletter':  await loadNewsletter(); break;
     case 'media':       await loadMediaSection(); break;
+    case 'archives':    await loadArchives(); break;
     case 'live':        await loadLive(); break;
     case 'parametres':  await loadParametres(); break;
   }
@@ -1692,4 +1694,149 @@ function copyToClipboard(text) {
   navigator.clipboard.writeText(text)
     .then(() => toast('✓ URL copiée dans le presse-papier !', 'success'))
     .catch(() => toast('Impossible de copier — vérifiez les permissions', 'error'));
+}
+
+// =========================================
+// ARCHIVES
+// =========================================
+let archivesData = [];
+let archiveEditingId = null;
+
+const CAT_ICONS_ADMIN = {
+  'Constitution': '📜', 'Loi': '⚖️', 'Loi organique': '📋',
+  'Traité': '🤝', 'Décret': '📄', 'Compte rendu': '📝', 'Rapport': '📊'
+};
+
+async function loadArchives() {
+  const el = document.getElementById('archive-list');
+  if (el) el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('archives_documents')
+    .select('*').order('published_at', { ascending: false });
+
+  if (error) { toast('Erreur chargement archives : ' + error.message, 'error'); return; }
+  archivesData = data || [];
+
+  // Badge + count
+  const badge = document.getElementById('badge-archives');
+  if (badge) badge.textContent = archivesData.length;
+
+  // Populate year filter
+  const years = [...new Set(archivesData.map(d => d.year).filter(Boolean))].sort((a, b) => b - a);
+  const yf = document.getElementById('arch-year-filter');
+  if (yf) {
+    const cur = yf.value;
+    yf.innerHTML = '<option value="">Toutes années</option>' + years.map(y => `<option${y == cur ? ' selected' : ''}>${y}</option>`).join('');
+  }
+
+  filterArchives();
+}
+
+function filterArchives() {
+  const q   = (document.getElementById('arch-search')?.value || '').toLowerCase();
+  const cat = document.getElementById('arch-cat-filter')?.value || '';
+  const yr  = document.getElementById('arch-year-filter')?.value || '';
+
+  const filtered = archivesData.filter(d => {
+    if (cat && d.category !== cat) return false;
+    if (yr  && String(d.year) !== yr) return false;
+    if (q   && !d.title.toLowerCase().includes(q) && !(d.description||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  document.getElementById('arch-count').textContent = filtered.length;
+  renderArchives(filtered);
+}
+
+function renderArchives(docs) {
+  const el = document.getElementById('archive-list');
+  if (!el) return;
+  if (!docs.length) {
+    el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Aucun document</td></tr>';
+    return;
+  }
+  el.innerHTML = docs.map(d => {
+    const icon = CAT_ICONS_ADMIN[d.category] || '📄';
+    const date = d.published_at ? new Date(d.published_at).toLocaleDateString('fr-FR') : '—';
+    return `<tr>
+      <td><strong>${icon} ${d.title}</strong>${d.description ? `<br><small style="color:var(--muted)">${d.description}</small>` : ''}</td>
+      <td><span class="status-badge status-published">${d.category}</span></td>
+      <td>${d.year || '—'}</td>
+      <td style="font-size:.75rem;color:var(--muted)">${d.legislature || '—'}</td>
+      <td style="font-size:.75rem">${d.file_size || '—'}</td>
+      <td style="font-size:.75rem">${date}</td>
+      <td>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:.75rem" onclick="editArchive('${d.id}')">✏️</button>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:.75rem;color:#dc2626" onclick="deleteArchive('${d.id}')">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openArchiveModal(id) {
+  archiveEditingId = id || null;
+  document.getElementById('archiveModalTitle').textContent = id ? 'Modifier le document' : 'Nouveau document';
+  document.getElementById('arch-title').value = '';
+  document.getElementById('arch-category').value = 'Loi';
+  document.getElementById('arch-year').value = new Date().getFullYear();
+  document.getElementById('arch-legislature').value = '15ème Législature';
+  document.getElementById('arch-description').value = '';
+  document.getElementById('arch-file-url').value = '';
+  document.getElementById('arch-file-size').value = '';
+  document.getElementById('arch-date').value = '';
+  document.getElementById('archiveModalOverlay').classList.remove('hidden');
+}
+
+async function editArchive(id) {
+  const doc = archivesData.find(d => d.id === id);
+  if (!doc) return;
+  archiveEditingId = id;
+  document.getElementById('archiveModalTitle').textContent = 'Modifier le document';
+  document.getElementById('arch-title').value       = doc.title || '';
+  document.getElementById('arch-category').value    = doc.category || 'Loi';
+  document.getElementById('arch-year').value        = doc.year || '';
+  document.getElementById('arch-legislature').value = doc.legislature || '15ème Législature';
+  document.getElementById('arch-description').value = doc.description || '';
+  document.getElementById('arch-file-url').value    = doc.file_url || '';
+  document.getElementById('arch-file-size').value   = doc.file_size || '';
+  document.getElementById('arch-date').value        = doc.published_at || '';
+  document.getElementById('archiveModalOverlay').classList.remove('hidden');
+}
+
+function closeArchiveModal() {
+  document.getElementById('archiveModalOverlay').classList.add('hidden');
+  archiveEditingId = null;
+}
+
+async function saveArchive() {
+  const title = document.getElementById('arch-title').value.trim();
+  if (!title) { toast('Le titre est obligatoire', 'error'); return; }
+
+  const payload = {
+    title,
+    category:    document.getElementById('arch-category').value,
+    year:        parseInt(document.getElementById('arch-year').value) || null,
+    legislature: document.getElementById('arch-legislature').value.trim() || null,
+    description: document.getElementById('arch-description').value.trim() || null,
+    file_url:    document.getElementById('arch-file-url').value.trim() || null,
+    file_size:   document.getElementById('arch-file-size').value.trim() || null,
+    published_at:document.getElementById('arch-date').value || null,
+  };
+
+  const { error } = archiveEditingId
+    ? await db.from('archives_documents').update(payload).eq('id', archiveEditingId)
+    : await db.from('archives_documents').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(archiveEditingId ? 'Document mis à jour' : 'Document ajouté', 'success');
+  closeArchiveModal();
+  loadArchives();
+}
+
+async function deleteArchive(id) {
+  if (!confirm('Supprimer ce document ?')) return;
+  const { error } = await db.from('archives_documents').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Document supprimé', 'success');
+  loadArchives();
 }

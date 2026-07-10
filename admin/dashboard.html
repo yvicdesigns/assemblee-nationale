@@ -111,6 +111,11 @@
         <span class="nav-badge" id="badge-newsletter">—</span>
       </button>
 
+      <button class="nav-item" data-section="archives">
+        <span class="nav-icon">📂</span> Archives & Documents
+        <span class="nav-badge" id="badge-archives">—</span>
+      </button>
+
       <div class="sidebar-section-label">Médias</div>
       <button class="nav-item" data-section="media">
         <span class="nav-icon">🖼️</span> Médiathèque
@@ -519,6 +524,115 @@
           <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeMediaVideoModal()">Annuler</button>
             <button class="btn btn-primary" onclick="saveVideo()">💾 Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== ARCHIVES ==== -->
+      <div id="section-archives" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">📂 Documents archivés</div>
+            <button class="btn btn-primary" onclick="openArchiveModal()">+ Ajouter un document</button>
+          </div>
+
+          <!-- Filtres -->
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input id="arch-search" type="text" class="input" placeholder="Rechercher…" style="width:220px" oninput="filterArchives()">
+            <select id="arch-cat-filter" class="input" style="width:180px" onchange="filterArchives()">
+              <option value="">Toutes catégories</option>
+              <option>Constitution</option>
+              <option>Loi</option>
+              <option>Loi organique</option>
+              <option>Traité</option>
+              <option>Décret</option>
+              <option>Compte rendu</option>
+              <option>Rapport</option>
+            </select>
+            <select id="arch-year-filter" class="input" style="width:110px" onchange="filterArchives()">
+              <option value="">Toutes années</option>
+            </select>
+            <span style="margin-left:auto;font-size:.8rem;color:var(--muted)">
+              <span id="arch-count">—</span> document(s)
+            </span>
+          </div>
+
+          <!-- Table -->
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Titre</th>
+                  <th>Catégorie</th>
+                  <th>Année</th>
+                  <th>Législature</th>
+                  <th>Taille</th>
+                  <th>Date publiée</th>
+                  <th style="width:120px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="archive-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Modal Archives ── -->
+      <div class="modal-overlay hidden" id="archiveModalOverlay" onclick="if(event.target===this)closeArchiveModal()">
+        <div class="modal" style="max-width:560px">
+          <div class="modal-header">
+            <div class="modal-title" id="archiveModalTitle">Nouveau document</div>
+            <button class="modal-close" onclick="closeArchiveModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Titre *</label>
+              <input id="arch-title" class="input" placeholder="Titre du document">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="form-group">
+                <label class="form-label">Catégorie *</label>
+                <select id="arch-category" class="input">
+                  <option>Constitution</option>
+                  <option>Loi</option>
+                  <option>Loi organique</option>
+                  <option>Traité</option>
+                  <option>Décret</option>
+                  <option>Compte rendu</option>
+                  <option>Rapport</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Année</label>
+                <input id="arch-year" class="input" type="number" placeholder="2026">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Législature</label>
+              <input id="arch-legislature" class="input" placeholder="15ème Législature" value="15ème Législature">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea id="arch-description" class="input" rows="2" placeholder="Brève description du document…" style="resize:vertical"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
+              <div class="form-group">
+                <label class="form-label">URL du fichier (PDF)</label>
+                <input id="arch-file-url" class="input" placeholder="https://…">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Taille</label>
+                <input id="arch-file-size" class="input" placeholder="1.2 MB">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date de publication</label>
+              <input id="arch-date" class="input" type="date">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeArchiveModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveArchive()">💾 Enregistrer</button>
           </div>
         </div>
       </div>
