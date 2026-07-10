@@ -2155,8 +2155,25 @@ section:nth-child(even) { background: var(--gris-c); }
 }
 .site-header .container {
   max-width: 100% !important;
-  padding: 0 !important;
-  gap: 6px !important;
+  padding: 0 6px !important;
+  gap: 4px !important;
+  justify-content: flex-start !important;
+}
+/* Nav links s'étire pour occuper le milieu */
+.site-header .main-nav {
+  flex: 1 1 auto !important;
+  justify-content: center !important;
+}
+/* Date + contrôles regroupés à droite, pas au bord extrême */
+.site-header .nav-date-pill {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+.site-header .search-toggle,
+.site-header .dark-toggle,
+.site-header .hamburger {
+  flex-shrink: 0 !important;
+  margin-left: 2px !important;
 }
 .site-header.scrolled {
   box-shadow: 0 8px 40px rgba(0,0,0,0.6) !important;
