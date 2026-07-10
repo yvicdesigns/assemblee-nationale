@@ -2514,7 +2514,7 @@ section:nth-child(even) { background: var(--gris-c); }
     border: 1px solid rgba(255,255,255,0.1) !important;
     border-radius: 50px !important;
     box-shadow: 0 6px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07) !important;
-    padding: 10px 20px !important;
+    padding: 16px 20px !important;
     width: 100% !important;
     order: 1 !important;
     justify-content: center !important;
@@ -2523,7 +2523,7 @@ section:nth-child(even) { background: var(--gris-c); }
   /* Liens avec plus d'espace vertical */
   .site-header .nav-link {
     font-size: 0.75rem !important;
-    padding: 8px 10px !important;
+    padding: 12px 10px !important;
   }
 
   /* ── Masquer sur tablette : drapeau, date, loupe, lune ── */
