@@ -2128,3 +2128,211 @@ section:nth-child(even) { background: var(--gris-c); }
     grid-template-columns: 1fr 1fr !important;
   }
 }
+
+/* =========================================
+   GLASS PILL NAV + HERO FULL SCREEN
+   ========================================= */
+
+/* Masquer top-bar et tricolor */
+.tricolor-bar,
+.top-bar { display: none !important; }
+
+/* Header → pill glass flottante */
+.site-header {
+  position: fixed !important;
+  top: 16px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 40px) !important;
+  max-width: 1160px !important;
+  background: rgba(8,12,15,0.72) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  padding: 7px 16px !important;
+}
+.site-header .container {
+  max-width: 100% !important;
+  padding: 0 !important;
+  gap: 6px !important;
+}
+.site-header.scrolled {
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6) !important;
+}
+.site-logo__img {
+  height: 38px !important;
+  transform: scale(1) !important;
+}
+
+/* Drapeau Congo animé dans la nav */
+.nav-flag {
+  flex-shrink: 0;
+  margin: 0 8px;
+  width: 34px; height: 22px;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+}
+.nav-flag svg {
+  width: 100%; height: 100%; display: block;
+  animation: navFlagWave 2.4s ease-in-out infinite;
+  transform-origin: left center;
+}
+@keyframes navFlagWave {
+  0%,100% { transform: skewY(0deg)    scaleX(1);    }
+  20%      { transform: skewY(-2deg)   scaleX(0.97); }
+  40%      { transform: skewY(2.5deg)  scaleX(1.02); }
+  60%      { transform: skewY(-1.5deg) scaleX(0.98); }
+  80%      { transform: skewY(2deg)    scaleX(1.02); }
+}
+
+/* Nav links */
+.nav-link {
+  padding: 6px 10px !important;
+  font-size: 0.75rem !important;
+  border-radius: 20px !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-weight: 500 !important;
+}
+.nav-link:hover,
+.nav-item:hover > .nav-link {
+  background: rgba(255,255,255,0.08) !important;
+  color: #fff !important;
+}
+
+/* Masquer AssistAN du nav (devient bulle flottante) */
+.nav-item:has(> a[href="pages/assistant.html"]) { display: none !important; }
+
+/* Date affichée dans le nav */
+.nav-date-pill {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.63rem; color: rgba(255,255,255,0.4);
+  white-space: nowrap; flex-shrink: 0;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding-left: 10px; margin-left: 2px;
+  font-family: var(--font);
+}
+.nav-date-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--jaune); flex-shrink: 0; opacity: 0.8;
+}
+
+/* Hero full-screen */
+.hero-slider {
+  height: 100vh !important;
+  min-height: 600px !important;
+}
+
+/* Slides centrées verticalement */
+.slide { align-items: center !important; }
+.slide-content {
+  padding: 0 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  max-width: 800px !important;
+}
+
+/* Badge → glass */
+.slide-badge {
+  background: rgba(0,154,68,0.22) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(0,200,100,0.38) !important;
+  color: #b8ffd4 !important;
+  border-radius: 30px !important;
+  padding: 5px 16px !important;
+  box-shadow: 0 4px 16px rgba(0,154,68,.18), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  font-size: 0.7rem !important;
+}
+
+.slide-title {
+  font-size: clamp(1.8rem, 3.2vw, 2.7rem) !important;
+  text-align: center !important;
+}
+
+/* Dots + boutons remontés au-dessus du ticker */
+.slider-dots     { bottom: 56px !important; }
+.slider-controls { bottom: 48px !important; }
+
+/* Boutons slider → glass */
+.slider-btn {
+  background: rgba(255,255,255,0.09) !important;
+  backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+.slider-btn:hover {
+  background: rgba(0,154,68,0.28) !important;
+  border-color: rgba(0,154,68,0.48) !important;
+}
+
+/* ── TICKER BAS DU HERO ── */
+.hero-ticker {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 42px; overflow: hidden; z-index: 10;
+  background: rgba(0,0,0,0.52);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+}
+.hero-ticker__inner {
+  display: inline-flex; white-space: nowrap; flex-shrink: 0;
+  animation: heroTicker 50s linear infinite;
+}
+@keyframes heroTicker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.hero-ticker__item {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.68rem; color: rgba(255,255,255,0.45);
+  padding: 0 28px; letter-spacing: 0.3px; white-space: nowrap;
+  font-family: var(--font);
+}
+.hero-ticker__item .t-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #00c957; flex-shrink: 0; opacity: 0.8;
+}
+.hero-ticker__item b { color: rgba(255,255,255,0.75); font-weight: 600; }
+.hero-ticker__sep { color: rgba(255,255,255,0.15); padding: 0 6px; font-size: .65rem; }
+
+/* ── BULLE ASSISTÁN flottante ── */
+.assistAN-bubble {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9000;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(145deg, #00b84a, #007a30);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px;
+  border: 2px solid rgba(255,255,255,0.22);
+  animation: bubbleFloat 2.8s ease-in-out infinite;
+  text-decoration: none; cursor: grab;
+}
+.assistAN-bubble::before {
+  content: '';
+  position: absolute; inset: -6px; border-radius: 50%;
+  border: 2px solid rgba(0,201,87,0.38);
+  animation: bubbleRing 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+.assistAN-bubble::after {
+  content: '';
+  position: absolute; inset: -14px; border-radius: 50%;
+  border: 1px solid rgba(0,201,87,0.14);
+  animation: bubbleRing 2.8s ease-in-out infinite 0.4s;
+  pointer-events: none;
+}
+@keyframes bubbleFloat {
+  0%,100% { transform: translateY(0);    box-shadow: 0 8px 28px rgba(0,154,68,.48); }
+  50%      { transform: translateY(-8px); box-shadow: 0 16px 36px rgba(0,154,68,.58); }
+}
+@keyframes bubbleRing {
+  0%,100% { transform: scale(1);   opacity: 0.6; }
+  50%      { transform: scale(1.1); opacity: 0;   }
+}
+.assistAN-bubble__icon  { font-size: 1.15rem; line-height: 1; }
+.assistAN-bubble__label { font-size: 0.5rem; font-weight: 800; color: #fff; letter-spacing: 0.6px; text-transform: uppercase; font-family: var(--font); }
