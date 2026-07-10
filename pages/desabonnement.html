@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Désabonnement Newsletter – Assemblée Nationale</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .tricolor { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #009A44 33.3%, #FBDE4A 33.3% 66.6%, #DC241F 66.6%); }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,.08);
+      border: 1px solid #e2e8f0;
+    }
+    .logo { font-family: Georgia, serif; font-size: 22px; font-weight: 900; color: #fff; background: #009A44; width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+    .icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    h1 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #0a3d1f; margin-bottom: 12px; }
+    p  { font-size: .88rem; color: #475569; line-height: 1.7; margin-bottom: 24px; }
+    .btn {
+      display: inline-block;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s;
+      text-decoration: none;
+    }
+    .btn:hover { background: #b91c1c; }
+    .btn-ghost {
+      background: transparent;
+      color: #009A44;
+      border: 1.5px solid #009A44;
+      margin-top: 12px;
+    }
+    .btn-ghost:hover { background: #009A44; color: #fff; }
+    .actions { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+    .note { font-size: .75rem; color: #9ca3af; margin-top: 20px; }
+    #state-loading, #state-confirm, #state-success, #state-error { display: none; }
+    #state-loading.show, #state-confirm.show, #state-success.show, #state-error.show { display: block; }
+  </style>
+</head>
+<body>
+<div class="tricolor"></div>
+
+<div class="card">
+  <div class="logo">AN</div>
+
+  <!-- État : chargement -->
+  <div id="state-loading" class="show">
+    <span class="icon">⏳</span>
+    <h1>Vérification en cours…</h1>
+    <p>Nous vérifions votre lien de désabonnement.</p>
+  </div>
+
+  <!-- État : confirmation -->
+  <div id="state-confirm">
+    <span class="icon">📬</span>
+    <h1>Confirmer le désabonnement</h1>
+    <p>Vous êtes sur le point de vous désabonner de la newsletter officielle de l'Assemblée Nationale de la République du Congo.<br>Vous ne recevrez plus d'actualités parlementaires.</p>
+    <div class="actions">
+      <button class="btn" onclick="doUnsubscribe()">Confirmer le désabonnement</button>
+      <a href="../index.html" class="btn btn-ghost">Non, rester abonné</a>
+    </div>
+  </div>
+
+  <!-- État : succès -->
+  <div id="state-success">
+    <span class="icon">✅</span>
+    <h1>Désabonnement effectué</h1>
+    <p>Votre adresse e-mail a bien été retirée de notre liste. Vous ne recevrez plus de communications de l'Assemblée Nationale.</p>
+    <div class="actions">
+      <a href="../index.html" class="btn btn-ghost">Retour à l'accueil</a>
+    </div>
+    <p class="note">Vous pouvez vous réinscrire à tout moment depuis notre page d'accueil.</p>
+  </div>
+
+  <!-- État : erreur -->
+  <div id="state-error">
+    <span class="icon">❌</span>
+    <h1>Lien invalide</h1>
+    <p>Ce lien de désabonnement est invalide ou a déjà été utilisé. Si vous souhaitez vous désabonner, contactez-nous directement.</p>
+    <div class="actions">
+      <a href="../pages/contact.html" class="btn btn-ghost">Nous contacter</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const token = new URLSearchParams(window.location.search).get('token');
+
+function show(id) {
+  ['state-loading','state-confirm','state-success','state-error'].forEach(s => {
+    document.getElementById(s).classList.toggle('show', s === id);
+  });
+}
+
+async function init() {
+  if (!token) { show('state-error'); return; }
+  const { data } = await db.from('newsletter_subscribers')
+    .select('id, active')
+    .eq('unsubscribe_token', token)
+    .single();
+  if (!data || !data.active) { show('state-error'); return; }
+  show('state-confirm');
+}
+
+async function doUnsubscribe() {
+  const { error } = await db.from('newsletter_subscribers')
+    .update({ active: false, unsubscribed_at: new Date().toISOString() })
+    .eq('unsubscribe_token', token);
+  if (error) { show('state-error'); return; }
+  show('state-success');
+}
+
+init();
+</script>
+</body>
+</html>

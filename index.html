@@ -1114,6 +1114,158 @@
 </style>
 
 <!-- ==============================
+     NEWSLETTER
+     ============================== -->
+<section class="newsletter-section" id="newsletter">
+  <div class="container">
+    <div class="newsletter-inner">
+      <div class="newsletter-left">
+        <div class="newsletter-icon">📬</div>
+        <h2 class="newsletter-title">Restez informé des travaux parlementaires</h2>
+        <p class="newsletter-desc">Recevez les actualités, les séances plénières et les publications officielles de l'Assemblée Nationale directement dans votre boîte mail.</p>
+        <ul class="newsletter-features">
+          <li>✓ Actualités et communiqués officiels</li>
+          <li>✓ Calendrier des sessions parlementaires</li>
+          <li>✓ Publications et textes de loi</li>
+          <li>✓ Désabonnement en un clic</li>
+        </ul>
+      </div>
+      <div class="newsletter-right">
+        <div class="newsletter-form-wrap" id="newsletterWrap">
+          <form class="newsletter-form" id="newsletterForm" onsubmit="subscribeNewsletter(event)">
+            <div class="newsletter-field">
+              <label class="newsletter-label" for="nl-prenom">Prénom</label>
+              <input class="newsletter-input" type="text" id="nl-prenom" name="prenom" placeholder="Votre prénom" autocomplete="given-name">
+            </div>
+            <div class="newsletter-field">
+              <label class="newsletter-label" for="nl-email">Adresse e-mail *</label>
+              <input class="newsletter-input" type="email" id="nl-email" name="email" placeholder="votre@email.com" required autocomplete="email">
+            </div>
+            <div class="newsletter-field">
+              <label class="newsletter-label">Centres d'intérêt</label>
+              <div class="newsletter-checks">
+                <label class="nl-check"><input type="checkbox" name="topics" value="pleniere" checked> Séances plénières</label>
+                <label class="nl-check"><input type="checkbox" name="topics" value="commissions" checked> Commissions</label>
+                <label class="nl-check"><input type="checkbox" name="topics" value="lois"> Textes de loi</label>
+                <label class="nl-check"><input type="checkbox" name="topics" value="agenda"> Agenda</label>
+              </div>
+            </div>
+            <button type="submit" class="newsletter-btn" id="nl-btn">
+              <span id="nl-btn-text">S'abonner gratuitement</span>
+            </button>
+            <p class="newsletter-privacy">En vous abonnant, vous acceptez de recevoir des communications officielles de l'Assemblée Nationale. Vos données ne seront jamais partagées.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ── Newsletter ── */
+.newsletter-section {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 64px 0;
+}
+.newsletter-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+@media (max-width: 860px) {
+  .newsletter-inner { grid-template-columns: 1fr; gap: 36px; }
+}
+.newsletter-icon { font-size: 2.5rem; margin-bottom: 14px; }
+.newsletter-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0a3d1f;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.newsletter-desc { font-size: .9rem; color: #475569; line-height: 1.7; margin-bottom: 20px; }
+.newsletter-features {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.newsletter-features li { font-size: .84rem; color: #334155; display: flex; align-items: center; gap: 8px; }
+
+.newsletter-form-wrap {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  border: 1px solid #e2e8f0;
+}
+.newsletter-form { display: flex; flex-direction: column; gap: 18px; }
+.newsletter-field { display: flex; flex-direction: column; gap: 6px; }
+.newsletter-label { font-size: .8rem; font-weight: 600; color: #374151; }
+.newsletter-input {
+  padding: 11px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: .88rem;
+  color: #111827;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  font-family: inherit;
+}
+.newsletter-input:focus {
+  border-color: #009A44;
+  box-shadow: 0 0 0 3px rgba(0,154,68,.12);
+}
+.newsletter-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.nl-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: .82rem;
+  color: #374151;
+  cursor: pointer;
+}
+.nl-check input[type="checkbox"] {
+  accent-color: #009A44;
+  width: 15px; height: 15px;
+  cursor: pointer;
+}
+.newsletter-btn {
+  background: #009A44;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 24px;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  font-family: inherit;
+}
+.newsletter-btn:hover { background: #007a36; transform: translateY(-1px); }
+.newsletter-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+.newsletter-privacy { font-size: .72rem; color: #9ca3af; line-height: 1.5; text-align: center; }
+
+/* État succès */
+.newsletter-success {
+  text-align: center;
+  padding: 40px 20px;
+}
+.newsletter-success-icon { font-size: 3rem; margin-bottom: 16px; }
+.newsletter-success h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #0a3d1f; margin-bottom: 10px; }
+.newsletter-success p  { font-size: .85rem; color: #475569; line-height: 1.7; }
+</style>
+
+<!-- ==============================
      FOOTER
      ============================== -->
 <footer class="site-footer">
@@ -1233,6 +1385,48 @@
 <script src="js/main.js"></script>
 <script src="js/cms.js"></script>
 <script src="js/search.js"></script>
+
+<script>
+/* ── Newsletter ── */
+async function subscribeNewsletter(e) {
+  e.preventDefault();
+  const form  = document.getElementById('newsletterForm');
+  const btn   = document.getElementById('nl-btn');
+  const btnTx = document.getElementById('nl-btn-text');
+  const email = document.getElementById('nl-email').value.trim();
+  const prenom = document.getElementById('nl-prenom').value.trim();
+  const topics = [...form.querySelectorAll('[name="topics"]:checked')].map(c => c.value);
+
+  if (!email) return;
+  btn.disabled = true;
+  btnTx.textContent = 'Inscription en cours…';
+
+  const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const token = crypto.randomUUID();
+  const { error } = await db.from('newsletter_subscribers').upsert(
+    [{ email, prenom: prenom || null, topics: topics.join(','), unsubscribe_token: token, subscribed_at: new Date().toISOString() }],
+    { onConflict: 'email' }
+  );
+
+  if (error) {
+    btn.disabled = false;
+    btnTx.textContent = 'S\'abonner gratuitement';
+    alert('Une erreur est survenue. Veuillez réessayer.');
+    return;
+  }
+
+  document.getElementById('newsletterWrap').innerHTML = `
+    <div class="newsletter-success">
+      <div class="newsletter-success-icon">🎉</div>
+      <h3>Abonnement confirmé !</h3>
+      <p>Merci <strong>${prenom || 'cher abonné'}</strong>, vous recevrez désormais les actualités de l'Assemblée Nationale.<br><br>
+      Un lien de désabonnement sera inclus dans chaque message.</p>
+    </div>`;
+}
+</script>
 
 <script>
 /* ── Transparence : compteurs animés + données live ── */

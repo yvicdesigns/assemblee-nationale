@@ -82,6 +82,7 @@ async function loadSection(name) {
     case 'agenda':      await loadAgenda(); break;
     case 'deputes':     await loadDeputes(); break;
     case 'messages':    await loadMessages(); break;
+    case 'newsletter':  await loadNewsletter(); break;
     case 'media':       await loadMediaSection(); break;
     case 'live':        await loadLive(); break;
     case 'parametres':  await loadParametres(); break;
@@ -1399,6 +1400,98 @@ function exportMessagesCSV() {
 // =========================================
 // MÉDIATHÈQUE
 // =========================================
+// =============================================
+// NEWSLETTER
+// =============================================
+
+let nlAllData = [];
+
+async function loadNewsletter() {
+  const el = document.getElementById('newsletter-list');
+  if (!el) return;
+  el.innerHTML = loadingHTML();
+
+  const { data, error } = await db.from('newsletter_subscribers')
+    .select('*').order('subscribed_at', { ascending: false });
+
+  if (error) { el.innerHTML = emptyHTML('Erreur : ' + error.message); return; }
+  nlAllData = data || [];
+
+  const total  = nlAllData.length;
+  const active = nlAllData.filter(s => s.active).length;
+  const unsub  = total - active;
+
+  document.getElementById('nl-total').textContent = total;
+  document.getElementById('nl-active').textContent = active;
+  document.getElementById('nl-unsub').textContent  = unsub;
+  document.getElementById('badge-newsletter').textContent = active;
+
+  renderNewsletter(nlAllData);
+}
+
+function filterNewsletter(q) {
+  const filter = document.getElementById('nl-filter').value;
+  let list = nlAllData;
+  if (filter === 'active')   list = list.filter(s => s.active);
+  if (filter === 'inactive') list = list.filter(s => !s.active);
+  if (q) list = list.filter(s => s.email.toLowerCase().includes(q.toLowerCase()) || (s.prenom||'').toLowerCase().includes(q.toLowerCase()));
+  renderNewsletter(list);
+}
+
+function renderNewsletter(list) {
+  const el = document.getElementById('newsletter-list');
+  if (!list.length) { el.innerHTML = emptyHTML('Aucun abonné trouvé.'); return; }
+
+  el.innerHTML = `<table style="width:100%;border-collapse:collapse;">
+    <thead><tr style="background:var(--bg-alt);font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">
+      <th style="padding:10px 16px;text-align:left;">Email</th>
+      <th style="padding:10px 16px;text-align:left;">Prénom</th>
+      <th style="padding:10px 16px;text-align:left;">Centres d'intérêt</th>
+      <th style="padding:10px 16px;text-align:left;">Date</th>
+      <th style="padding:10px 16px;text-align:center;">Statut</th>
+      <th style="padding:10px 16px;text-align:right;">Action</th>
+    </tr></thead>
+    <tbody>
+      ${list.map(s => `<tr style="border-bottom:1px solid var(--border);font-size:.82rem;">
+        <td style="padding:10px 16px;font-weight:600;">${esc(s.email)}</td>
+        <td style="padding:10px 16px;color:var(--muted);">${esc(s.prenom||'—')}</td>
+        <td style="padding:10px 16px;color:var(--muted);font-size:.75rem;">${esc(s.topics||'—')}</td>
+        <td style="padding:10px 16px;color:var(--muted);">${s.subscribed_at ? new Date(s.subscribed_at).toLocaleDateString('fr-FR') : '—'}</td>
+        <td style="padding:10px 16px;text-align:center;">
+          ${s.active
+            ? '<span style="background:#dcfce7;color:#166534;font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:700;">Actif</span>'
+            : '<span style="background:#fee2e2;color:#dc2626;font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:700;">Désabonné</span>'}
+        </td>
+        <td style="padding:10px 16px;text-align:right;">
+          <button onclick="deleteSubscriber('${s.id}')" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:.78rem;" title="Supprimer">🗑️</button>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+async function deleteSubscriber(id) {
+  if (!confirm('Supprimer cet abonné définitivement ?')) return;
+  const { error } = await db.from('newsletter_subscribers').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Abonné supprimé', 'success');
+  loadNewsletter();
+}
+
+function exportNewsletter() {
+  const active = nlAllData.filter(s => s.active);
+  if (!active.length) { toast('Aucun abonné actif à exporter', 'error'); return; }
+  const csv = ['Email,Prénom,Centres d\'intérêt,Date inscription',
+    ...active.map(s => `"${s.email}","${s.prenom||''}","${s.topics||''}","${s.subscribed_at ? new Date(s.subscribed_at).toLocaleDateString('fr-FR') : ''}"`)
+  ].join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `newsletter-abonnes-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast(`✓ ${active.length} abonnés exportés`, 'success');
+}
+
 // =============================================
 // MÉDIATHÈQUE — Photos & Vidéos
 // =============================================
