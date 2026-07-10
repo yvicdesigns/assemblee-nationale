@@ -1,4 +1,4 @@
-const CACHE = 'an-congo-v1';
+const CACHE = 'an-congo-v2';
 const STATIC = [
   '/',
   '/index.html',
