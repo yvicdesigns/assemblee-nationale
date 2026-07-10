@@ -1651,29 +1651,16 @@ async function subscribeNewsletter(e) {
 
 <script>
 (function () {
-  // ── Même clé que pages/assistant.html ──
-  const GEMINI_KEY = 'VOTRE_CLE_GEMINI_ICI'; // https://aistudio.google.com/apikey
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-
-  const SYS = `Tu es AssistAN, l'assistant officiel numérique de l'Assemblée Nationale de la République du Congo (15ème Législature 2022-2027). Tu aides les citoyens congolais à comprendre leur institution parlementaire : rôle de l'AN, Constitution 2015, procédure législative, 151 députés, 8 commissions permanentes, sessions parlementaires, traités, lois organiques. Réponds TOUJOURS en français, de façon professionnelle et accessible. Ne prends jamais position politiquement. Maximum 3 paragraphes.`;
-
+  // La clé est dans Vercel env vars → /api/chat proxy
   async function callGemini(msgs) {
-    const contents = msgs.map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
-    }));
-    const res = await fetch(GEMINI_URL, {
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYS }] },
-        contents: contents.slice(-8),
-        generationConfig: { maxOutputTokens: 512, temperature: 0.7 }
-      })
+      body: JSON.stringify({ messages: msgs })
     });
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Erreur de réponse.";
+    if (data.error) throw new Error(data.error);
+    return data.reply;
   }
 
   let cwpMsgs = [];

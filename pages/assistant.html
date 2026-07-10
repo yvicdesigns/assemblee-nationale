@@ -424,58 +424,21 @@
 <script src="../js/search.js"></script>
 <script src="../js/main.js"></script>
 <script>
-// ── Clé Gemini gratuite — obtenir sur https://aistudio.google.com/apikey ──
-const GEMINI_KEY = 'VOTRE_CLE_GEMINI_ICI'; // https://aistudio.google.com/apikey
-
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-
-const SYSTEM_PROMPT = `Tu es AssistAN, l'assistant officiel numérique de l'Assemblée Nationale de la République du Congo (15ème Législature, 2022-2027). Tu aides les citoyens congolais à comprendre leur institution parlementaire.
-
-TU PEUX RÉPONDRE SUR :
-- Le rôle, l'histoire et le fonctionnement de l'Assemblée Nationale
-- La Constitution de la République du Congo (promulguée le 6 novembre 2015)
-- Les procédures législatives : dépôt de projet de loi, lecture, vote, promulgation
-- Les 151 députés élus au suffrage universel direct et leurs circonscriptions
-- Les 8 commissions permanentes et leurs attributions
-- Le Bureau de l'Assemblée (Président, Vice-Présidents, Secrétaires, Questeurs)
-- Les sessions parlementaires : session de mars (printemps) et session d'octobre (automne)
-- Les traités ratifiés, décrets, lois organiques et lois ordinaires
-- Les droits des pétitionnaires et voies de recours des citoyens
-
-INFORMATIONS CLÉS :
-- 151 députés, mandat de 5 ans, 15ème Législature 2022-2027
-- Siège : Rond-point de la place de la République, Brazzaville
-- 12 départements : Brazzaville, Pointe-Noire, Bouenza, Cuvette, Cuvette-Ouest, Kouilou, Lékoumou, Likouala, Niari, Plateaux, Sangha, Pool
-- 8 commissions permanentes : Économie et Finances, Lois et Libertés, Affaires étrangères, Défense nationale, Santé et Action sociale, Éducation et Culture, Agriculture et Développement rural, Infrastructure et Aménagement du territoire
-
-RÈGLES :
-1. Réponds TOUJOURS en français, avec un langage clair et accessible
-2. Sois précis, professionnel, bienveillant — tu représentes une institution de la République
-3. Ne prends JAMAIS position politiquement
-4. Si tu n'as pas une information précise : "Je n'ai pas cette information précise, contactez le greffe de l'Assemblée Nationale"
-5. Limite tes réponses à 2-4 paragraphes sauf si une liste est plus claire
-6. Ne réponds pas aux questions hors sujet parlementaire congolais`;
+// La clé Gemini est stockée dans Vercel (Settings → Environment Variables → GEMINI_KEY)
+// Le frontend appelle /api/chat — jamais directement Gemini
 
 let messages = [];
 let isLoading = false;
 
 async function callGemini(msgs) {
-  const contents = msgs.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
-  const res = await fetch(GEMINI_URL, {
+  const res = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents: contents.slice(-12),
-      generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
-    })
+    body: JSON.stringify({ messages: msgs })
   });
   const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Erreur de réponse de l'IA.";
+  if (data.error) throw new Error(data.error);
+  return data.reply;
 }
 
 function now() {
