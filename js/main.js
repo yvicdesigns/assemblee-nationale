@@ -230,44 +230,62 @@ document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt = null;
 
     function buildBanner(isIOS) {
-      const el = document.createElement('div');
-      el.id = 'pwa-banner';
-      el.setAttribute('role', 'dialog');
-      el.setAttribute('aria-label', 'Installer l\'application');
-      el.innerHTML = `
-        <div class="pwa-b__left">
-          <div class="pwa-b__icon">🏛️</div>
-          <div class="pwa-b__text">
-            <strong>Installer l'Assemblée Nationale</strong>
-            <span>${isIOS
-              ? 'Appuyez sur <b>□↑</b> puis <b>« Sur l\'écran d\'accueil »</b>'
-              : 'Accédez rapidement à l\'Assemblée nationale, même sans connexion'
-            }</span>
-          </div>
-        </div>
-        <div class="pwa-b__actions">
-          ${isIOS ? '' : '<button class="pwa-b__btn" id="pwaInstall">Installer</button>'}
-          <button class="pwa-b__close" id="pwaClose" aria-label="Fermer">✕</button>
-        </div>`;
-      document.body.appendChild(el);
-      requestAnimationFrame(() => el.classList.add('pwa-b--show'));
+      const overlay = document.createElement('div');
+      overlay.id = 'pwa-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', "Installer l'application");
 
-      document.getElementById('pwaClose').addEventListener('click', () => {
-        el.classList.remove('pwa-b--show');
+      overlay.innerHTML = `
+        <div id="pwa-banner">
+          <button class="pwa-b__close-x" id="pwaClose" aria-label="Fermer">✕</button>
+          <span class="pwa-b__icon">🏛️</span>
+          <p class="pwa-b__app-name">Application officielle</p>
+          <h2 class="pwa-b__title">Assemblée Nationale<br>du Congo</h2>
+          <p class="pwa-b__desc">${isIOS
+            ? 'Ajoutez l\'application à votre écran d\'accueil pour un accès rapide à l\'actualité parlementaire.'
+            : 'Installez l\'application pour suivre les séances, les décrets et l\'actualité du parlement — même sans connexion.'
+          }</p>
+          ${isIOS ? `
+          <div class="pwa-b__ios-steps">
+            1. Appuyez sur le bouton <b>Partager</b> (□↑) en bas de votre navigateur<br>
+            2. Faites défiler et choisissez <b>« Sur l'écran d'accueil »</b><br>
+            3. Appuyez sur <b>« Ajouter »</b>
+          </div>
+          ` : `
+          <ul class="pwa-b__perks">
+            <li>Accès hors ligne aux informations</li>
+            <li>Chargement instantané</li>
+            <li>Notifications des séances plénières</li>
+          </ul>
+          `}
+          ${isIOS
+            ? '<button class="pwa-b__dismiss" id="pwaClose2">Fermer</button>'
+            : '<button class="pwa-b__btn" id="pwaInstall">📲 Installer l\'application</button><button class="pwa-b__dismiss" id="pwaClose2">Non merci, continuer sur le navigateur</button>'
+          }
+        </div>`;
+
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add('pwa-b--show'));
+
+      function dismiss() {
+        overlay.classList.remove('pwa-b--show');
         localStorage.setItem(DISMISSED_KEY, '1');
-        setTimeout(() => el.remove(), 400);
-      });
+        setTimeout(() => overlay.remove(), 400);
+      }
+
+      document.getElementById('pwaClose').addEventListener('click', dismiss);
+      document.getElementById('pwaClose2')?.addEventListener('click', dismiss);
+      overlay.addEventListener('click', e => { if (e.target === overlay) dismiss(); });
 
       if (!isIOS) {
         document.getElementById('pwaInstall').addEventListener('click', async () => {
-          el.classList.remove('pwa-b--show');
           if (deferredPrompt) {
             deferredPrompt.prompt();
             await deferredPrompt.userChoice;
             deferredPrompt = null;
           }
-          localStorage.setItem(DISMISSED_KEY, '1');
-          setTimeout(() => el.remove(), 400);
+          dismiss();
         });
       }
     }
