@@ -872,6 +872,248 @@
 </section>
 
 <!-- ==============================
+     TRANSPARENCE & CHIFFRES CLÉS
+     ============================== -->
+<section class="transparence-section" id="transparence">
+  <div class="container">
+
+    <div class="transparence-header">
+      <div class="transparence-badge">Transparence démocratique</div>
+      <h2 class="section-title" style="color:#fff;margin-bottom:10px;">L'Assemblée Nationale en chiffres</h2>
+      <p class="transparence-sub">Données en temps réel — 15ᵉ Législature · République du Congo</p>
+    </div>
+
+    <!-- Compteurs principaux -->
+    <div class="stats-grid">
+      <div class="stat-card" data-target="151" data-suffix="">
+        <div class="stat-icon">🏛️</div>
+        <div class="stat-number"><span class="stat-count">0</span></div>
+        <div class="stat-label">Députés élus</div>
+        <div class="stat-detail">au suffrage universel direct</div>
+      </div>
+      <div class="stat-card" data-target="8" data-suffix="">
+        <div class="stat-icon">⚖️</div>
+        <div class="stat-number"><span class="stat-count">0</span></div>
+        <div class="stat-label">Commissions permanentes</div>
+        <div class="stat-detail">couvrant tous les secteurs</div>
+      </div>
+      <div class="stat-card" data-target="12" data-suffix="">
+        <div class="stat-icon">🗺️</div>
+        <div class="stat-number"><span class="stat-count">0</span></div>
+        <div class="stat-label">Départements représentés</div>
+        <div class="stat-detail">sur toute l'étendue du territoire</div>
+      </div>
+      <div class="stat-card stat-live" data-supabase="articles" data-suffix="">
+        <div class="stat-icon">📰</div>
+        <div class="stat-number"><span class="stat-count">—</span></div>
+        <div class="stat-label">Publications officielles</div>
+        <div class="stat-detail">articles, communiqués, rapports</div>
+      </div>
+      <div class="stat-card stat-live" data-supabase="agenda" data-suffix="">
+        <div class="stat-icon">📅</div>
+        <div class="stat-number"><span class="stat-count">—</span></div>
+        <div class="stat-label">Événements parlementaires</div>
+        <div class="stat-detail">séances, auditions, conférences</div>
+      </div>
+      <div class="stat-card stat-live" data-supabase="deputes" data-suffix="">
+        <div class="stat-icon">👤</div>
+        <div class="stat-number"><span class="stat-count">—</span></div>
+        <div class="stat-label">Profils de députés</div>
+        <div class="stat-detail">avec biographies et circonscriptions</div>
+      </div>
+    </div>
+
+    <!-- Barre de progression législature -->
+    <div class="legislature-bar">
+      <div class="legislature-bar__header">
+        <div>
+          <div class="legislature-bar__title">15ᵉ Législature · 2022 – 2027</div>
+          <div class="legislature-bar__sub">Durée constitutionnelle : 5 ans</div>
+        </div>
+        <div class="legislature-bar__pct" id="legPct">—</div>
+      </div>
+      <div class="legislature-bar__track">
+        <div class="legislature-bar__fill" id="legFill" style="width:0%"></div>
+      </div>
+      <div class="legislature-bar__labels">
+        <span>Août 2022</span>
+        <span id="legLabel">En cours</span>
+        <span>Août 2027</span>
+      </div>
+    </div>
+
+    <!-- Liens rapides -->
+    <div class="transparence-links">
+      <a href="pages/deputes.html" class="transparence-link">
+        <span>👥</span> Annuaire des 151 Députés
+      </a>
+      <a href="pages/carte.html" class="transparence-link">
+        <span>🗺️</span> Carte interactive
+      </a>
+      <a href="pages/commissions.html" class="transparence-link">
+        <span>⚖️</span> Les 8 Commissions
+      </a>
+      <a href="pages/blog.html" class="transparence-link">
+        <span>📰</span> Publications
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<style>
+/* ── Transparence section ── */
+.transparence-section {
+  background: linear-gradient(135deg, #012d15 0%, #024d24 40%, #013820 100%);
+  padding: 72px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+.transparence-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #009A44 33.3%, #FBDE4A 33.3% 66.6%, #DC241F 66.6%);
+}
+.transparence-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(0,154,68,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.transparence-header { text-align: center; margin-bottom: 52px; }
+.transparence-badge {
+  display: inline-block;
+  background: rgba(0,154,68,.25);
+  border: 1px solid rgba(0,154,68,.5);
+  color: #6ee7a0;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.transparence-sub { color: rgba(255,255,255,.55); font-size: .88rem; }
+
+/* ── Grille compteurs ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 860px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
+
+.stat-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 28px 24px;
+  text-align: center;
+  transition: background .25s, transform .25s;
+  backdrop-filter: blur(4px);
+}
+.stat-card:hover {
+  background: rgba(255,255,255,.11);
+  transform: translateY(-3px);
+}
+.stat-icon { font-size: 1.8rem; margin-bottom: 12px; }
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+.stat-card.stat-live .stat-number { color: #6ee7a0; }
+.stat-label {
+  font-size: .85rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  margin-bottom: 4px;
+}
+.stat-detail { font-size: .72rem; color: rgba(255,255,255,.45); }
+
+/* ── Barre législature ── */
+.legislature-bar {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 36px;
+  position: relative;
+  z-index: 1;
+}
+.legislature-bar__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.legislature-bar__title { font-weight: 700; color: #fff; font-size: .95rem; margin-bottom: 3px; }
+.legislature-bar__sub   { font-size: .76rem; color: rgba(255,255,255,.5); }
+.legislature-bar__pct   { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #6ee7a0; }
+.legislature-bar__track {
+  height: 8px;
+  background: rgba(255,255,255,.12);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.legislature-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #009A44, #6ee7a0);
+  border-radius: 4px;
+  transition: width 1.6s cubic-bezier(.22,1,.36,1);
+}
+.legislature-bar__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: rgba(255,255,255,.4);
+}
+
+/* ── Liens rapides ── */
+.transparence-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.transparence-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.85);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: .83rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .2s;
+}
+.transparence-link:hover {
+  background: #009A44;
+  border-color: #009A44;
+  color: #fff;
+  transform: translateY(-2px);
+}
+</style>
+
+<!-- ==============================
      FOOTER
      ============================== -->
 <footer class="site-footer">
@@ -991,5 +1233,93 @@
 <script src="js/main.js"></script>
 <script src="js/cms.js"></script>
 <script src="js/search.js"></script>
+
+<script>
+/* ── Transparence : compteurs animés + données live ── */
+(function () {
+  const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+
+  /* Compteur animé : 0 → target en ~1.4s */
+  function animateCount(el, target) {
+    const duration = 1400;
+    const start    = performance.now();
+    const startVal = 0;
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.round(startVal + eased * target).toLocaleString('fr-FR');
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* Barre de progression législature */
+  function initLegislature() {
+    const start = new Date('2022-08-16');
+    const end   = new Date('2027-08-16');
+    const now   = new Date();
+    const pct   = Math.min(100, Math.round(((now - start) / (end - start)) * 100));
+    const fill  = document.getElementById('legFill');
+    const pctEl = document.getElementById('legPct');
+    const lbl   = document.getElementById('legLabel');
+    if (fill)  setTimeout(() => { fill.style.width = pct + '%'; }, 300);
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (lbl) {
+      const months = Math.floor((now - start) / (1000 * 60 * 60 * 24 * 30.44));
+      const yr = Math.floor(months / 12), mo = months % 12;
+      lbl.textContent = `${yr > 0 ? yr + ' an' + (yr > 1 ? 's' : '') + (mo > 0 ? ' ' : '') : ''}${mo > 0 ? mo + ' mois' : ''} écoulés`;
+    }
+  }
+
+  /* Chargement données Supabase + déclenchement compteurs */
+  async function loadStats() {
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const tables = ['articles', 'agenda', 'deputes'];
+    const counts = {};
+    await Promise.all(tables.map(async t => {
+      const { count } = await db.from(t).select('*', { count: 'exact', head: true });
+      counts[t] = count || 0;
+    }));
+
+    document.querySelectorAll('.stat-card.stat-live').forEach(card => {
+      const table = card.dataset.supabase;
+      const el    = card.querySelector('.stat-count');
+      if (el && counts[table] !== undefined) {
+        animateCount(el, counts[table]);
+      }
+    });
+  }
+
+  /* IntersectionObserver : déclenche seulement quand visible */
+  function init() {
+    initLegislature();
+
+    const section = document.getElementById('transparence');
+    if (!section) return;
+
+    let triggered = false;
+    const observer = new IntersectionObserver(entries => {
+      if (triggered || !entries[0].isIntersecting) return;
+      triggered = true;
+      observer.disconnect();
+
+      /* Compteurs statiques */
+      document.querySelectorAll('.stat-card:not(.stat-live)').forEach(card => {
+        const target = parseInt(card.dataset.target, 10);
+        const el     = card.querySelector('.stat-count');
+        if (el && target) animateCount(el, target);
+      });
+
+      /* Compteurs Supabase */
+      loadStats();
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
 </body>
 </html>
