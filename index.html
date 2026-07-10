@@ -195,23 +195,56 @@
 </header>
 
 <!-- ==============================
-     CARROUSEL HERO (chargé depuis Supabase → table slider)
+     CARROUSEL HERO
      ============================== -->
 <section class="hero-slider" id="heroSlider" aria-label="Slider principal">
-  <!-- Les slides sont injectées dynamiquement par loadHeroSlider() -->
-  <div class="slide active" id="sliderLoadingSlide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #0a3d1f 0%, #1a6b36 50%, #0d5a28 100%);"></div>
+
+  <div class="slide active">
+    <div class="slide-bg" style="background-image:url('https://djqrmcuagrfvahmcwbro.supabase.co/storage/v1/object/public/images/slides/1777749123417.jpg');background-size:cover;background-position:center;"></div>
     <div class="slide-overlay"></div>
     <div class="slide-content">
-      <span class="slide-badge">Bienvenue</span>
-      <h2 class="slide-title">Assemblée Nationale de la République du Congo</h2>
-      <p class="slide-date">15ᵉ Législature · 2022–2027</p>
+      <span class="slide-badge">Actualité</span>
+      <h2 class="slide-title">Assemblée Nationale</h2>
+      <p class="slide-date">📅 République du Congo · 15ᵉ Législature · 2022–2027</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background-image:url('https://djqrmcuagrfvahmcwbro.supabase.co/storage/v1/object/public/images/slides/1777753898123.jpg');background-size:cover;background-position:center;"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Plénière</span>
+      <h2 class="slide-title">Clôture de la 10ᵉ Session Ordinaire Budgétaire : Un Bilan Positif</h2>
+      <p class="slide-date">📅 30 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background-image:url('https://djqrmcuagrfvahmcwbro.supabase.co/storage/v1/object/public/images/slides/1777753925144.jpg');background-size:cover;background-position:center;"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Actualité</span>
+      <h2 class="slide-title">Réorganisation stratégique de deux commissions à l'Assemblée nationale</h2>
+      <p class="slide-date">📅 27 décembre 2025</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-bg" style="background-image:url('https://djqrmcuagrfvahmcwbro.supabase.co/storage/v1/object/public/images/slides/1777753956642.jpg');background-size:cover;background-position:center;"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <span class="slide-badge">Actualité</span>
+      <h2 class="slide-title">Bilan du quinquennat (2021-2026) : l'Assemblée nationale fait le point</h2>
+      <p class="slide-date">📅 22 décembre 2025</p>
     </div>
   </div>
 
   <!-- Contrôles -->
   <div class="slider-dots" id="sliderDots">
     <span class="slider-dot active"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
   </div>
   <div class="slider-controls">
     <button class="slider-btn prev" aria-label="Précédent">&#8249;</button>

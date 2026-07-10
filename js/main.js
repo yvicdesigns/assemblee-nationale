@@ -66,9 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---- Carrousel Hero ----
-  // initSlider() est appelé par loadHeroSlider() après injection des slides depuis Supabase.
-  // On le lance ici seulement si loadHeroSlider n'est pas encore défini (page sans Supabase).
-  if (typeof loadHeroSlider !== 'function') initSlider();
+  initSlider();
 
   // ---- Filtres actualités ----
   const filterBtns = document.querySelectorAll('.filter-btn');
