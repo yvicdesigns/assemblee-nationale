@@ -2242,8 +2242,11 @@ section:nth-child(even) { background: var(--gris-c); }
   z-index: 3 !important;
 }
 
-/* Badge → glass */
+/* Badge → glass avec point vert */
 .slide-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
   background: rgba(0,154,68,0.22) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
@@ -2253,6 +2256,16 @@ section:nth-child(even) { background: var(--gris-c); }
   padding: 5px 16px !important;
   box-shadow: 0 4px 16px rgba(0,154,68,.18), inset 0 1px 0 rgba(255,255,255,.2) !important;
   font-size: 0.7rem !important;
+}
+.slide-badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00e676;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(0,230,118,.7);
 }
 
 .slide-title {
