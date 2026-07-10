@@ -2140,14 +2140,14 @@ section:nth-child(even) { background: var(--gris-c); }
 /* Header → pill glass flottante */
 .site-header {
   position: fixed !important;
-  top: 16px !important;
+  top: 32px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  width: calc(100% - 32px) !important;
+  width: calc(100% - 48px) !important;
   max-width: 1480px !important;
-  background: rgba(8,12,15,0.96) !important;
-  backdrop-filter: blur(12px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  background: rgba(8,12,15,0.72) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
   border: 1px solid rgba(255,255,255,0.1) !important;
   border-radius: 50px !important;
   box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08) !important;
@@ -2511,9 +2511,9 @@ section:nth-child(even) { background: var(--gris-c); }
 
   /* ── Nav : pill avec hauteur généreuse ── */
   .site-header .main-nav {
-    background: rgba(8,12,15,0.96) !important;
-    backdrop-filter: blur(12px) saturate(140%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+    background: rgba(8,12,15,0.80) !important;
+    backdrop-filter: blur(28px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     border-radius: 50px !important;
     box-shadow: 0 6px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07) !important;
@@ -2728,14 +2728,14 @@ section:nth-child(even) { background: var(--gris-c); }
 /* Assurer que le site-header a position relative pour le bouton absolu */
 .site-header { position: fixed !important; }
 
-/* Bande opaque au-dessus de la nav pill — empêche le contenu d'être visible dans le gap de 16px */
+/* Bande opaque au-dessus de la nav pill — empêche le contenu d'être visible dans le gap */
 body::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 16px;
+  height: 32px;
   background: #080c0f;
   z-index: 999;
   pointer-events: none;
