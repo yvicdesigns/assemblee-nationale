@@ -2622,3 +2622,94 @@ section:nth-child(even) { background: var(--gris-c); }
     display: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════
+   NAV COLLAPSE — bouton et animation
+   ══════════════════════════════════════════════ */
+
+/* Bouton collapse : petit tiret centré en bas du pill */
+.nav-collapse-btn {
+  position: absolute !important;
+  bottom: -10px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 36px !important;
+  height: 20px !important;
+  background: rgba(8,12,15,0.80) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1001 !important;
+  transition: background 0.2s ease, transform 0.2s ease !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+.nav-collapse-btn:hover {
+  background: rgba(0,154,68,0.4) !important;
+  transform: translateX(-50%) scale(1.1) !important;
+}
+.nav-collapse-icon {
+  display: block;
+  width: 14px; height: 2px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+}
+
+/* Site header : transition fluide pour le collapse */
+.site-header {
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.35s ease !important;
+}
+.site-header.nav-collapsed {
+  transform: translateX(-50%) translateY(calc(-100% - 28px)) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Mini pill flottante quand nav cachée */
+.nav-restore-btn {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  z-index: 1002;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 20px;
+  background: rgba(8,12,15,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 50px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+}
+.nav-restore-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-restore-flag { font-size: 1rem; }
+.nav-restore-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.3px;
+  font-family: var(--font);
+}
+.nav-restore-arrow {
+  font-size: 0.7rem;
+  color: #00e676;
+  font-weight: 700;
+}
+
+/* Assurer que le site-header a position relative pour le bouton absolu */
+.site-header { position: fixed !important; }

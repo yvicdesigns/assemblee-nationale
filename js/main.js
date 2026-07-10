@@ -31,6 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
     navDateEl.textContent = new Date().toLocaleDateString('fr-FR', opts);
   }
 
+  // ---- Nav collapse / restore ----
+  (function() {
+    const header     = document.querySelector('.site-header');
+    const collapseBtn = document.getElementById('navCollapseBtn');
+    const restoreBtn  = document.getElementById('navRestoreBtn');
+    if (!header || !collapseBtn || !restoreBtn) return;
+
+    collapseBtn.addEventListener('click', () => {
+      header.classList.add('nav-collapsed');
+      restoreBtn.classList.add('visible');
+    });
+    restoreBtn.addEventListener('click', () => {
+      header.classList.remove('nav-collapsed');
+      restoreBtn.classList.remove('visible');
+    });
+  })();
+
   // ---- Bulle AssistAN draggable ----
   (function() {
     const bubble = document.getElementById('assistBubble');
