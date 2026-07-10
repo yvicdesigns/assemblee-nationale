@@ -1755,12 +1755,50 @@ async function exportIcal() {
     'linear-gradient(135deg,#1a0a2a 0%,#3a1a5a 50%,#28104a 100%)',
   ];
 
+  // Photos de démonstration (remplacées par les vraies photos dans Supabase)
+  const DEMO_SLIDES = [
+    {
+      ordre: 1, eyebrow: 'République du Congo',
+      titre: 'Assemblée', titre_accent: 'Nationale',
+      description: 'La voix de 151 représentants du peuple congolais. Travaux législatifs et ressources parlementaires de la 15e Législature.',
+      cta1_label: 'Découvrir l\'institution', cta1_url: '#institution',
+      cta2_label: 'Voir les députés',         cta2_url: '#deputes',
+      image_url: 'https://images.unsplash.com/photo-1564121211835-e88c852648ab?w=1920&q=80'
+    },
+    {
+      ordre: 2, eyebrow: 'En direct',
+      titre: 'Séances', titre_accent: 'Plénières',
+      description: 'Suivez les travaux en séance publique, les ordres du jour, comptes rendus et votes de la chambre.',
+      cta1_label: 'Voir les séances',              cta1_url: 'pages/seances.html',
+      cta2_label: 'Télécharger l\'ordre du jour',  cta2_url: '#',
+      image_url: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1920&q=80'
+    },
+    {
+      ordre: 3, eyebrow: 'Intelligence artificielle',
+      titre: 'Votre guide', titre_accent: 'parlementaire',
+      description: 'AssistAN répond à vos questions sur les lois, vos droits et le fonctionnement de l\'Assemblée Nationale — 24h/24.',
+      cta1_label: 'Parler à AssistAN', cta1_url: 'pages/assistant.html',
+      cta2_label: 'En savoir plus',     cta2_url: '#assistAN',
+      image_url: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80'
+    },
+    {
+      ordre: 4, eyebrow: 'Documentation officielle',
+      titre: 'Archives', titre_accent: 'Parlementaires',
+      description: 'Constitution, lois, traités, décrets et rapports officiels de la République du Congo en un seul endroit.',
+      cta1_label: 'Consulter les archives', cta1_url: 'pages/archives.html',
+      cta2_label: 'Constitution 2015',       cta2_url: '#',
+      image_url: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=80'
+    }
+  ];
+
   try {
     const res  = await fetch(`${SUPA_URL}/rest/v1/slider?select=*&active=eq.true&order=ordre.asc`, {
       headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
     });
-    const rows = await res.json();
-    if (!Array.isArray(rows) || !rows.length) return; // garde le slide de secours
+    const data = await res.json();
+    // Si la table n'existe pas encore ou est vide → utilise les démos
+    const rows = (Array.isArray(data) && data.length) ? data : DEMO_SLIDES;
+    if (!rows.length) return;
 
     const section  = document.getElementById('heroSlider');
     const dotsWrap = document.getElementById('sliderDots');
@@ -1851,8 +1889,36 @@ async function exportIcal() {
     if (typeof initSlider === 'function') initSlider();
 
   } catch (e) {
-    console.warn('Slider Supabase error:', e);
-    // Conserve le slide de secours et initialise normalement
+    console.warn('Slider Supabase error, using demo slides:', e);
+    // En cas d'erreur réseau → injecte quand même les démos
+    try {
+      const section  = document.getElementById('heroSlider');
+      const dotsWrap = document.getElementById('sliderDots');
+      section.querySelectorAll('.slide').forEach(s => s.remove());
+      dotsWrap.innerHTML = '';
+      DEMO_SLIDES.forEach((row, i) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide' + (i === 0 ? ' active' : '');
+        const bg = document.createElement('div');
+        bg.className = 'slide-bg';
+        bg.style.backgroundImage = `url('${row.image_url}')`;
+        bg.style.backgroundSize = 'cover';
+        bg.style.backgroundPosition = 'center';
+        const overlay = document.createElement('div');
+        overlay.className = 'slide-overlay';
+        const content = document.createElement('div');
+        content.className = 'slide-content';
+        if (row.eyebrow) { const b = document.createElement('span'); b.className = 'slide-badge'; b.textContent = row.eyebrow; content.appendChild(b); }
+        const t = document.createElement('h2'); t.className = 'slide-title'; t.textContent = row.titre + (row.titre_accent ? ' ' + row.titre_accent : ''); content.appendChild(t);
+        if (row.description) { const d = document.createElement('p'); d.className = 'slide-date'; d.textContent = row.description; content.appendChild(d); }
+        slide.appendChild(bg); slide.appendChild(overlay); slide.appendChild(content);
+        const controls = section.querySelector('.slider-controls');
+        section.insertBefore(slide, controls);
+        const dot = document.createElement('span');
+        dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+        dotsWrap.appendChild(dot);
+      });
+    } catch(_) {}
     if (typeof initSlider === 'function') initSlider();
   }
 })();
