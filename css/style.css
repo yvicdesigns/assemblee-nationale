@@ -2355,10 +2355,7 @@ section:nth-child(even) { background: var(--gris-c); }
 .hero-ticker__item b { color: rgba(255,255,255,0.75); font-weight: 600; }
 .hero-ticker__sep { color: rgba(255,255,255,0.15); padding: 0 6px; font-size: .65rem; }
 
-/* ── BULLE ASSISTÁN flottante — mobile/tablette uniquement ── */
-@media (min-width: 1100px) {
-  .assistAN-bubble { display: none !important; }
-}
+/* ── BULLE ASSISTÁN flottante ── */
 .assistAN-bubble {
   position: fixed; bottom: 28px; right: 28px; z-index: 9000;
   width: 60px; height: 60px; border-radius: 50%;
@@ -2673,7 +2670,10 @@ section:nth-child(even) { background: var(--gris-c); }
   pointer-events: none !important;
 }
 
-/* Bulle flottante quand nav cachée */
+/* Bulle flottante quand nav cachée — mobile/tablette uniquement */
+@media (min-width: 1100px) {
+  .nav-restore-btn { display: none !important; }
+}
 .nav-restore-btn {
   position: fixed;
   top: 20px;
