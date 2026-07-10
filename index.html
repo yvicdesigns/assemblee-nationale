@@ -1706,7 +1706,7 @@ async function subscribeNewsletter(e) {
       cwpAppend('bot', reply);
     } catch (err) {
       cwpRemoveTyping();
-      cwpAppend('bot', "❌ Erreur IA. Vérifiez la clé Gemini ou réessayez.");
+      cwpAppend('bot', `❌ Erreur : ${err.message}`);
     }
 
     cwpLoading  = false;

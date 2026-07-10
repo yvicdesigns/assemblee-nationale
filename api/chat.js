@@ -50,24 +50,32 @@ export default async function handler(req, res) {
       parts: [{ text: m.content }]
     }));
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM }] },
-          contents,
-          generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
-        })
-      }
-    );
+    // Essaie gemini-1.5-flash (stable, gratuit) puis gemini-2.0-flash en fallback
+    const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-latest'];
+    let lastError = null;
 
-    const data = await geminiRes.json();
-    if (data.error) return res.status(500).json({ error: data.error.message });
+    for (const model of models) {
+      const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: SYSTEM }] },
+            contents,
+            generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
+          })
+        }
+      );
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Erreur de réponse.";
-    return res.status(200).json({ reply });
+      const data = await geminiRes.json();
+      if (data.error) { lastError = data.error.message; continue; }
+
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (reply) return res.status(200).json({ reply });
+    }
+
+    return res.status(500).json({ error: lastError || 'Tous les modèles ont échoué' });
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
