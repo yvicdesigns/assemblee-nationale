@@ -2537,3 +2537,82 @@ section:nth-child(even) { background: var(--gris-c); }
     display: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════
+   MOBILE (≤768px) — Redesign nav pill
+   Rangée 1 : logo + drapeau + hamburger
+   Rangée 2 : barre de recherche pleine largeur
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Pill mobile : padding généreux, coin légèrement arrondi */
+  .site-header {
+    border-radius: 22px !important;
+    padding: 12px 16px !important;
+    top: 12px !important;
+    width: calc(100% - 24px) !important;
+  }
+
+  /* Container : flex avec wrap pour les 2 rangées */
+  .site-header .container {
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Rangée 1 : logo à gauche */
+  .site-header .site-logo {
+    order: 1 !important;
+    flex-shrink: 0 !important;
+  }
+  .site-header .site-logo .site-logo__img {
+    height: 36px !important;
+  }
+
+  /* Drapeau après le logo */
+  .site-header .nav-flag {
+    order: 2 !important;
+    display: flex !important;
+    margin-left: 10px !important;
+  }
+
+  /* Hamburger à droite dans le pill */
+  .site-header .hamburger {
+    order: 3 !important;
+    margin-left: auto !important;
+    display: flex !important;
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+  }
+
+  /* Rangée 2 : barre de recherche pleine largeur */
+  .site-header .search-toggle {
+    order: 10 !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    border-radius: 30px !important;
+    padding: 10px 16px !important;
+    justify-content: flex-start !important;
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    gap: 10px !important;
+    font-size: 0.82rem !important;
+    font-weight: 400 !important;
+    color: rgba(255,255,255,0.5) !important;
+  }
+  .site-header .search-toggle::after {
+    content: 'Rechercher sur le site...' !important;
+    opacity: 1 !important;
+    font-size: 0.82rem !important;
+    font-weight: 400 !important;
+  }
+
+  /* Masquer date et lune sur mobile */
+  .site-header .nav-date-pill,
+  .site-header .dark-toggle {
+    display: none !important;
+  }
+}
