@@ -2143,20 +2143,20 @@ section:nth-child(even) { background: var(--gris-c); }
   top: 16px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  width: calc(100% - 40px) !important;
-  max-width: 1160px !important;
+  width: calc(100% - 32px) !important;
+  max-width: 1480px !important;
   background: rgba(8,12,15,0.72) !important;
   backdrop-filter: blur(28px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
   border: 1px solid rgba(255,255,255,0.1) !important;
   border-radius: 50px !important;
   box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08) !important;
-  padding: 7px 16px !important;
+  padding: 6px 20px !important;
 }
 .site-header .container {
   max-width: 100% !important;
-  padding: 0 6px !important;
-  gap: 4px !important;
+  padding: 0 !important;
+  gap: 2px !important;
   justify-content: flex-start !important;
 }
 /* Nav links s'étire pour occuper le milieu */
@@ -2164,7 +2164,12 @@ section:nth-child(even) { background: var(--gris-c); }
   flex: 1 1 auto !important;
   justify-content: center !important;
 }
-/* Date + contrôles regroupés à droite, pas au bord extrême */
+/* Liens plus compacts */
+.site-header .nav-link {
+  padding: 5px 9px !important;
+  font-size: 0.74rem !important;
+}
+/* Date + contrôles groupés à droite */
 .site-header .nav-date-pill {
   margin-left: auto !important;
   flex-shrink: 0 !important;
