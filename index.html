@@ -195,89 +195,23 @@
 </header>
 
 <!-- ==============================
-     CARROUSEL HERO
+     CARROUSEL HERO (chargé depuis Supabase → table slider)
      ============================== -->
-<section class="hero-slider" aria-label="Actualités récentes">
-
-  <div class="slide active">
+<section class="hero-slider" id="heroSlider" aria-label="Slider principal">
+  <!-- Les slides sont injectées dynamiquement par loadHeroSlider() -->
+  <div class="slide active" id="sliderLoadingSlide">
     <div class="slide-bg" style="background: linear-gradient(135deg, #0a3d1f 0%, #1a6b36 50%, #0d5a28 100%);"></div>
     <div class="slide-overlay"></div>
     <div class="slide-content">
-      <span class="slide-badge">Plénière</span>
-      <h2 class="slide-title">Clôture de la 10ᵉ Session Ordinaire Budgétaire : Un Bilan Positif</h2>
-      <p class="slide-date">📅 30 décembre 2025</p>
-    </div>
-  </div>
-
-  <div class="slide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #1a0a0a 0%, #5a1a1a 50%, #3d0d0d 100%);"></div>
-    <div class="slide-overlay"></div>
-    <div class="slide-content">
-      <span class="slide-badge">Actualité</span>
-      <h2 class="slide-title">Réorganisation stratégique de deux commissions à l'Assemblée nationale</h2>
-      <p class="slide-date">📅 27 décembre 2025</p>
-    </div>
-  </div>
-
-  <div class="slide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #0a1a3d 0%, #1a3d6b 50%, #0d2858 100%);"></div>
-    <div class="slide-overlay"></div>
-    <div class="slide-content">
-      <span class="slide-badge">Actualité</span>
-      <h2 class="slide-title">Bilan du quinquennat (2021-2026) : l'Assemblée nationale fait le point</h2>
-      <p class="slide-date">📅 22 décembre 2025</p>
-    </div>
-  </div>
-
-  <div class="slide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #3d2a00 0%, #6b5000 50%, #4a3a00 100%);"></div>
-    <div class="slide-overlay"></div>
-    <div class="slide-content">
-      <span class="slide-badge">Plénière</span>
-      <h2 class="slide-title">Consolidation des textes législatifs — Session de décembre 2025</h2>
-      <p class="slide-date">📅 20 décembre 2025</p>
-    </div>
-  </div>
-
-  <div class="slide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #0a2a1a 0%, #1a5a3a 50%, #0d3d28 100%);"></div>
-    <div class="slide-overlay"></div>
-    <div class="slide-content">
-      <span class="slide-badge">Plénière</span>
-      <h2 class="slide-title">Élargissement du cadre législatif dans les domaines de l'environnement, de l'énergie et de la diplomatie</h2>
-      <p class="slide-date">📅 19 décembre 2025</p>
-    </div>
-  </div>
-
-  <div class="slide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #1a0a2a 0%, #3a1a5a 50%, #28104a 100%);"></div>
-    <div class="slide-overlay"></div>
-    <div class="slide-content">
-      <span class="slide-badge">Plénière</span>
-      <h2 class="slide-title">Séance Plénière à l'Assemblée Nationale — Décembre 2025</h2>
-      <p class="slide-date">📅 16 décembre 2025</p>
-    </div>
-  </div>
-
-  <div class="slide">
-    <div class="slide-bg" style="background: linear-gradient(135deg, #001a3d 0%, #003a6b 50%, #002858 100%);"></div>
-    <div class="slide-overlay"></div>
-    <div class="slide-content">
-      <span class="slide-badge">Audience</span>
-      <h2 class="slide-title">La santé au cœur des préoccupations législatives : L'Assemblée Nationale réaffirme son Engagement avec le Fonds Mondial</h2>
-      <p class="slide-date">📅 12 décembre 2025</p>
+      <span class="slide-badge">Bienvenue</span>
+      <h2 class="slide-title">Assemblée Nationale de la République du Congo</h2>
+      <p class="slide-date">15ᵉ Législature · 2022–2027</p>
     </div>
   </div>
 
   <!-- Contrôles -->
-  <div class="slider-dots">
+  <div class="slider-dots" id="sliderDots">
     <span class="slider-dot active"></span>
-    <span class="slider-dot"></span>
-    <span class="slider-dot"></span>
-    <span class="slider-dot"></span>
-    <span class="slider-dot"></span>
-    <span class="slider-dot"></span>
-    <span class="slider-dot"></span>
   </div>
   <div class="slider-controls">
     <button class="slider-btn prev" aria-label="Précédent">&#8249;</button>
@@ -1806,6 +1740,122 @@ async function exportIcal() {
   a.click();
   URL.revokeObjectURL(url);
 }
+</script>
+
+<script>
+/* ── Hero Slider dynamique depuis Supabase (table: slider) ── */
+(async function loadHeroSlider() {
+  const SUPA_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
+
+  const FALLBACK_GRADIENTS = [
+    'linear-gradient(135deg,#0a3d1f 0%,#1a6b36 50%,#0d5a28 100%)',
+    'linear-gradient(135deg,#3d2a00 0%,#6b5000 50%,#4a3a00 100%)',
+    'linear-gradient(135deg,#0a1a3d 0%,#1a3d6b 50%,#0d2858 100%)',
+    'linear-gradient(135deg,#1a0a2a 0%,#3a1a5a 50%,#28104a 100%)',
+  ];
+
+  try {
+    const res  = await fetch(`${SUPA_URL}/rest/v1/slider?select=*&active=eq.true&order=ordre.asc`, {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
+    });
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) return; // garde le slide de secours
+
+    const section  = document.getElementById('heroSlider');
+    const dotsWrap = document.getElementById('sliderDots');
+
+    // Vide le contenu existant
+    section.querySelectorAll('.slide').forEach(s => s.remove());
+    dotsWrap.innerHTML = '';
+
+    rows.forEach((row, i) => {
+      // ── Build slide ──
+      const slide = document.createElement('div');
+      slide.className = 'slide' + (i === 0 ? ' active' : '');
+
+      const bg = document.createElement('div');
+      bg.className = 'slide-bg';
+      if (row.image_url) {
+        bg.style.backgroundImage = `url('${row.image_url}')`;
+        bg.style.backgroundSize  = 'cover';
+        bg.style.backgroundPosition = 'center';
+      } else {
+        bg.style.background = FALLBACK_GRADIENTS[i % FALLBACK_GRADIENTS.length];
+      }
+
+      const overlay = document.createElement('div');
+      overlay.className = 'slide-overlay';
+
+      const content = document.createElement('div');
+      content.className = 'slide-content';
+
+      // badge / eyebrow
+      if (row.eyebrow) {
+        const badge = document.createElement('span');
+        badge.className = 'slide-badge';
+        badge.textContent = row.eyebrow;
+        content.appendChild(badge);
+      }
+
+      // titre
+      const title = document.createElement('h2');
+      title.className = 'slide-title';
+      title.innerHTML = row.titre + (row.titre_accent ? ` <em style="color:var(--jaune,#c9a227);font-style:normal">${row.titre_accent}</em>` : '');
+      content.appendChild(title);
+
+      // description
+      if (row.description) {
+        const desc = document.createElement('p');
+        desc.className = 'slide-date';
+        desc.textContent = row.description;
+        content.appendChild(desc);
+      }
+
+      // CTA buttons
+      if (row.cta1_label) {
+        const ctas = document.createElement('div');
+        ctas.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;margin-top:18px';
+
+        const btn1 = document.createElement('a');
+        btn1.href = row.cta1_url || '#';
+        btn1.textContent = row.cta1_label;
+        btn1.style.cssText = 'display:inline-flex;align-items:center;background:var(--vert,#1a7a3c);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:11px 22px;border-radius:8px;transition:background .2s';
+        ctas.appendChild(btn1);
+
+        if (row.cta2_label) {
+          const btn2 = document.createElement('a');
+          btn2.href = row.cta2_url || '#';
+          btn2.textContent = row.cta2_label;
+          btn2.style.cssText = 'display:inline-flex;align-items:center;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:11px 22px;border-radius:8px;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(8px);transition:background .2s';
+          ctas.appendChild(btn2);
+        }
+        content.appendChild(ctas);
+      }
+
+      slide.appendChild(bg);
+      slide.appendChild(overlay);
+      slide.appendChild(content);
+
+      // Insérer avant les contrôles
+      const controls = section.querySelector('.slider-controls');
+      section.insertBefore(slide, controls);
+
+      // dot
+      const dot = document.createElement('span');
+      dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+      dotsWrap.appendChild(dot);
+    });
+
+    // Réinitialise le slider avec les nouveaux slides
+    if (typeof initSlider === 'function') initSlider();
+
+  } catch (e) {
+    console.warn('Slider Supabase error:', e);
+    // Conserve le slide de secours et initialise normalement
+    if (typeof initSlider === 'function') initSlider();
+  }
+})();
 </script>
 </body>
 </html>
