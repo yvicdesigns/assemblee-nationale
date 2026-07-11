@@ -2743,11 +2743,6 @@ section:nth-child(even) { background: var(--gris-c); }
    NAV COLLAPSE — bouton et animation
    ══════════════════════════════════════════════ */
 
-/* Bouton collapse : mobile/tablette uniquement */
-@media (min-width: 1100px) {
-  .nav-collapse-btn { display: none !important; }
-}
-
 /* Bouton collapse : petit rond centré en bas du pill */
 .nav-collapse-btn {
   position: absolute !important;
@@ -2776,6 +2771,10 @@ section:nth-child(even) { background: var(--gris-c); }
 .site-header:has(.main-nav.open) .nav-collapse-btn {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+/* Mobile/tablette uniquement — doit être APRÈS les règles de base pour gagner */
+@media (min-width: 1100px) {
+  .nav-collapse-btn { display: none !important; }
 }
 .nav-collapse-icon {
   display: block;

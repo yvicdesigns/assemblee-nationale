@@ -52,19 +52,25 @@ document.addEventListener('DOMContentLoaded', () => {
   (function() {
     const bubble = document.getElementById('assistBubble');
     if (!bubble) return;
-    let pressing = false, hasMoved = false, ox = 0, oy = 0;
+    let dragged = false, ox = 0, oy = 0;
 
+    // Clic simple → ouvrir/fermer le chat
+    bubble.addEventListener('click', () => {
+      if (dragged) { dragged = false; return; }
+      if (typeof toggleWidget === 'function') toggleWidget();
+    });
+
+    // Drag souris (desktop)
     bubble.addEventListener('mousedown', e => {
-      pressing = true;
-      hasMoved = false;
+      dragged = false;
       const r = bubble.getBoundingClientRect();
       ox = e.clientX - r.left; oy = e.clientY - r.top;
       bubble.style.cursor = 'grabbing';
     });
     document.addEventListener('mousemove', e => {
-      if (!pressing) return;
-      if (!hasMoved) {
-        hasMoved = true;
+      if (e.buttons !== 1 || ox === 0) return;
+      if (!dragged) {
+        dragged = true;
         bubble.style.animation = 'none';
         bubble.style.right = 'auto'; bubble.style.bottom = 'auto';
       }
@@ -72,36 +78,35 @@ document.addEventListener('DOMContentLoaded', () => {
       bubble.style.top  = (e.clientY - oy) + 'px';
     });
     document.addEventListener('mouseup', () => {
-      if (!pressing) return;
-      pressing = false;
+      if (dragged) bubble.style.animation = 'bubbleFloat 2.8s ease-in-out infinite';
       bubble.style.cursor = 'grab';
-      bubble.style.animation = 'bubbleFloat 2.8s ease-in-out infinite';
-      // Si pas de mouvement = clic → ouvrir le chat
-      if (!hasMoved) toggleWidget();
+      ox = 0;
     });
 
+    // Drag tactile (mobile)
     bubble.addEventListener('touchstart', e => {
-      const t = e.touches[0];
-      pressing = true; hasMoved = false;
-      const r = bubble.getBoundingClientRect();
+      dragged = false;
+      const t = e.touches[0], r = bubble.getBoundingClientRect();
       ox = t.clientX - r.left; oy = t.clientY - r.top;
     }, { passive: true });
     document.addEventListener('touchmove', e => {
-      if (!pressing) return;
-      if (!hasMoved) {
-        hasMoved = true;
+      if (ox === 0) return;
+      const t = e.touches[0];
+      const dx = Math.abs(t.clientX - ox - bubble.getBoundingClientRect().left);
+      const dy = Math.abs(t.clientY - oy - bubble.getBoundingClientRect().top);
+      if (!dragged && (dx > 8 || dy > 8)) {
+        dragged = true;
         bubble.style.animation = 'none';
         bubble.style.right = 'auto'; bubble.style.bottom = 'auto';
       }
-      const t = e.touches[0];
-      bubble.style.left = (t.clientX - ox) + 'px';
-      bubble.style.top  = (t.clientY - oy) + 'px';
+      if (dragged) {
+        bubble.style.left = (t.clientX - ox) + 'px';
+        bubble.style.top  = (t.clientY - oy) + 'px';
+      }
     }, { passive: true });
     document.addEventListener('touchend', () => {
-      if (!pressing) return;
-      pressing = false;
-      bubble.style.animation = 'bubbleFloat 2.8s ease-in-out infinite';
-      if (!hasMoved) toggleWidget();
+      if (dragged) bubble.style.animation = 'bubbleFloat 2.8s ease-in-out infinite';
+      ox = 0;
     });
   })();
 
