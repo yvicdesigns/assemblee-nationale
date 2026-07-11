@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260711p">
+  <link rel="stylesheet" href="css/style.css?v=20260711q">
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
@@ -385,8 +385,11 @@
 
 <style>
   .chat-widget-panel {
-    position: fixed; bottom: 100px; right: 28px; z-index: 9001;
-    width: 360px; max-height: 500px;
+    position: fixed;
+    bottom: 100px; right: 28px;
+    z-index: 9001;
+    width: 360px;
+    max-height: min(500px, calc(100dvh - 130px));
     background: #fff; border-radius: 18px;
     box-shadow: 0 16px 64px rgba(0,0,0,.18);
     border: 1px solid #e2e8f0;
@@ -396,8 +399,14 @@
     transition: all .25s cubic-bezier(.34,1.56,.64,1);
   }
   .chat-widget-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
-  @media (max-width: 420px) {
-    .chat-widget-panel { width: calc(100vw - 32px); right: 16px; bottom: 90px; }
+  @media (max-width: 768px) {
+    .chat-widget-panel {
+      width: calc(100vw - 32px);
+      right: 16px;
+      bottom: 88px;
+      max-height: min(420px, calc(100dvh - 120px));
+      border-radius: 16px;
+    }
   }
   .cwp-header { padding: 14px 16px; background: linear-gradient(135deg, #009A44, #1a6b36); border-radius: 18px 18px 0 0; display: flex; align-items: center; gap: 10px; color: #fff; }
   .cwp-avatar { font-size: 1.4rem; }
