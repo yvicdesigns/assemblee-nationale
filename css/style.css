@@ -2743,7 +2743,12 @@ section:nth-child(even) { background: var(--gris-c); }
    NAV COLLAPSE — bouton et animation
    ══════════════════════════════════════════════ */
 
-/* Bouton collapse : petit tiret centré en bas du pill */
+/* Bouton collapse : mobile/tablette uniquement */
+@media (min-width: 1100px) {
+  .nav-collapse-btn { display: none !important; }
+}
+
+/* Bouton collapse : petit rond centré en bas du pill */
 .nav-collapse-btn {
   position: absolute !important;
   bottom: -14px !important;
