@@ -52,45 +52,56 @@ document.addEventListener('DOMContentLoaded', () => {
   (function() {
     const bubble = document.getElementById('assistBubble');
     if (!bubble) return;
-    let dragging = false, ox = 0, oy = 0;
+    let pressing = false, hasMoved = false, ox = 0, oy = 0;
+
     bubble.addEventListener('mousedown', e => {
-      dragging = true;
+      pressing = true;
+      hasMoved = false;
       const r = bubble.getBoundingClientRect();
       ox = e.clientX - r.left; oy = e.clientY - r.top;
-      bubble.style.animation = 'none';
       bubble.style.cursor = 'grabbing';
-      bubble.style.right = 'auto'; bubble.style.bottom = 'auto';
-      e.preventDefault();
     });
     document.addEventListener('mousemove', e => {
-      if (!dragging) return;
+      if (!pressing) return;
+      if (!hasMoved) {
+        hasMoved = true;
+        bubble.style.animation = 'none';
+        bubble.style.right = 'auto'; bubble.style.bottom = 'auto';
+      }
       bubble.style.left = (e.clientX - ox) + 'px';
       bubble.style.top  = (e.clientY - oy) + 'px';
     });
-    document.addEventListener('mouseup', e => {
-      if (!dragging) return;
-      dragging = false;
-      // Si c'était un simple clic (pas un glissement), suivre le lien
+    document.addEventListener('mouseup', () => {
+      if (!pressing) return;
+      pressing = false;
       bubble.style.cursor = 'grab';
       bubble.style.animation = 'bubbleFloat 2.8s ease-in-out infinite';
+      // Si pas de mouvement = clic → ouvrir le chat
+      if (!hasMoved) toggleWidget();
     });
+
     bubble.addEventListener('touchstart', e => {
       const t = e.touches[0];
-      dragging = true;
+      pressing = true; hasMoved = false;
       const r = bubble.getBoundingClientRect();
       ox = t.clientX - r.left; oy = t.clientY - r.top;
-      bubble.style.animation = 'none';
-      bubble.style.right = 'auto'; bubble.style.bottom = 'auto';
     }, { passive: true });
     document.addEventListener('touchmove', e => {
-      if (!dragging) return;
+      if (!pressing) return;
+      if (!hasMoved) {
+        hasMoved = true;
+        bubble.style.animation = 'none';
+        bubble.style.right = 'auto'; bubble.style.bottom = 'auto';
+      }
       const t = e.touches[0];
       bubble.style.left = (t.clientX - ox) + 'px';
       bubble.style.top  = (t.clientY - oy) + 'px';
     }, { passive: true });
     document.addEventListener('touchend', () => {
-      dragging = false;
+      if (!pressing) return;
+      pressing = false;
       bubble.style.animation = 'bubbleFloat 2.8s ease-in-out infinite';
+      if (!hasMoved) toggleWidget();
     });
   })();
 
