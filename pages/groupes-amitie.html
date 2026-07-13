@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groupes d'amitié – Travaux – Assemblée Nationale du Congo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .amitie-intro { font-size:.9rem; line-height:1.85; color:var(--gris-m); margin-bottom:36px; }
+
+    /* ── Grille groupes ── */
+    .amitie-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:16px; margin:20px 0 40px; }
+    .amitie-card { border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; transition:all .2s; }
+    .amitie-card:hover { border-color:#009A44; box-shadow:0 6px 20px rgba(0,154,68,.1); transform:translateY(-2px); }
+    .amitie-card__hero { padding:20px 20px 14px; display:flex; align-items:center; gap:14px; }
+    .amitie-card__flag { font-size:2.4rem; line-height:1; }
+    .amitie-card__country { font-family:var(--font-h); font-size:1.05rem; font-weight:700; color:var(--noir); }
+    .amitie-card__since { font-size:.72rem; color:#64748b; margin-top:2px; }
+    .amitie-card__body { padding:0 20px 20px; border-top:1px solid #f1f5f9; padding-top:14px; }
+    .amitie-card__president { font-size:.78rem; color:#374151; margin-bottom:6px; }
+    .amitie-card__president span { font-weight:700; }
+    .amitie-card__members { font-size:.75rem; color:#64748b; margin-bottom:10px; }
+    .amitie-card__tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .amitie-tag { font-size:.65rem; font-weight:700; background:#f1f5f9; color:#374151; padding:3px 9px; border-radius:20px; }
+    .amitie-tag.actif { background:#dcfce7; color:#009A44; }
+
+    /* ── Stats ── */
+    .amitie-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+    .amitie-stat { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; text-align:center; }
+    .amitie-stat__num { font-family:var(--font-h); font-size:1.8rem; font-weight:700; color:#009A44; }
+    .amitie-stat__label { font-size:.7rem; color:#64748b; margin-top:3px; }
+    [data-theme="dark"] .amitie-stat { background:#1e2a3a; border-color:rgba(255,255,255,.08); }
+
+    /* ── Création d'un groupe ── */
+    .creation-box { background:#f8fafc; border-radius:12px; padding:24px; border:1px solid #e2e8f0; margin:8px 0 36px; }
+    .creation-box h3 { font-size:.95rem; margin-bottom:12px; color:var(--noir); }
+    .creation-box ul { list-style:none; padding:0; display:flex; flex-direction:column; gap:8px; }
+    .creation-box ul li { font-size:.82rem; color:#64748b; padding-left:20px; position:relative; line-height:1.5; }
+    .creation-box ul li::before { content:'→'; position:absolute; left:0; color:#009A44; font-weight:700; }
+    [data-theme="dark"] .creation-box { background:#1e2a3a; border-color:rgba(255,255,255,.08); }
+    [data-theme="dark"] .creation-box h3 { color:var(--text-main); }
+    [data-theme="dark"] .amitie-card { background:#1a1a2e; border-color:rgba(255,255,255,.1); }
+    [data-theme="dark"] .amitie-card__country { color:var(--text-main); }
+    [data-theme="dark"] .amitie-card__body { border-color:rgba(255,255,255,.08); }
+    [data-theme="dark"] .amitie-tag { background:#1e2a3a; color:#94a3b8; }
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"></div>
+<div class="top-bar"><div class="container"><div class="top-bar__left"><span class="top-bar__date"></span><span class="top-bar__sep"></span><span>15ᵉ Législature – République du Congo</span></div><div class="top-bar__right"><div class="top-social"><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a></div><span class="top-bar__sep"></span><div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div></div></div></div>
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo"><img src="../logo/logo-dark-small.png" alt="Assemblée Nationale" class="site-logo__img"></a>
+    <nav class="main-nav" role="navigation" aria-label="Navigation principale">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item">
+          <a href="histoire.html" class="nav-link">L'Assemblée Nationale <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section"><div class="dropdown-section__title">Présentation</div><a href="histoire.html" class="dropdown-link">Notre histoire</a><a href="role.html" class="dropdown-link">Mission &amp; Attributions</a><a href="organisation.html" class="dropdown-link">Organisation &amp; Fonctionnement</a><a href="reglement.html" class="dropdown-link">Règlement intérieur</a><a href="textes.html" class="dropdown-link">Textes fondamentaux</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Organes</div><a href="bureau.html" class="dropdown-link">Le Bureau</a><a href="conference-presidents.html" class="dropdown-link">Conférence des Présidents</a><a href="commissions.html" class="dropdown-link">Commissions permanentes</a><a href="commissions-speciales.html" class="dropdown-link">Commissions spéciales</a><a href="groupes.html" class="dropdown-link">Groupes parlementaires</a><a href="secretariat-general.html" class="dropdown-link">Secrétariat général</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Les Députés</div><a href="deputes.html" class="dropdown-link">Annuaire des 151 Députés</a><a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a><a href="contact.html" class="dropdown-link">Contacter son Député</a></div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="blog.html" class="nav-link">Travaux <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section"><div class="dropdown-section__title">Actualité &amp; Plénières</div><a href="blog.html" class="dropdown-link">Actualité parlementaire</a><a href="seances.html" class="dropdown-link">Séances plénières</a><a href="seances.html" class="dropdown-link">📅 Calendrier des sessions</a><a href="ordre-du-jour.html" class="dropdown-link">Ordre du jour</a><a href="pleniere.html" class="dropdown-link">📝 Comptes rendus &amp; PV</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Commissions &amp; Contrôle</div><a href="commissions.html" class="dropdown-link">Les Commissions</a><a href="questions-ecrites.html" class="dropdown-link">Questions écrites</a><a href="questions-orales.html" class="dropdown-link">Questions orales</a><a href="interpellations.html" class="dropdown-link">Interpellations</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">International &amp; Archives</div><a href="diplomatie.html" class="dropdown-link">Diplomatie parlementaire</a><a href="groupes-amitie.html" class="dropdown-link active">Groupes d'amitié</a><a href="role.html" class="dropdown-link">Découvrir l'Assemblée</a><a href="archives.html" class="dropdown-link">📂 Archives &amp; Lois</a></div>
+          </div>
+        </li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link">Médiathèque</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="assistant.html" class="nav-link" style="color:#009A44;font-weight:700">🤖 AssistAN</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb"><a href="../index.html">Accueil</a><span>›</span><a href="blog.html">Travaux</a><span>›</span><span>Groupes d'amitié</span></div>
+    <h1 class="page-hero__title">Groupes d'amitié</h1>
+    <p class="page-hero__sub">Liens parlementaires bilatéraux entre l'Assemblée Nationale du Congo et les parlements du monde</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="container">
+    <div class="page-layout">
+      <main class="page-main">
+
+        <p class="amitie-intro">
+          Les groupes d'amitié sont des structures informelles de l'Assemblée Nationale qui rassemblent
+          des députés souhaitant renforcer les liens d'amitié et de coopération avec un pays donné.
+          Ils organisent des visites, des échanges d'expériences et participent aux délégations
+          officielles entre assemblées. Ils complètent les accords formels de coopération interparlementaire.
+        </p>
+
+        <div class="amitie-stats">
+          <div class="amitie-stat"><div class="amitie-stat__num">16</div><div class="amitie-stat__label">Groupes d'amitié actifs</div></div>
+          <div class="amitie-stat"><div class="amitie-stat__num">24</div><div class="amitie-stat__label">Pays partenaires</div></div>
+          <div class="amitie-stat"><div class="amitie-stat__num">8</div><div class="amitie-stat__label">Échanges en 2025</div></div>
+        </div>
+
+        <h2>Groupes d'amitié actifs — 15ᵉ Législature</h2>
+        <div class="amitie-grid">
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇫🇷</div>
+              <div><div class="amitie-card__country">Congo – France</div><div class="amitie-card__since">Depuis 1972 · Historique</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Émile BANZOUZI</span></div>
+              <div class="amitie-card__members">22 membres · Groupe PCT, UPADS, MCDDI</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Coopération</span><span class="amitie-tag">Francophonie</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇨🇳</div>
+              <div><div class="amitie-card__country">Congo – Chine</div><div class="amitie-card__since">Depuis 1994</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Jean-Michel BOKAMBA</span></div>
+              <div class="amitie-card__members">18 membres · Tous groupes</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Infrastructure</span><span class="amitie-tag">Commerce</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇧🇷</div>
+              <div><div class="amitie-card__country">Congo – Brésil</div><div class="amitie-card__since">Depuis 2008</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Christine IBATA</span></div>
+              <div class="amitie-card__members">12 membres · Groupe PCT</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Forêt tropicale</span><span class="amitie-tag">Sud-Sud</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇷🇺</div>
+              <div><div class="amitie-card__country">Congo – Russie</div><div class="amitie-card__since">Depuis 1985</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Alphonse NGANGA</span></div>
+              <div class="amitie-card__members">10 membres</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Coopération</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇨🇩</div>
+              <div><div class="amitie-card__country">Congo – RDC</div><div class="amitie-card__since">Depuis 2002 · Voisins</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Prosper MOUYABI</span></div>
+              <div class="amitie-card__members">14 membres · UPADS, PCT</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Voisinage</span><span class="amitie-tag">Fleuve Congo</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇺🇸</div>
+              <div><div class="amitie-card__country">Congo – États-Unis</div><div class="amitie-card__since">Depuis 2010</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Marie-Claire NGANGA</span></div>
+              <div class="amitie-card__members">9 membres</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Démocratie</span><span class="amitie-tag">Investissement</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇬🇦</div>
+              <div><div class="amitie-card__country">Congo – Gabon</div><div class="amitie-card__since">Depuis 1991 · Voisins</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Casimir BATÉKÉLA</span></div>
+              <div class="amitie-card__members">11 membres</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">CEMAC</span><span class="amitie-tag">Voisinage</span></div>
+            </div>
+          </div>
+
+          <div class="amitie-card">
+            <div class="amitie-card__hero">
+              <div class="amitie-card__flag">🇰🇷</div>
+              <div><div class="amitie-card__country">Congo – Corée du Sud</div><div class="amitie-card__since">Depuis 2016</div></div>
+            </div>
+            <div class="amitie-card__body">
+              <div class="amitie-card__president">Président : <span>Albert ONDELE</span></div>
+              <div class="amitie-card__members">8 membres</div>
+              <div class="amitie-card__tags"><span class="amitie-tag actif">Actif</span><span class="amitie-tag">Numérique</span><span class="amitie-tag">Énergie</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <h2>Créer un groupe d'amitié</h2>
+        <div class="creation-box">
+          <h3>Conditions de création d'un groupe d'amitié</h3>
+          <ul>
+            <li>Initiative d'au moins 10 députés de la même législature</li>
+            <li>Dépôt d'une déclaration constitutive auprès du Bureau de l'Assemblée</li>
+            <li>Election d'un bureau (président, vice-président, secrétaire)</li>
+            <li>Validation par la Conférence des Présidents</li>
+            <li>Un seul groupe d'amitié par pays partenaire</li>
+          </ul>
+        </div>
+
+      </main>
+
+      <aside class="page-sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-card__title">International</h3>
+          <ul class="sidebar-links">
+            <li><a href="diplomatie.html">Diplomatie parlementaire</a></li>
+            <li><a href="groupes-amitie.html"><strong>Groupes d'amitié</strong></a></li>
+          </ul>
+        </div>
+        <div class="sidebar-card">
+          <h3 class="sidebar-card__title">Travaux</h3>
+          <ul class="sidebar-links">
+            <li><a href="seances.html">Séances plénières</a></li>
+            <li><a href="ordre-du-jour.html">Ordre du jour</a></li>
+            <li><a href="pleniere.html">Comptes rendus &amp; PV</a></li>
+          </ul>
+        </div>
+        <div class="sidebar-card sidebar-card--dark">
+          <h3 class="sidebar-card__title">Chiffres clés</h3>
+          <div class="sidebar-stat"><span class="sidebar-stat__num">16</span><span class="sidebar-stat__label">Groupes actifs</span></div>
+          <div class="sidebar-stat"><span class="sidebar-stat__num">24</span><span class="sidebar-stat__label">Pays partenaires</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top"><div class="container"><div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo"><div class="footer-logo-emblem">🏛️</div><div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div></div><p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p></div>
+    <div class="footer-col"><h4 class="footer-col__title">International</h4><ul class="footer-links"><li><a href="diplomatie.html">Diplomatie parlementaire</a></li><li><a href="groupes-amitie.html">Groupes d'amitié</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Travaux</h4><ul class="footer-links"><li><a href="seances.html">Séances</a></li><li><a href="pleniere.html">Comptes rendus</a></li><li><a href="archives.html">Archives</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Réseaux sociaux</h4><div class="footer-social"><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a></div></div>
+  </div></div></div>
+  <div class="footer-bottom"><div class="container"><p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p><div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div></div></div>
+</footer>
+<button class="scroll-top" title="Haut de page">↑</button>
+<script src="../js/main.js"></script>
+</body>
+</html>

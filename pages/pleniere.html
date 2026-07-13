@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comptes rendus & PV – Travaux – Assemblée Nationale du Congo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Filtres ── */
+    .filters-bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:28px; }
+    .filter-btn { border:1px solid #e2e8f0; background:#fff; color:#374151; font-size:.78rem; font-weight:600; padding:6px 16px; border-radius:20px; cursor:pointer; transition:all .18s; }
+    .filter-btn:hover, .filter-btn.active { background:#009A44; color:#fff; border-color:#009A44; }
+    [data-theme="dark"] .filter-btn { background:#1a2234; border-color:rgba(255,255,255,.15); color:#94a3b8; }
+    [data-theme="dark"] .filter-btn.active { background:#009A44; color:#fff; }
+
+    /* ── Session tabs ── */
+    .session-tabs { display:flex; gap:0; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:24px; }
+    .session-tab { flex:1; padding:10px; text-align:center; font-size:.8rem; font-weight:700; color:#64748b; background:#f8fafc; cursor:pointer; transition:all .18s; border:none; }
+    .session-tab.active { background:#009A44; color:#fff; }
+    [data-theme="dark"] .session-tab { background:#1e2a3a; color:#94a3b8; }
+    [data-theme="dark"] .session-tab.active { background:#009A44; color:#fff; }
+
+    /* ── PV list ── */
+    .pv-list { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+    .pv-item { border:1px solid #e2e8f0; border-radius:12px; padding:20px 22px; display:flex; align-items:center; gap:16px; transition:all .2s; }
+    .pv-item:hover { border-color:#009A44; box-shadow:0 4px 14px rgba(0,154,68,.1); }
+    .pv-date-badge { min-width:56px; text-align:center; }
+    .pv-date-badge__day { font-family:var(--font-h); font-size:1.6rem; font-weight:700; color:#009A44; line-height:1; }
+    .pv-date-badge__month { font-size:.65rem; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:.07em; }
+    .pv-divider { width:1px; height:44px; background:#e2e8f0; flex-shrink:0; }
+    .pv-body { flex:1; }
+    .pv-body__title { font-weight:700; color:var(--noir); font-size:.9rem; margin-bottom:4px; line-height:1.3; }
+    .pv-body__meta { font-size:.75rem; color:#64748b; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .pv-status { font-size:.65rem; font-weight:800; letter-spacing:.07em; text-transform:uppercase; padding:2px 8px; border-radius:20px; }
+    .pv-status.ok { background:#dcfce7; color:#009A44; }
+    .pv-status.draft { background:#fef9c3; color:#92400e; }
+    .pv-actions { display:flex; gap:8px; flex-shrink:0; }
+    .pv-btn { display:inline-flex; align-items:center; gap:5px; padding:7px 14px; border-radius:7px; font-size:.76rem; font-weight:700; text-decoration:none; transition:all .18s; }
+    .pv-btn-read { background:#f0fdf4; color:#009A44; border:1px solid #bbf7d0; }
+    .pv-btn-read:hover { background:#009A44; color:#fff; }
+    .pv-btn-dl { background:#f8fafc; color:#374151; border:1px solid #e2e8f0; }
+    .pv-btn-dl:hover { background:#374151; color:#fff; }
+
+    /* ── Stats bar ── */
+    .stats-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+    @media(max-width:580px){ .stats-strip{ grid-template-columns:repeat(2,1fr); } }
+    .stat-tile { background:#f8fafc; border-radius:10px; padding:16px; text-align:center; border:1px solid #e2e8f0; }
+    .stat-tile__num { font-family:var(--font-h); font-size:1.8rem; font-weight:700; color:#009A44; }
+    .stat-tile__label { font-size:.72rem; color:#64748b; margin-top:3px; }
+    [data-theme="dark"] .stat-tile { background:#1e2a3a; border-color:rgba(255,255,255,.08); }
+    [data-theme="dark"] .pv-item { background:#1a1a2e; border-color:rgba(255,255,255,.1); }
+    [data-theme="dark"] .pv-body__title { color:var(--text-main); }
+    [data-theme="dark"] .pv-divider { background:rgba(255,255,255,.1); }
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"></div>
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar__left">
+      <span class="top-bar__date"></span>
+      <span class="top-bar__sep"></span>
+      <span>15ᵉ Législature – République du Congo</span>
+    </div>
+    <div class="top-bar__right">
+      <div class="top-social">
+        <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a>
+        <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a>
+      </div>
+      <span class="top-bar__sep"></span>
+      <div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div>
+    </div>
+  </div>
+</div>
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo"><img src="../logo/logo-dark-small.png" alt="Assemblée Nationale" class="site-logo__img"></a>
+    <nav class="main-nav" role="navigation" aria-label="Navigation principale">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item">
+          <a href="histoire.html" class="nav-link">L'Assemblée Nationale <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Présentation</div>
+              <a href="histoire.html" class="dropdown-link">Notre histoire</a>
+              <a href="role.html" class="dropdown-link">Mission &amp; Attributions</a>
+              <a href="organisation.html" class="dropdown-link">Organisation &amp; Fonctionnement</a>
+              <a href="reglement.html" class="dropdown-link">Règlement intérieur</a>
+              <a href="textes.html" class="dropdown-link">Textes fondamentaux</a>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Organes</div>
+              <a href="bureau.html" class="dropdown-link">Le Bureau</a>
+              <a href="conference-presidents.html" class="dropdown-link">Conférence des Présidents</a>
+              <a href="commissions.html" class="dropdown-link">Commissions permanentes</a>
+              <a href="commissions-speciales.html" class="dropdown-link">Commissions spéciales</a>
+              <a href="groupes.html" class="dropdown-link">Groupes parlementaires</a>
+              <a href="secretariat-general.html" class="dropdown-link">Secrétariat général</a>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Les Députés</div>
+              <a href="deputes.html" class="dropdown-link">Annuaire des 151 Députés</a>
+              <a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a>
+              <a href="contact.html" class="dropdown-link">Contacter son Député</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="blog.html" class="nav-link">Travaux <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Actualité &amp; Plénières</div>
+              <a href="blog.html" class="dropdown-link">Actualité parlementaire</a>
+              <a href="seances.html" class="dropdown-link">Séances plénières</a>
+              <a href="seances.html" class="dropdown-link">📅 Calendrier des sessions</a>
+              <a href="ordre-du-jour.html" class="dropdown-link">Ordre du jour</a>
+              <a href="pleniere.html" class="dropdown-link active">📝 Comptes rendus &amp; PV</a>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">Commissions &amp; Contrôle</div>
+              <a href="commissions.html" class="dropdown-link">Les Commissions</a>
+              <a href="questions-ecrites.html" class="dropdown-link">Questions écrites</a>
+              <a href="questions-orales.html" class="dropdown-link">Questions orales</a>
+              <a href="interpellations.html" class="dropdown-link">Interpellations</a>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-section__title">International &amp; Archives</div>
+              <a href="diplomatie.html" class="dropdown-link">Diplomatie parlementaire</a>
+              <a href="groupes-amitie.html" class="dropdown-link">Groupes d'amitié</a>
+              <a href="role.html" class="dropdown-link">Découvrir l'Assemblée</a>
+              <a href="archives.html" class="dropdown-link">📂 Archives &amp; Lois</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link">Médiathèque</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="assistant.html" class="nav-link" style="color:#009A44;font-weight:700">🤖 AssistAN</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb">
+      <a href="../index.html">Accueil</a><span>›</span>
+      <a href="seances.html">Travaux</a><span>›</span>
+      <span>Comptes rendus &amp; PV</span>
+    </div>
+    <h1 class="page-hero__title">Comptes rendus &amp; Procès-verbaux</h1>
+    <p class="page-hero__sub">Archives officielles des séances plénières de la 15ᵉ Législature</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="container">
+    <div class="page-layout">
+      <main class="page-main">
+
+        <div class="stats-strip">
+          <div class="stat-tile"><div class="stat-tile__num">48</div><div class="stat-tile__label">PV disponibles</div></div>
+          <div class="stat-tile"><div class="stat-tile__num">2</div><div class="stat-tile__label">Sessions 2025</div></div>
+          <div class="stat-tile"><div class="stat-tile__num">112</div><div class="stat-tile__label">Textes examinés</div></div>
+          <div class="stat-tile"><div class="stat-tile__num">89</div><div class="stat-tile__label">Lois adoptées</div></div>
+        </div>
+
+        <div class="session-tabs" id="sessionTabs">
+          <button class="session-tab active" data-session="2025">2ᵉ Session 2025 (Oct–Déc)</button>
+          <button class="session-tab" data-session="2025a">1ère Session 2025 (Mars–Juin)</button>
+          <button class="session-tab" data-session="2024">Sessions 2024</button>
+        </div>
+
+        <div class="filters-bar">
+          <span style="font-size:.78rem;font-weight:600;color:#64748b;">Filtrer :</span>
+          <button class="filter-btn active">Tous</button>
+          <button class="filter-btn">Lois adoptées</button>
+          <button class="filter-btn">Budget</button>
+          <button class="filter-btn">Questions</button>
+          <button class="filter-btn">Interpellations</button>
+        </div>
+
+        <div class="pv-list">
+          <div class="pv-item">
+            <div class="pv-date-badge"><div class="pv-date-badge__day">18</div><div class="pv-date-badge__month">Nov 2025</div></div>
+            <div class="pv-divider"></div>
+            <div class="pv-body">
+              <div class="pv-body__title">Séance plénière — Adoption du Projet de Loi de Finances 2026</div>
+              <div class="pv-body__meta">
+                <span>Présidée par : Isidore MVOUBA</span>
+                <span>·</span><span>142 députés présents</span>
+                <span>·</span><span class="pv-status ok">Disponible</span>
+              </div>
+            </div>
+            <div class="pv-actions">
+              <a href="archives.html?ref=PV-20251118" class="pv-btn pv-btn-read">Lire</a>
+              <a href="archives.html?ref=PV-20251118&dl=1" class="pv-btn pv-btn-dl">⬇ PDF</a>
+            </div>
+          </div>
+          <div class="pv-item">
+            <div class="pv-date-badge"><div class="pv-date-badge__day">12</div><div class="pv-date-badge__month">Nov 2025</div></div>
+            <div class="pv-divider"></div>
+            <div class="pv-body">
+              <div class="pv-body__title">Séance plénière — Examen du Projet de Loi sur la Décentralisation</div>
+              <div class="pv-body__meta">
+                <span>Présidée par : Isidore MVOUBA</span>
+                <span>·</span><span>138 députés présents</span>
+                <span>·</span><span class="pv-status ok">Disponible</span>
+              </div>
+            </div>
+            <div class="pv-actions">
+              <a href="archives.html?ref=PV-20251112" class="pv-btn pv-btn-read">Lire</a>
+              <a href="archives.html?ref=PV-20251112&dl=1" class="pv-btn pv-btn-dl">⬇ PDF</a>
+            </div>
+          </div>
+          <div class="pv-item">
+            <div class="pv-date-badge"><div class="pv-date-badge__day">05</div><div class="pv-date-badge__month">Nov 2025</div></div>
+            <div class="pv-divider"></div>
+            <div class="pv-body">
+              <div class="pv-body__title">Séance plénière — Questions orales sans débat au Gouvernement</div>
+              <div class="pv-body__meta">
+                <span>Présidée par : 1ᵉʳ Vice-Président</span>
+                <span>·</span><span>127 députés présents</span>
+                <span>·</span><span class="pv-status ok">Disponible</span>
+              </div>
+            </div>
+            <div class="pv-actions">
+              <a href="archives.html?ref=PV-20251105" class="pv-btn pv-btn-read">Lire</a>
+              <a href="archives.html?ref=PV-20251105&dl=1" class="pv-btn pv-btn-dl">⬇ PDF</a>
+            </div>
+          </div>
+          <div class="pv-item">
+            <div class="pv-date-badge"><div class="pv-date-badge__day">28</div><div class="pv-date-badge__month">Oct 2025</div></div>
+            <div class="pv-divider"></div>
+            <div class="pv-body">
+              <div class="pv-body__title">Séance solennelle — Ouverture de la 2ᵉ Session ordinaire 2025</div>
+              <div class="pv-body__meta">
+                <span>Présidée par : Isidore MVOUBA</span>
+                <span>·</span><span>151 députés présents</span>
+                <span>·</span><span class="pv-status ok">Disponible</span>
+              </div>
+            </div>
+            <div class="pv-actions">
+              <a href="archives.html?ref=PV-20251028" class="pv-btn pv-btn-read">Lire</a>
+              <a href="archives.html?ref=PV-20251028&dl=1" class="pv-btn pv-btn-dl">⬇ PDF</a>
+            </div>
+          </div>
+          <div class="pv-item" style="opacity:.7;">
+            <div class="pv-date-badge"><div class="pv-date-badge__day">25</div><div class="pv-date-badge__month">Nov 2025</div></div>
+            <div class="pv-divider"></div>
+            <div class="pv-body">
+              <div class="pv-body__title">Séance plénière — Examen du Projet de Loi sur la Fonction publique</div>
+              <div class="pv-body__meta">
+                <span>En cours de rédaction</span>
+                <span>·</span><span class="pv-status draft">En préparation</span>
+              </div>
+            </div>
+            <div class="pv-actions">
+              <span style="font-size:.76rem;color:#94a3b8;padding:7px 14px;">Bientôt disponible</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:-10px;margin-bottom:40px;">
+          <a href="archives.html?cat=PV" class="btn btn-vert">Voir tous les comptes rendus →</a>
+        </div>
+
+      </main>
+
+      <aside class="page-sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-card__title">Travaux parlementaires</h3>
+          <ul class="sidebar-links">
+            <li><a href="seances.html">Séances plénières</a></li>
+            <li><a href="ordre-du-jour.html">Ordre du jour</a></li>
+            <li><a href="pleniere.html"><strong>Comptes rendus &amp; PV</strong></a></li>
+            <li><a href="questions-ecrites.html">Questions écrites</a></li>
+            <li><a href="questions-orales.html">Questions orales</a></li>
+            <li><a href="interpellations.html">Interpellations</a></li>
+          </ul>
+        </div>
+        <div class="sidebar-card sidebar-card--dark">
+          <h3 class="sidebar-card__title">Session en cours</h3>
+          <p style="font-size:.8rem;color:rgba(255,255,255,.7);line-height:1.6;">2ᵉ Session ordinaire<br>15 oct. → 23 déc. 2025</p>
+          <a href="seances.html" class="btn btn-vert" style="margin-top:12px;display:inline-block;font-size:.8rem;padding:8px 16px;">Voir les séances</a>
+        </div>
+        <div class="sidebar-card">
+          <h3 class="sidebar-card__title">Archives</h3>
+          <ul class="sidebar-links">
+            <li><a href="archives.html?cat=PV">Tous les PV</a></li>
+            <li><a href="archives.html?cat=Loi">Lois adoptées</a></li>
+            <li><a href="archives.html?cat=Rapport">Rapports de commission</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top"><div class="container"><div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo"><div class="footer-logo-emblem">🏛️</div><div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div></div><p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p></div>
+    <div class="footer-col"><h4 class="footer-col__title">Travaux</h4><ul class="footer-links"><li><a href="seances.html">Séances</a></li><li><a href="pleniere.html">Comptes rendus</a></li><li><a href="archives.html">Archives</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Contrôle</h4><ul class="footer-links"><li><a href="questions-ecrites.html">Questions écrites</a></li><li><a href="questions-orales.html">Questions orales</a></li><li><a href="interpellations.html">Interpellations</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Réseaux sociaux</h4><div class="footer-social"><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a></div></div>
+  </div></div></div>
+  <div class="footer-bottom"><div class="container"><p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p><div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div></div></div>
+</footer>
+<button class="scroll-top" title="Haut de page">↑</button>
+<script src="../js/main.js"></script>
+<script>
+  document.querySelectorAll('.session-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.session-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

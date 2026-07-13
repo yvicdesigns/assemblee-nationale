@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Questions écrites – Travaux – Assemblée Nationale du Congo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Intro ── */
+    .ctrl-intro { background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px solid #fde68a; border-radius:12px; padding:22px 24px; margin-bottom:28px; font-size:.88rem; color:#78350f; line-height:1.75; }
+    .ctrl-intro strong { display:block; font-size:.95rem; color:#92400e; margin-bottom:6px; }
+    [data-theme="dark"] .ctrl-intro { background:#2d1e08; border-color:#78350f; color:#fbbf24; }
+    [data-theme="dark"] .ctrl-intro strong { color:#fbbf24; }
+
+    /* ── Filtres ── */
+    .q-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; align-items:center; }
+    .q-filter-label { font-size:.78rem; font-weight:700; color:#64748b; }
+    .q-filter { border:1px solid #e2e8f0; background:#fff; color:#374151; font-size:.75rem; font-weight:600; padding:5px 14px; border-radius:20px; cursor:pointer; transition:all .18s; }
+    .q-filter:hover, .q-filter.active { background:#009A44; color:#fff; border-color:#009A44; }
+    [data-theme="dark"] .q-filter { background:#1a2234; border-color:rgba(255,255,255,.15); color:#94a3b8; }
+    [data-theme="dark"] .q-filter.active { background:#009A44; color:#fff; }
+
+    /* ── Stats ── */
+    .q-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+    .q-stat { border-radius:10px; padding:16px 14px; text-align:center; }
+    .q-stat.en-attente { background:#fef9c3; border:1px solid #fde68a; }
+    .q-stat.repondue { background:#dcfce7; border:1px solid #bbf7d0; }
+    .q-stat.total { background:#f8fafc; border:1px solid #e2e8f0; }
+    .q-stat__num { font-family:var(--font-h); font-size:1.6rem; font-weight:700; }
+    .q-stat.en-attente .q-stat__num { color:#92400e; }
+    .q-stat.repondue .q-stat__num { color:#009A44; }
+    .q-stat.total .q-stat__num { color:#374151; }
+    .q-stat__label { font-size:.7rem; font-weight:600; color:#64748b; margin-top:3px; }
+    [data-theme="dark"] .q-stat.total { background:#1e2a3a; border-color:rgba(255,255,255,.08); }
+    [data-theme="dark"] .q-stat.total .q-stat__num { color:#94a3b8; }
+
+    /* ── Question card ── */
+    .q-list { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+    .q-card { border:1px solid #e2e8f0; border-radius:12px; padding:20px 22px; transition:all .2s; }
+    .q-card:hover { border-color:#009A44; box-shadow:0 3px 12px rgba(0,154,68,.08); }
+    .q-card__top { display:flex; align-items:flex-start; gap:14px; margin-bottom:10px; }
+    .q-card__ref { font-size:.65rem; font-weight:800; color:#009A44; background:#dcfce7; padding:3px 9px; border-radius:6px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+    .q-card__title { font-weight:700; color:var(--noir); font-size:.9rem; line-height:1.35; flex:1; }
+    .q-badge { font-size:.65rem; font-weight:800; text-transform:uppercase; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+    .qb-attente { background:#fef9c3; color:#92400e; }
+    .qb-repondue { background:#dcfce7; color:#009A44; }
+    .qb-classee { background:#f1f5f9; color:#64748b; }
+    .q-card__meta { display:flex; flex-wrap:wrap; gap:10px; font-size:.76rem; color:#64748b; align-items:center; }
+    .q-card__meta span::before { content:'·'; margin-right:10px; }
+    .q-card__meta span:first-child::before { display:none; }
+    .q-card__question { font-size:.82rem; color:#64748b; line-height:1.65; margin-top:10px; padding-top:10px; border-top:1px solid #f1f5f9; font-style:italic; }
+    .q-card__response { font-size:.82rem; color:#1e3a1e; line-height:1.65; margin-top:8px; background:#f0fdf4; border-radius:7px; padding:10px 14px; border-left:3px solid #009A44; }
+    [data-theme="dark"] .q-card { background:#1a1a2e; border-color:rgba(255,255,255,.1); }
+    [data-theme="dark"] .q-card__title { color:var(--text-main); }
+    [data-theme="dark"] .q-card__question { border-color:rgba(255,255,255,.07); }
+    [data-theme="dark"] .q-card__response { background:#0d2e1a; color:#86efac; }
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"></div>
+<div class="top-bar"><div class="container"><div class="top-bar__left"><span class="top-bar__date"></span><span class="top-bar__sep"></span><span>15ᵉ Législature – République du Congo</span></div><div class="top-bar__right"><div class="top-social"><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a></div><span class="top-bar__sep"></span><div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div></div></div></div>
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo"><img src="../logo/logo-dark-small.png" alt="Assemblée Nationale" class="site-logo__img"></a>
+    <nav class="main-nav" role="navigation" aria-label="Navigation principale">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item">
+          <a href="histoire.html" class="nav-link">L'Assemblée Nationale <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section"><div class="dropdown-section__title">Présentation</div><a href="histoire.html" class="dropdown-link">Notre histoire</a><a href="role.html" class="dropdown-link">Mission &amp; Attributions</a><a href="organisation.html" class="dropdown-link">Organisation &amp; Fonctionnement</a><a href="reglement.html" class="dropdown-link">Règlement intérieur</a><a href="textes.html" class="dropdown-link">Textes fondamentaux</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Organes</div><a href="bureau.html" class="dropdown-link">Le Bureau</a><a href="conference-presidents.html" class="dropdown-link">Conférence des Présidents</a><a href="commissions.html" class="dropdown-link">Commissions permanentes</a><a href="commissions-speciales.html" class="dropdown-link">Commissions spéciales</a><a href="groupes.html" class="dropdown-link">Groupes parlementaires</a><a href="secretariat-general.html" class="dropdown-link">Secrétariat général</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Les Députés</div><a href="deputes.html" class="dropdown-link">Annuaire des 151 Députés</a><a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a><a href="contact.html" class="dropdown-link">Contacter son Député</a></div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="blog.html" class="nav-link">Travaux <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section"><div class="dropdown-section__title">Actualité &amp; Plénières</div><a href="blog.html" class="dropdown-link">Actualité parlementaire</a><a href="seances.html" class="dropdown-link">Séances plénières</a><a href="seances.html" class="dropdown-link">📅 Calendrier des sessions</a><a href="ordre-du-jour.html" class="dropdown-link">Ordre du jour</a><a href="pleniere.html" class="dropdown-link">📝 Comptes rendus &amp; PV</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Commissions &amp; Contrôle</div><a href="commissions.html" class="dropdown-link">Les Commissions</a><a href="questions-ecrites.html" class="dropdown-link active">Questions écrites</a><a href="questions-orales.html" class="dropdown-link">Questions orales</a><a href="interpellations.html" class="dropdown-link">Interpellations</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">International &amp; Archives</div><a href="diplomatie.html" class="dropdown-link">Diplomatie parlementaire</a><a href="groupes-amitie.html" class="dropdown-link">Groupes d'amitié</a><a href="role.html" class="dropdown-link">Découvrir l'Assemblée</a><a href="archives.html" class="dropdown-link">📂 Archives &amp; Lois</a></div>
+          </div>
+        </li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link">Médiathèque</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="assistant.html" class="nav-link" style="color:#009A44;font-weight:700">🤖 AssistAN</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb"><a href="../index.html">Accueil</a><span>›</span><a href="blog.html">Travaux</a><span>›</span><span>Questions écrites</span></div>
+    <h1 class="page-hero__title">Questions écrites</h1>
+    <p class="page-hero__sub">Contrôle parlementaire : questions des députés adressées par écrit au Gouvernement</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="container">
+    <div class="page-layout">
+      <main class="page-main">
+
+        <div class="ctrl-intro">
+          <strong>Qu'est-ce qu'une question écrite ?</strong>
+          Un député peut adresser une question écrite à tout membre du Gouvernement. Le ministre
+          interpellé dispose d'un délai d'un mois pour y répondre. Les questions et réponses sont
+          publiées au Journal Officiel. Ce mécanisme constitue l'un des principaux outils de contrôle
+          de l'action gouvernementale par le Parlement.
+        </div>
+
+        <div class="q-stats">
+          <div class="q-stat en-attente"><div class="q-stat__num">14</div><div class="q-stat__label">En attente de réponse</div></div>
+          <div class="q-stat repondue"><div class="q-stat__num">63</div><div class="q-stat__label">Répondues</div></div>
+          <div class="q-stat total"><div class="q-stat__num">77</div><div class="q-stat__label">Total — 2ᵉ session 2025</div></div>
+        </div>
+
+        <div class="q-filters">
+          <span class="q-filter-label">Statut :</span>
+          <button class="q-filter active">Toutes</button>
+          <button class="q-filter">En attente</button>
+          <button class="q-filter">Répondues</button>
+          <span class="q-filter-label" style="margin-left:8px;">Ministère :</span>
+          <button class="q-filter">Finances</button>
+          <button class="q-filter">Éducation</button>
+          <button class="q-filter">Santé</button>
+          <button class="q-filter">Intérieur</button>
+        </div>
+
+        <div class="q-list">
+          <div class="q-card">
+            <div class="q-card__top">
+              <span class="q-card__ref">QE-2025-077</span>
+              <div class="q-card__title">Situation des bourses d'études universitaires non versées depuis plus de 8 mois</div>
+              <span class="q-badge qb-attente">En attente</span>
+            </div>
+            <div class="q-card__meta">
+              <span>Député : Jean-Marc ITOUA – Groupe PCT</span>
+              <span>Ministère de l'Enseignement Supérieur</span>
+              <span>Déposée le 05 nov. 2025</span>
+            </div>
+            <div class="q-card__question">Monsieur le Ministre voudra bien me faire connaître les mesures envisagées par le Gouvernement pour régulariser le versement des bourses universitaires en souffrance depuis le mois de mars 2025, et le calendrier prévu pour leur apurement.</div>
+          </div>
+
+          <div class="q-card">
+            <div class="q-card__top">
+              <span class="q-card__ref">QE-2025-074</span>
+              <div class="q-card__title">État d'avancement du programme national de construction de centres de santé en zones rurales</div>
+              <span class="q-badge qb-repondue">Répondue</span>
+            </div>
+            <div class="q-card__meta">
+              <span>Député : Marie-Claire NGANGA – Groupe PCT</span>
+              <span>Ministère de la Santé</span>
+              <span>Déposée le 28 oct. 2025 · Répondue le 18 nov. 2025</span>
+            </div>
+            <div class="q-card__question">Monsieur le Ministre voudra bien préciser combien de centres de santé ont été livrés sur les 47 prévus dans le plan triennal 2023–2025, et les raisons des retards constatés dans le département de la Bouenza.</div>
+            <div class="q-card__response">Réponse du Ministre : Sur les 47 centres prévus, 29 ont été livrés et réceptionnés. Les retards dans la Bouenza sont liés à des problèmes d'approvisionnement en matériaux de construction. La livraison des 18 centres restants est programmée pour le premier semestre 2026.</div>
+          </div>
+
+          <div class="q-card">
+            <div class="q-card__top">
+              <span class="q-card__ref">QE-2025-071</span>
+              <div class="q-card__title">Retards de paiement des salaires des agents de l'État dans le département des Plateaux</div>
+              <span class="q-badge qb-attente">En attente</span>
+            </div>
+            <div class="q-card__meta">
+              <span>Député : Prosper MOUYABI – Groupe UPADS</span>
+              <span>Ministère des Finances</span>
+              <span>Déposée le 20 oct. 2025</span>
+            </div>
+            <div class="q-card__question">Monsieur le Ministre voudra bien m'informer des dispositions prises pour régulariser les arriérés de salaires des fonctionnaires du département des Plateaux, accumulés depuis le mois de juillet 2025.</div>
+          </div>
+
+          <div class="q-card">
+            <div class="q-card__top">
+              <span class="q-card__ref">QE-2025-068</span>
+              <div class="q-card__title">Mesures de sécurité suite aux incidents survenus sur la RN2 au cours du mois d'octobre</div>
+              <span class="q-badge qb-repondue">Répondue</span>
+            </div>
+            <div class="q-card__meta">
+              <span>Député : Émile BANZOUZI – Groupe PCT</span>
+              <span>Ministère de l'Intérieur</span>
+              <span>Déposée le 15 oct. 2025 · Répondue le 05 nov. 2025</span>
+            </div>
+            <div class="q-card__question">Quelles mesures ont été prises pour garantir la sécurité des usagers sur la Route Nationale 2, après les incidents signalés dans la zone de Kinkala le mois dernier ?</div>
+            <div class="q-card__response">Réponse du Ministre : Des patrouilles renforcées ont été déployées sur la RN2. Trois postes de contrôle supplémentaires ont été installés. Les forces de sécurité ont interpellé 12 individus suspectés d'être impliqués dans les incidents. La situation est désormais maîtrisée.</div>
+          </div>
+        </div>
+
+        <div style="text-align:center;"><a href="archives.html?cat=QE" class="btn btn-vert">Voir toutes les questions écrites →</a></div>
+
+      </main>
+
+      <aside class="page-sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-card__title">Contrôle parlementaire</h3>
+          <ul class="sidebar-links">
+            <li><a href="questions-ecrites.html"><strong>Questions écrites</strong></a></li>
+            <li><a href="questions-orales.html">Questions orales</a></li>
+            <li><a href="interpellations.html">Interpellations</a></li>
+            <li><a href="commissions.html">Commissions permanentes</a></li>
+          </ul>
+        </div>
+        <div class="sidebar-card">
+          <h3 class="sidebar-card__title">Travaux</h3>
+          <ul class="sidebar-links">
+            <li><a href="seances.html">Séances plénières</a></li>
+            <li><a href="ordre-du-jour.html">Ordre du jour</a></li>
+            <li><a href="pleniere.html">Comptes rendus &amp; PV</a></li>
+            <li><a href="archives.html">Archives &amp; Lois</a></li>
+          </ul>
+        </div>
+        <div class="sidebar-card sidebar-card--dark">
+          <h3 class="sidebar-card__title">Déposer une question</h3>
+          <p style="font-size:.8rem;color:rgba(255,255,255,.7);line-height:1.6;">Les dépôts de questions écrites se font auprès du Secrétariat général.</p>
+          <a href="secretariat-general.html" class="btn btn-vert" style="margin-top:12px;display:inline-block;font-size:.8rem;padding:8px 16px;">Secrétariat général</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top"><div class="container"><div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo"><div class="footer-logo-emblem">🏛️</div><div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div></div><p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p></div>
+    <div class="footer-col"><h4 class="footer-col__title">Contrôle</h4><ul class="footer-links"><li><a href="questions-ecrites.html">Questions écrites</a></li><li><a href="questions-orales.html">Questions orales</a></li><li><a href="interpellations.html">Interpellations</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Travaux</h4><ul class="footer-links"><li><a href="seances.html">Séances</a></li><li><a href="pleniere.html">Comptes rendus</a></li><li><a href="archives.html">Archives</a></li></ul></div>
+    <div class="footer-col"><h4 class="footer-col__title">Réseaux sociaux</h4><div class="footer-social"><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a></div></div>
+  </div></div></div>
+  <div class="footer-bottom"><div class="container"><p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p><div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div></div></div>
+</footer>
+<button class="scroll-top" title="Haut de page">↑</button>
+<script src="../js/main.js"></script>
+<script>
+  document.querySelectorAll('.q-filter').forEach(btn => {
+    btn.addEventListener('click', () => { document.querySelectorAll('.q-filter').forEach(b => b.classList.remove('active')); btn.classList.add('active'); });
+  });
+</script>
+</body>
+</html>
