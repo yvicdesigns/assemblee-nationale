@@ -197,6 +197,51 @@
     }
     .video-date { font-size: .78rem; color: #64748b; }
 
+    /* ── Demo/fallback elements ── */
+    .photo-demo-thumb {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: rgba(255,255,255,.5);
+      font-size: .75rem;
+      letter-spacing: .04em;
+    }
+    .video-thumb-demo {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-demo-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .video-demo-cta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+      font-size: .73rem;
+      color: #009A44;
+      font-weight: 600;
+    }
+
     /* ── Lightbox ── */
     .lightbox {
       position: fixed;
@@ -461,6 +506,9 @@
       <button class="media-tab" id="tab-videos" role="tab" aria-selected="false" onclick="switchTab('videos')">
         🎬 Vidéos <span class="tab-count" id="count-videos">—</span>
       </button>
+      <a href="direct.html" class="media-tab" style="text-decoration:none;">
+        📡 Web TV
+      </a>
     </div>
 
     <!-- === PHOTOS === -->
@@ -520,41 +568,46 @@
 </div>
 
 <footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col footer-brand">
-        <img src="../logo/logo-footer.png" alt="Assemblée Nationale" class="footer-logo" onerror="this.style.display='none'">
-        <p>Portail officiel de l'Assemblée Nationale de la République du Congo.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="../index.html">Accueil</a></li>
-          <li><a href="deputes.html">Les Députés</a></li>
-          <li><a href="blog.html">Publications</a></li>
-          <li><a href="mediatheque.html">Médiathèque</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>L'Assemblée</h4>
-        <ul>
-          <li><a href="presidence.html">Le Président</a></li>
-          <li><a href="bureau.html">Le Bureau</a></li>
-          <li><a href="commissions.html">Les Commissions</a></li>
-          <li><a href="histoire.html">Notre histoire</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <ul>
-          <li>Rond-point de la place de la République (ex CCF)</li>
-          <li>Brazzaville, République du Congo</li>
-          <li><a href="contact.html">Formulaire de contact</a></li>
-        </ul>
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="footer-logo-emblem">🏛️</div>
+            <div class="footer-logo-text"><strong>ASSEMBLÉE NATIONALE</strong><span>République du Congo</span></div>
+          </div>
+          <p class="footer-desc">Chambre basse du Parlement de la République du Congo.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Médiathèque</h4>
+          <ul class="footer-links">
+            <li><a href="mediatheque.html">Galerie photos</a></li>
+            <li><a href="mediatheque.html#videos">Galerie vidéos</a></li>
+            <li><a href="direct.html">Web TV &amp; Direct</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">L'Assemblée</h4>
+          <ul class="footer-links">
+            <li><a href="histoire.html">Notre histoire</a></li>
+            <li><a href="organisation.html">Organisation</a></li>
+            <li><a href="deputes.html">Les Députés</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Réseaux sociaux</h4>
+          <div class="footer-social">
+            <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a>
+            <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>© 2026 Assemblée Nationale – République du Congo. Tous droits réservés.</p>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
+      <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
     </div>
   </div>
 </footer>
@@ -566,6 +619,31 @@
 const SUPABASE_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── Contenu de démonstration (affiché si Supabase vide) ──────────
+const PHOTOS_DEMO = [
+  { id:'d1', title:'Séance plénière — Session ordinaire', category:'Session', photo_url:null, _demo:true },
+  { id:'d2', title:'Visite d\'une délégation parlementaire étrangère', category:'Visites officielles', photo_url:null, _demo:true },
+  { id:'d3', title:'Réunion de la Commission des Lois', category:'Commissions', photo_url:null, _demo:true },
+  { id:'d4', title:'Cérémonie d\'ouverture de la 15ᵉ Législature', category:'Événements', photo_url:null, _demo:true },
+  { id:'d5', title:'Session budgétaire — Examen du PLF 2026', category:'Session', photo_url:null, _demo:true },
+  { id:'d6', title:'Rencontre interparlementaire CEMAC — Brazzaville', category:'Visites officielles', photo_url:null, _demo:true },
+];
+
+const VIDEOS_DEMO = [
+  { id:'v1', title:'Séance plénière — Adoption du Projet de Loi de Finances 2025', category:'Séances plénières', youtube_id:'', published_at:'2025-11-18', _demo:true },
+  { id:'v2', title:'Discours du Président de l\'Assemblée Nationale à l\'ouverture de session', category:'Conférences', youtube_id:'', published_at:'2025-10-28', _demo:true },
+  { id:'v3', title:'Commission Économique — Audition du Ministre des Finances', category:'Commissions', youtube_id:'', published_at:'2025-11-05', _demo:true },
+];
+
+const DEMO_GRADIENTS = [
+  'linear-gradient(135deg,#0a3d1f,#1a6b36)',
+  'linear-gradient(135deg,#00205b,#003a99)',
+  'linear-gradient(135deg,#4a1942,#7c3a7c)',
+  'linear-gradient(135deg,#7f1d1d,#dc2626)',
+  'linear-gradient(135deg,#1e3a1e,#2d6e2d)',
+  'linear-gradient(135deg,#1c2541,#3a506b)',
+];
 
 let allPhotos = [];
 let allVideos = [];
@@ -588,11 +666,14 @@ async function load() {
     db.from('media_photos').select('*').order('taken_at', { ascending: false }),
     db.from('media_videos').select('*').order('published_at', { ascending: false }),
   ]);
-  allPhotos = photoRes.data || [];
-  allVideos = videoRes.data || [];
+  allPhotos = (photoRes.data && photoRes.data.length) ? photoRes.data : PHOTOS_DEMO;
+  allVideos = (videoRes.data && videoRes.data.length) ? videoRes.data : VIDEOS_DEMO;
 
-  document.getElementById('count-photos').textContent = allPhotos.length || 0;
-  document.getElementById('count-videos').textContent = allVideos.length || 0;
+  const isPhotosDemo = allPhotos === PHOTOS_DEMO;
+  const isVideosDemo = allVideos === VIDEOS_DEMO;
+
+  document.getElementById('count-photos').textContent = isPhotosDemo ? '—' : allPhotos.length;
+  document.getElementById('count-videos').textContent = isVideosDemo ? '—' : allVideos.length;
 
   renderPhotos(allPhotos);
   renderVideos(allVideos);
@@ -608,20 +689,32 @@ function renderPhotos(photos) {
     </div>`;
     return;
   }
-  lbItems = photos;
-  grid.innerHTML = photos.map((p, i) => `
-    <div class="photo-card" onclick="openLightbox(${i})" title="${p.title}">
-      ${p.photo_url
-        ? `<img src="${p.photo_url}" alt="${p.title}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=photo-placeholder>📷</div>'">`
-        : `<div class="photo-placeholder">📷</div>`}
+  lbItems = photos.filter(p => !p._demo);
+  grid.innerHTML = photos.map((p, i) => {
+    const isDemoItem = p._demo;
+    const gradBg = DEMO_GRADIENTS[i % DEMO_GRADIENTS.length];
+    const thumbInner = p.photo_url
+      ? `<img src="${p.photo_url}" alt="${p.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">\
+<div class="photo-placeholder" style="display:none">📷</div>`
+      : isDemoItem
+        ? `<div class="photo-demo-thumb" style="background:${gradBg}">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="rgba(255,255,255,.3)"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-8.5-5.5L9 16.51 7 14l-3 3.99h14l-4.5-5.99z"/></svg>
+            <span>Aperçu indisponible</span>
+           </div>`
+        : `<div class="photo-placeholder">📷</div>`;
+    const clickAttr = isDemoItem ? '' : `onclick="openLightbox(${lbItems.indexOf(p)})"`;
+    const cursor = isDemoItem ? 'default' : 'zoom-in';
+    return `
+    <div class="photo-card" ${clickAttr} title="${p.title}" style="cursor:${cursor}">
+      ${thumbInner}
       <div class="photo-card__overlay">
         <div>
-          <div class="photo-card__cat">${p.category}</div>
+          <div class="photo-card__cat">${p.category}${isDemoItem ? ' <span style="font-size:.65rem;opacity:.7">(aperçu)</span>' : ''}</div>
           <div class="photo-card__title">${p.title}</div>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterPhotos(cat, btn) {
@@ -658,6 +751,12 @@ document.addEventListener('keydown', e => {
 });
 
 /* ── Videos ── */
+const VIDEO_DEMO_GRADIENTS = [
+  'linear-gradient(160deg,#0f172a 0%,#1e3a5f 100%)',
+  'linear-gradient(160deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%)',
+  'linear-gradient(160deg,#0a0a1a 0%,#1a2a1a 60%,#0a3d1f 100%)',
+];
+
 function renderVideos(videos) {
   const grid = document.getElementById('videoGrid');
   if (!videos.length) {
@@ -667,25 +766,42 @@ function renderVideos(videos) {
     </div>`;
     return;
   }
-  grid.innerHTML = videos.map(v => `
-    <div class="video-card" onclick="openVideo('${v.youtube_id}')">
-      <div class="video-thumb">
-        <img src="https://img.youtube.com/vi/${v.youtube_id}/hqdefault.jpg"
-             alt="${v.title}" loading="lazy"
-             onerror="this.style.background='#0f172a';this.style.display='none'">
-        <div class="video-play">
-          <div class="video-play-btn">
-            <svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-        </div>
-      </div>
+  grid.innerHTML = videos.map((v, i) => {
+    const isDemoItem = v._demo;
+    const grad = VIDEO_DEMO_GRADIENTS[i % VIDEO_DEMO_GRADIENTS.length];
+    const thumbContent = isDemoItem
+      ? `<div class="video-thumb-demo" style="background:${grad}">
+           <div class="video-play"><div class="video-play-btn" style="opacity:.4">
+             <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+           </div></div>
+           <span class="video-demo-badge">Aperçu</span>
+         </div>`
+      : `<div class="video-thumb">
+           <img src="https://img.youtube.com/vi/${v.youtube_id}/hqdefault.jpg"
+                alt="${v.title}" loading="lazy"
+                onerror="this.style.background='#0f172a';this.style.display='none'">
+           <div class="video-play"><div class="video-play-btn">
+             <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+           </div></div>
+         </div>`;
+    const clickAttr = isDemoItem ? '' : `onclick="openVideo('${v.youtube_id}')"`;
+    const cursor = isDemoItem ? 'default' : 'pointer';
+    const dateStr = v.published_at
+      ? `<div class="video-date">${new Date(v.published_at).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div>` : '';
+    return `
+    <div class="video-card" ${clickAttr} style="cursor:${cursor}">
+      ${thumbContent}
       <div class="video-body">
-        <span class="video-cat">${v.category}</span>
+        <span class="video-cat">${v.category}${isDemoItem ? ' <span style="font-size:.65rem;opacity:.7">(exemple)</span>' : ''}</span>
         <div class="video-title">${v.title}</div>
-        ${v.published_at ? `<div class="video-date">${new Date(v.published_at).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div>` : ''}
+        ${dateStr}
+        ${isDemoItem ? `<div class="video-demo-cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6v2H5v11h11v-5h2v7H3V6h7zm11-3v8l-2-2-6 6-1.41-1.41L17.17 7 15 5h6z"/></svg>
+          Voir les vidéos officielles sur YouTube
+        </div>` : ''}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterVideos(cat, btn) {
