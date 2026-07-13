@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="../js/gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journaux des débats – Assemblée Nationale du Congo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Intro box ── */
+    .jd-intro {
+      background: linear-gradient(135deg, #00205b, #003a99);
+      color: #fff;
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .jd-intro::after {
+      content: '📖';
+      position: absolute;
+      right: 24px;
+      bottom: 12px;
+      font-size: 5rem;
+      opacity: .1;
+      pointer-events: none;
+    }
+    .jd-intro__label {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.65);
+      margin-bottom: 10px;
+    }
+    .jd-intro__title {
+      font-family: var(--font-h);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .jd-intro__text { font-size: .85rem; line-height: 1.75; color: rgba(255,255,255,.85); max-width: 500px; }
+
+    /* ── Stats ── */
+    .jd-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 600px) { .jd-stats { grid-template-columns: repeat(2,1fr); } }
+    .jd-stat {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .jd-stat__num { font-family: var(--font-h); font-size: 1.8rem; font-weight: 700; color: #00205b; }
+    .jd-stat__label { font-size: .7rem; color: #64748b; margin-top: 3px; }
+    [data-theme="dark"] .jd-stat { background: #1e2a3a; border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .jd-stat__num { color: #60a5fa; }
+
+    /* ── Filtres session ── */
+    .session-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .session-tab-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .session-tab-btn:hover { border-color: #00205b; color: #00205b; }
+    .session-tab-btn.active { background: #00205b; color: #fff; border-color: #00205b; }
+    [data-theme="dark"] .session-tab-btn { background: #1a1a2e; border-color: rgba(255,255,255,.12); color: #94a3b8; }
+    [data-theme="dark"] .session-tab-btn.active { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+
+    /* ── Séance header (groupement par date) ── */
+    .seance-group { margin-bottom: 32px; }
+    .seance-group__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .seance-group__date {
+      background: #00205b;
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .seance-group__line { flex: 1; height: 1px; background: #e2e8f0; }
+    [data-theme="dark"] .seance-group__line { background: rgba(255,255,255,.1); }
+
+    /* ── Journal card ── */
+    .jd-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: all .2s;
+    }
+    .jd-card:hover { border-color: #00205b; box-shadow: 0 4px 16px rgba(0,32,91,.08); }
+    .jd-card__icon {
+      width: 44px; height: 44px;
+      background: #eff6ff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+    .jd-card__body { flex: 1; min-width: 0; }
+    .jd-card__ref {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .jd-card__title {
+      font-family: var(--font-h);
+      font-size: .95rem;
+      font-weight: 700;
+      color: #00205b;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .jd-card__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: .73rem;
+      color: #64748b;
+      align-items: center;
+    }
+    .jd-badge {
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .jdb-pub { background: #dcfce7; color: #166534; }
+    .jdb-draft { background: #fef3c7; color: #92400e; }
+    .jdb-integral { background: #dbeafe; color: #1e40af; }
+    .jdb-resume { background: #f3e8ff; color: #6b21a8; }
+    .jd-card__actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .jd-btn {
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+    .jd-btn-read { background: #eff6ff; color: #1e40af; }
+    .jd-btn-read:hover { background: #dbeafe; }
+    .jd-btn-dl { background: #f1f5f9; color: #475569; }
+    .jd-btn-dl:hover { background: #e2e8f0; }
+    [data-theme="dark"] .jd-card { background: #1a1a2e; border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .jd-card__title { color: #93c5fd; }
+    [data-theme="dark"] .jd-card__icon { background: #1e2a3a; }
+
+    /* ── Pagination ── */
+    .jd-pagination {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin: 32px 0;
+    }
+    .jd-page-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      font-size: .82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+      color: #374151;
+    }
+    .jd-page-btn.active { background: #00205b; color: #fff; border-color: #00205b; }
+    .jd-page-btn:hover:not(.active) { border-color: #00205b; color: #00205b; }
+
+    /* ── Explainer box ── */
+    .jd-explainer {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-left: 4px solid #0ea5e9;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 32px;
+      font-size: .83rem;
+      line-height: 1.7;
+      color: #0c4a6e;
+    }
+    .jd-explainer strong { display: block; margin-bottom: 6px; font-size: .9rem; }
+    [data-theme="dark"] .jd-explainer { background: #0c1a2e; border-color: #1e3a5f; color: #7dd3fc; }
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"></div>
+<div class="top-bar"><div class="container"><div class="top-bar__left"><span class="top-bar__date"></span><span class="top-bar__sep"></span><span>15ᵉ Législature – République du Congo</span></div><div class="top-bar__right"><div class="top-social"><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YT</a><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">FB</a></div><span class="top-bar__sep"></span><div class="top-bar__live"><a href="direct.html"><span class="live-dot"></span> EN DIRECT</a></div></div></div></div>
+<div class="nav-overlay"></div>
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-logo"><img src="../logo/logo-dark-small.png" alt="Assemblée Nationale" class="site-logo__img"></a>
+    <nav class="main-nav" role="navigation" aria-label="Navigation principale">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
+        <li class="nav-item">
+          <a href="histoire.html" class="nav-link">L'Assemblée Nationale <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section"><div class="dropdown-section__title">Présentation</div><a href="histoire.html" class="dropdown-link">Notre histoire</a><a href="role.html" class="dropdown-link">Mission &amp; Attributions</a><a href="organisation.html" class="dropdown-link">Organisation &amp; Fonctionnement</a><a href="reglement.html" class="dropdown-link">Règlement intérieur</a><a href="textes.html" class="dropdown-link">Textes fondamentaux</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Organes</div><a href="bureau.html" class="dropdown-link">Le Bureau</a><a href="conference-presidents.html" class="dropdown-link">Conférence des Présidents</a><a href="commissions.html" class="dropdown-link">Commissions permanentes</a><a href="commissions-speciales.html" class="dropdown-link">Commissions spéciales</a><a href="groupes.html" class="dropdown-link">Groupes parlementaires</a><a href="secretariat-general.html" class="dropdown-link">Secrétariat général</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Les Députés</div><a href="deputes.html" class="dropdown-link">Annuaire des 151 Députés</a><a href="carte.html" class="dropdown-link">🗺️ Carte des Circonscriptions</a><a href="contact.html" class="dropdown-link">Contacter son Député</a></div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="blog.html" class="nav-link active">Travaux <span class="arrow">▾</span></a>
+          <div class="dropdown">
+            <div class="dropdown-section"><div class="dropdown-section__title">Actualité &amp; Plénières</div><a href="blog.html" class="dropdown-link">Actualité parlementaire</a><a href="seances.html" class="dropdown-link">Séances plénières</a><a href="seances.html" class="dropdown-link">📅 Calendrier des sessions</a><a href="ordre-du-jour.html" class="dropdown-link">Ordre du jour</a><a href="pleniere.html" class="dropdown-link">📝 Comptes rendus &amp; PV</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">Commissions &amp; Contrôle</div><a href="commissions.html" class="dropdown-link">Les Commissions</a><a href="questions-ecrites.html" class="dropdown-link">Questions écrites</a><a href="questions-orales.html" class="dropdown-link">Questions orales</a><a href="interpellations.html" class="dropdown-link">Interpellations</a></div>
+            <div class="dropdown-section"><div class="dropdown-section__title">International &amp; Archives</div><a href="diplomatie.html" class="dropdown-link">Diplomatie parlementaire</a><a href="groupes-amitie.html" class="dropdown-link">Groupes d'amitié</a><a href="role.html" class="dropdown-link">Découvrir l'Assemblée</a><a href="archives.html" class="dropdown-link active">📂 Archives &amp; Lois</a></div>
+          </div>
+        </li>
+        <li class="nav-item"><a href="mediatheque.html" class="nav-link">Médiathèque</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="assistant.html" class="nav-link" style="color:#009A44;font-weight:700">🤖 AssistAN</a></li>
+      </ul>
+    </nav>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__breadcrumb"><a href="../index.html">Accueil</a><span>›</span><a href="pleniere.html">Travaux</a><span>›</span><span>Journaux des débats</span></div>
+    <h1 class="page-hero__title">Journaux des débats</h1>
+    <p class="page-hero__sub">Comptes rendus intégraux et résumés analytiques des séances plénières de l'Assemblée Nationale</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="container">
+    <div class="page-layout">
+      <main class="page-main">
+
+        <!-- Intro bloc -->
+        <div class="jd-intro">
+          <div class="jd-intro__label">Publication officielle</div>
+          <div class="jd-intro__title">Journal des Débats Parlementaires</div>
+          <p class="jd-intro__text">
+            Le Journal des Débats est la publication officielle de l'Assemblée Nationale qui retranscrit
+            fidèlement les interventions des députés et membres du Gouvernement lors des séances plénières.
+            Il constitue la mémoire vivante des travaux parlementaires.
+          </p>
+        </div>
+
+        <!-- Explainer -->
+        <div class="jd-explainer">
+          <strong>Qu'est-ce que le Journal des Débats ?</strong>
+          Le Journal des Débats est distinct du Procès-Verbal (PV) : le PV est le document juridique officiel
+          qui consigne les décisions et résultats des votes, tandis que le Journal des Débats reproduit
+          l'intégralité des interventions, questions, réponses et discussions survenues en séance.
+          Il est publié en version intégrale et en version analytique résumée.
+        </div>
+
+        <!-- Stats -->
+        <div class="jd-stats">
+          <div class="jd-stat">
+            <div class="jd-stat__num">89</div>
+            <div class="jd-stat__label">Journaux publiés — 15ᵉ Législature</div>
+          </div>
+          <div class="jd-stat">
+            <div class="jd-stat__num">2</div>
+            <div class="jd-stat__label">Sessions en cours</div>
+          </div>
+          <div class="jd-stat">
+            <div class="jd-stat__num">12</div>
+            <div class="jd-stat__label">Journaux — Session oct. 2025</div>
+          </div>
+          <div class="jd-stat">
+            <div class="jd-stat__num">48h</div>
+            <div class="jd-stat__label">Délai moyen de publication</div>
+          </div>
+        </div>
+
+        <!-- Filtres par session -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+          <h2 style="margin:0">Débats par session</h2>
+          <input type="search" id="jdSearch" placeholder="Rechercher un débat…"
+            style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 14px;font-size:.82rem;width:220px;outline:none"
+            oninput="filterJd(this.value)">
+        </div>
+
+        <div class="session-tabs">
+          <button class="session-tab-btn active" onclick="setSession('all', this)">Toutes les sessions</button>
+          <button class="session-tab-btn" onclick="setSession('oct25', this)">Oct. – Déc. 2025</button>
+          <button class="session-tab-btn" onclick="setSession('mar25', this)">Mars – Juin 2025</button>
+          <button class="session-tab-btn" onclick="setSession('oct24', this)">Oct. – Déc. 2024</button>
+          <button class="session-tab-btn" onclick="setSession('mar24', this)">Mars – Juin 2024</button>
+        </div>
+
+        <!-- Groupe Oct 2025 -->
+        <div class="seance-group" data-session="oct25">
+          <div class="seance-group__header">
+            <span class="seance-group__date">Session octobre – décembre 2025</span>
+            <div class="seance-group__line"></div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2025-89 · Séance du 18 novembre 2025</div>
+              <div class="jd-card__title">Adoption du Projet de Loi de Finances 2026 — Discussion générale et article par article</div>
+              <div class="jd-card__meta">
+                <span>Mardi 18 novembre 2025 — 09h30 – 18h45</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2025-88 · Séance du 5 novembre 2025</div>
+              <div class="jd-card__title">Questions orales — Ministres des Finances, des Transports et de la Santé</div>
+              <div class="jd-card__meta">
+                <span>Mercredi 5 novembre 2025 — 10h00 – 14h30</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-resume">Résumé analytique</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2025-87 · Séance du 28 octobre 2025</div>
+              <div class="jd-card__title">Discours d'ouverture de la session budgétaire — Présentation du PLF 2026 par le Gouvernement</div>
+              <div class="jd-card__meta">
+                <span>Lundi 28 octobre 2025 — 09h00 – 12h00</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Groupe Mars 2025 -->
+        <div class="seance-group" data-session="mar25">
+          <div class="seance-group__header">
+            <span class="seance-group__date">Session mars – juin 2025</span>
+            <div class="seance-group__line"></div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2025-74 · Séance du 12 juin 2025</div>
+              <div class="jd-card__title">Clôture de la session ordinaire de printemps — Bilan législatif et interpellations</div>
+              <div class="jd-card__meta">
+                <span>Jeudi 12 juin 2025 — 09h30 – 16h00</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2025-58 · Séance du 8 avril 2025</div>
+              <div class="jd-card__title">Adoption de la loi portant code de la famille — Deuxième lecture</div>
+              <div class="jd-card__meta">
+                <span>Mardi 8 avril 2025 — 10h00 – 19h15</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2025-47 · Séance du 18 mars 2025</div>
+              <div class="jd-card__title">Ouverture de la session ordinaire de printemps — Ordre du jour de la session</div>
+              <div class="jd-card__meta">
+                <span>Mardi 18 mars 2025 — 09h00 – 11h30</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-resume">Résumé analytique</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Groupe Oct 2024 -->
+        <div class="seance-group" data-session="oct24">
+          <div class="seance-group__header">
+            <span class="seance-group__date">Session octobre – décembre 2024</span>
+            <div class="seance-group__line"></div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2024-38 · Séance du 22 novembre 2024</div>
+              <div class="jd-card__title">Adoption de la Loi de Finances 2025 — Vote solennel</div>
+              <div class="jd-card__meta">
+                <span>Vendredi 22 novembre 2024 — 09h00 – 13h00</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2024-24 · Séance du 31 octobre 2024</div>
+              <div class="jd-card__title">Interpellation du Premier Ministre sur la politique énergétique nationale</div>
+              <div class="jd-card__meta">
+                <span>Jeudi 31 octobre 2024 — 10h30 – 17h00</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Groupe Mars 2024 -->
+        <div class="seance-group" data-session="mar24">
+          <div class="seance-group__header">
+            <span class="seance-group__date">Session mars – juin 2024</span>
+            <div class="seance-group__line"></div>
+          </div>
+
+          <div class="jd-card">
+            <div class="jd-card__icon">📖</div>
+            <div class="jd-card__body">
+              <div class="jd-card__ref">JD-2024-12 · Séance du 15 mai 2024</div>
+              <div class="jd-card__title">Révision constitutionnelle — Examen et débat sur l'article 185 relatif aux collectivités locales</div>
+              <div class="jd-card__meta">
+                <span>Mercredi 15 mai 2024 — 09h00 – 21h30</span>
+                <span class="jd-badge jdb-pub">Publié</span>
+                <span class="jd-badge jdb-integral">Intégral</span>
+              </div>
+              <div class="jd-card__actions">
+                <button class="jd-btn jd-btn-read">📖 Lire le débat</button>
+                <button class="jd-btn jd-btn-dl">⬇ Télécharger PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="jd-pagination">
+          <button class="jd-page-btn active">1</button>
+          <button class="jd-page-btn">2</button>
+          <button class="jd-page-btn">3</button>
+          <button class="jd-page-btn">…</button>
+          <button class="jd-page-btn">9</button>
+        </div>
+
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="page-sidebar">
+        <div class="sidebar-card" style="background:linear-gradient(135deg,#00205b,#003a99);color:#fff;border:none">
+          <div class="sidebar-card__title" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.15)">Session en cours</div>
+          <div style="font-size:.8rem;opacity:.8;margin-bottom:4px">Oct. – Déc. 2025</div>
+          <div style="font-family:var(--font-h);font-size:1.6rem;font-weight:700">12</div>
+          <div style="font-size:.72rem;opacity:.7">journaux publiés</div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card__title">Types de publication</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:.8rem;">
+            <div>
+              <span class="jd-badge jdb-integral" style="margin-right:6px">Intégral</span>
+              <span style="color:#64748b">Transcription mot-à-mot de la séance</span>
+            </div>
+            <div>
+              <span class="jd-badge jdb-resume" style="margin-right:6px">Résumé</span>
+              <span style="color:#64748b">Synthèse analytique des points abordés</span>
+            </div>
+            <div>
+              <span class="jd-badge jdb-pub" style="margin-right:6px">Publié</span>
+              <span style="color:#64748b">Document finalisé et disponible</span>
+            </div>
+            <div>
+              <span class="jd-badge jdb-draft" style="margin-right:6px">En cours</span>
+              <span style="color:#64748b">Transcription en cours de validation</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card__title">Travaux parlementaires</div>
+          <ul class="sidebar-links">
+            <li><a href="pleniere.html">Comptes rendus &amp; PV</a></li>
+            <li><a href="seances.html">Séances plénières</a></li>
+            <li><a href="ordre-du-jour.html">Ordre du jour</a></li>
+            <li><a href="questions-ecrites.html">Questions écrites</a></li>
+            <li><a href="questions-orales.html">Questions orales</a></li>
+            <li><a href="interpellations.html">Interpellations</a></li>
+            <li><a href="archives.html">📂 Archives &amp; Lois</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card__title">Législatures précédentes</div>
+          <ul class="sidebar-links">
+            <li><a href="#">14ᵉ Législature (2017–2022)</a></li>
+            <li><a href="#">13ᵉ Législature (2012–2017)</a></li>
+            <li><a href="#">12ᵉ Législature (2007–2012)</a></li>
+            <li><a href="archives.html">📂 Toutes les archives</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale" class="footer-logo">
+          <p class="footer-desc">Site officiel de l'Assemblée Nationale de la République du Congo — Unité, Travail, Progrès.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Liens Rapides</h4>
+          <ul class="footer-links">
+            <li><a href="histoire.html">Notre histoire</a></li>
+            <li><a href="role.html">Rôle de l'Assemblée nationale</a></li>
+            <li><a href="archives.html?cat=Loi">Lois votées</a></li>
+            <li><a href="bienvenue.html">Bienvenue à l'Assemblée</a></li>
+            <li><a href="diplomatie.html">Diplomatie Parlementaire</a></li>
+            <li><a href="seances.html">Séances plénières</a></li>
+            <li><a href="journaux-debats.html">Journaux des débats</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">L'Assemblée</h4>
+          <ul class="footer-links">
+            <li><a href="presidence.html">Le Président</a></li>
+            <li><a href="bureau.html">Le Bureau</a></li>
+            <li><a href="commissions.html">Les Commissions</a></li>
+            <li><a href="deputes.html">Les Députés</a></li>
+            <li><a href="secretariat-general.html">Secrétariat Général</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">Réseaux sociaux</h4>
+          <ul class="footer-links">
+            <li><a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener">YouTube</a></li>
+            <li><a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener">Facebook</a></li>
+            <li><a href="direct.html">Web TV</a></li>
+            <li><a href="mediatheque.html">Médiathèque</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Assemblée Nationale de la République du Congo. Tous droits réservés.</p>
+      <div class="footer-tricolor"><span class="ft-v"></span><span class="ft-j"></span><span class="ft-r"></span></div>
+    </div>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" aria-label="Retour en haut" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="../js/main.js"></script>
+<script>
+let currentSession = 'all';
+
+function setSession(sess, btn) {
+  currentSession = sess;
+  document.querySelectorAll('.session-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.seance-group').forEach(g => {
+    g.style.display = (sess === 'all' || g.dataset.session === sess) ? '' : 'none';
+  });
+}
+
+function filterJd(q) {
+  const term = q.toLowerCase();
+  document.querySelectorAll('.jd-card').forEach(c => {
+    const text = c.textContent.toLowerCase();
+    c.style.display = text.includes(term) ? '' : 'none';
+  });
+  document.querySelectorAll('.seance-group').forEach(g => {
+    const visible = [...g.querySelectorAll('.jd-card')].some(c => c.style.display !== 'none');
+    g.style.display = visible ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
