@@ -1207,8 +1207,10 @@
 
 <style>
 /* ── Transparence section ── */
-.transparence-section {
-  background: linear-gradient(135deg, #012d15 0%, #024d24 40%, #013820 100%);
+/* !important nécessaire : section:nth-child(even){background:var(--gris-c)} dans style.css
+   a une spécificité plus haute (0,1,1) que .transparence-section (0,1,0) */
+section.transparence-section {
+  background: linear-gradient(135deg, #012d15 0%, #024d24 40%, #013820 100%) !important;
   padding: 72px 0 60px;
   position: relative;
   overflow: hidden;
