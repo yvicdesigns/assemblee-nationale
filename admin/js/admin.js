@@ -1668,12 +1668,12 @@ async function loadMediaVideos() {
   if (!data?.length) { el.innerHTML = emptyHTML('Aucune vidéo. Cliquez sur « Ajouter une vidéo ».'); return; }
 
   el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:20px;">
-    ${data.map(v => `
+    ${data.map(v => { const ytId = extractYoutubeId(v.youtube_id); return `
       <div class="media-card">
         <div class="media-card-img" style="aspect-ratio:16/9;height:auto">
-          <img src="https://img.youtube.com/vi/${esc(v.youtube_id)}/mqdefault.jpg" alt="${esc(v.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+          <img src="https://img.youtube.com/vi/${esc(ytId)}/mqdefault.jpg" alt="${esc(v.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover">
           <div style="position:absolute;inset:0;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;">
-            <a href="https://youtu.be/${esc(v.youtube_id)}" target="_blank" rel="noopener" style="width:40px;height:40px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+            <a href="https://youtu.be/${esc(ytId)}" target="_blank" rel="noopener" style="width:40px;height:40px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="#009A44" style="margin-left:3px"><path d="M8 5v14l11-7z"/></svg>
             </a>
           </div>
@@ -1685,12 +1685,12 @@ async function loadMediaVideos() {
             ${v.published_at ? '<span>' + new Date(v.published_at).toLocaleDateString('fr-FR') + '</span>' : ''}
           </div>
           <div class="media-card-actions">
-            <a href="https://youtu.be/${esc(v.youtube_id)}" target="_blank" rel="noopener" class="btn-voir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>YouTube</a>
+            <a href="https://youtu.be/${esc(ytId)}" target="_blank" rel="noopener" class="btn-voir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>YouTube</a>
             <button onclick="editMediaVideo('${v.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">Modifier</button>
             <button onclick="deleteMediaVideo('${v.id}')" class="btn btn-sm" style="padding:4px 8px;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑</button>
           </div>
         </div>
-      </div>`).join('')}
+      </div>`;}).join('')}
   </div>`;
 }
 
@@ -1714,7 +1714,22 @@ function closeMediaVideoModal() {
   overlay.classList.add('hidden');
 }
 
-function previewVideo(ytId) {
+function extractYoutubeId(input) {
+  if (!input) return '';
+  input = input.trim();
+  // youtu.be/<id>
+  let m = input.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+  if (m) return m[1];
+  // youtube.com/watch?v=<id> or /embed/<id> or /shorts/<id> or /v/<id>
+  m = input.match(/(?:v=|\/embed\/|\/shorts\/|\/v\/)([A-Za-z0-9_-]{6,})/);
+  if (m) return m[1];
+  // Just an ID (no slashes, no dots)
+  if (/^[A-Za-z0-9_-]{6,15}$/.test(input)) return input;
+  return input;
+}
+
+function previewVideo(rawInput) {
+  const ytId = extractYoutubeId(rawInput);
   const img  = document.getElementById('video-preview');
   const link = document.getElementById('video-yt-link');
   if (ytId && ytId.length >= 6) {
@@ -1735,7 +1750,7 @@ async function editMediaVideo(id) {
 async function saveVideo() {
   const id    = document.getElementById('video-id').value;
   const title = document.getElementById('video-title').value.trim();
-  const ytId  = document.getElementById('video-youtube-id').value.trim();
+  const ytId  = extractYoutubeId(document.getElementById('video-youtube-id').value);
   if (!title || !ytId) { toast('Titre et ID YouTube sont obligatoires', 'error'); return; }
 
   const payload = {
