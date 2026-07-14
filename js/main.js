@@ -357,15 +357,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
         revealObserver.unobserve(entry.target);
-
-        // Counter animation si data-count présent
-        const el = entry.target.querySelector('[data-count]') || (entry.target.dataset.count !== undefined ? entry.target : null);
         entry.target.querySelectorAll('[data-count]').forEach(counter => animateCounter(counter));
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.12 });
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Expose globally so dynamic content (e.g. JS-loaded video cards) can be observed
+  window.observeReveal = (el) => {
+    if (el instanceof NodeList || Array.isArray(el)) {
+      el.forEach(e => revealObserver.observe(e));
+    } else {
+      revealObserver.observe(el);
+    }
+  };
 
   // ---- Compteurs animés ----
   function animateCounter(el) {

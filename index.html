@@ -585,7 +585,7 @@
 <section class="agenda-section" id="agenda">
   <div class="container">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:4px;">
-      <h2 class="section-title" style="margin-bottom:0">Agenda Institutionnel</h2>
+      <h2 class="section-title reveal reveal-up" style="margin-bottom:0">Agenda Institutionnel</h2>
       <button onclick="exportIcal()" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s;backdrop-filter:blur(4px);" onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
         📅 Exporter vers mon calendrier (.ics)
       </button>
@@ -690,12 +690,12 @@
 <section class="videos-section" id="videos">
   <div class="container">
     <div class="section-hdr">
-      <h2 class="section-title" style="margin-bottom:0">Dernières Vidéos</h2>
+      <h2 class="section-title reveal reveal-up" style="margin-bottom:0">Dernières Vidéos</h2>
       <a href="pages/mediatheque.html" class="voir-tout-link">Voir tout →</a>
     </div>
     <div class="videos-grid" id="videos-grid">
       <!-- Chargement dynamique depuis Supabase — fallback statique si vide -->
-      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="video-card">
+      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="video-card reveal reveal-up" style="--delay:0ms">
         <div class="video-thumb" style="background:linear-gradient(135deg,#0a3d1f,#1a6b36)">
           <div class="video-play-btn">▶</div>
           <span class="video-badge">Plénière</span>
@@ -705,7 +705,7 @@
           <span class="video-date">30 déc. 2025</span>
         </div>
       </a>
-      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="video-card">
+      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="video-card reveal reveal-up" style="--delay:100ms">
         <div class="video-thumb" style="background:linear-gradient(135deg,#0a1a3d,#1a3d6b)">
           <div class="video-play-btn">▶</div>
           <span class="video-badge">Séance</span>
@@ -715,7 +715,7 @@
           <span class="video-date">16 déc. 2025</span>
         </div>
       </a>
-      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="video-card">
+      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="video-card reveal reveal-up" style="--delay:200ms">
         <div class="video-thumb" style="background:linear-gradient(135deg,#1a0a0a,#5a1a1a)">
           <div class="video-play-btn">▶</div>
           <span class="video-badge">Audience</span>
@@ -735,11 +735,11 @@
 <section class="publications-section" id="publications">
   <div class="container">
     <div class="section-hdr">
-      <h2 class="section-title" style="margin-bottom:0">Dernières Publications</h2>
+      <h2 class="section-title reveal reveal-up" style="margin-bottom:0">Dernières Publications</h2>
       <a href="pages/archives.html" class="voir-tout-link">Voir tout →</a>
     </div>
     <div class="pubs-list">
-      <a href="pages/archives.html?cat=Loi" class="pub-item">
+      <a href="pages/archives.html?cat=Loi" class="pub-item reveal reveal-up" style="--delay:0ms">
         <div class="pub-badge pub-loi">LOI</div>
         <div class="pub-body">
           <h3 class="pub-title">Loi de finances pour l'exercice 2026</h3>
@@ -747,7 +747,7 @@
         </div>
         <span class="pub-dl">⬇ PDF</span>
       </a>
-      <a href="pages/archives.html?cat=Rapport" class="pub-item">
+      <a href="pages/archives.html?cat=Rapport" class="pub-item reveal reveal-up" style="--delay:80ms">
         <div class="pub-badge pub-rapport">RAPPORT</div>
         <div class="pub-body">
           <h3 class="pub-title">Rapport de la Commission Économie &amp; Finances — 2025</h3>
@@ -755,7 +755,7 @@
         </div>
         <span class="pub-dl">⬇ PDF</span>
       </a>
-      <a href="pages/archives.html?cat=Compte+rendu" class="pub-item">
+      <a href="pages/archives.html?cat=Compte+rendu" class="pub-item reveal reveal-up" style="--delay:160ms">
         <div class="pub-badge pub-cr">C.R.</div>
         <div class="pub-body">
           <h3 class="pub-title">Compte rendu de la séance plénière du 27 novembre 2025</h3>
@@ -763,7 +763,7 @@
         </div>
         <span class="pub-dl">⬇ PDF</span>
       </a>
-      <a href="pages/archives.html?cat=Traité" class="pub-item">
+      <a href="pages/archives.html?cat=Traité" class="pub-item reveal reveal-up" style="--delay:240ms">
         <div class="pub-badge pub-traite">TRAITÉ</div>
         <div class="pub-body">
           <h3 class="pub-title">Accord de coopération interparlementaire APF — 2025</h3>
@@ -780,7 +780,7 @@
      ============================== -->
 <section class="news-section" id="actualites">
   <div class="container">
-    <h2 class="section-title">Actualités</h2>
+    <h2 class="section-title reveal reveal-up">Actualités</h2>
 
     <!-- Filtres -->
     <div class="news-filters" role="group" aria-label="Filtrer par catégorie">
@@ -798,7 +798,7 @@
     <!-- Grille actualités -->
     <div class="news-grid">
 
-      <article class="news-card" data-cat="pleniere">
+      <article class="news-card reveal reveal-up" data-cat="pleniere" style="--delay:0ms">
         <div class="news-card__img" style="background: linear-gradient(135deg,#0a3d1f,#1a6b36);">
           <span>🏛️</span>
         </div>
@@ -812,7 +812,7 @@
         </div>
       </article>
 
-      <article class="news-card" data-cat="actualite">
+      <article class="news-card reveal reveal-up" data-cat="actualite" style="--delay:80ms">
         <div class="news-card__img" style="background: linear-gradient(135deg,#0a1a3d,#1a3d6b);">
           <span>📋</span>
         </div>
@@ -826,7 +826,7 @@
         </div>
       </article>
 
-      <article class="news-card" data-cat="actualite">
+      <article class="news-card reveal reveal-up" data-cat="actualite" style="--delay:160ms">
         <div class="news-card__img" style="background: linear-gradient(135deg,#3d2a00,#6b5000);">
           <span>📊</span>
         </div>
@@ -840,7 +840,7 @@
         </div>
       </article>
 
-      <article class="news-card" data-cat="pleniere">
+      <article class="news-card reveal reveal-up" data-cat="pleniere" style="--delay:240ms">
         <div class="news-card__img" style="background: linear-gradient(135deg,#1a0a2a,#3a1a5a);">
           <span>📜</span>
         </div>
@@ -1095,7 +1095,7 @@
     <div class="social-grid">
 
       <!-- Facebook -->
-      <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" class="social-card social-fb">
+      <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" class="social-card social-fb reveal reveal-up" style="--delay:0ms">
         <div class="sc-stripe"></div>
         <div class="sc-body">
           <div class="sc-icon">
@@ -1111,7 +1111,7 @@
       </a>
 
       <!-- YouTube -->
-      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="social-card social-yt">
+      <a href="https://www.youtube.com/@AssembleeNationaleCongo" target="_blank" rel="noopener" class="social-card social-yt reveal reveal-up" style="--delay:100ms">
         <div class="sc-stripe"></div>
         <div class="sc-body">
           <div class="sc-icon">
@@ -1127,7 +1127,7 @@
       </a>
 
       <!-- Web TV -->
-      <a href="pages/direct.html" class="social-card social-live">
+      <a href="pages/direct.html" class="social-card social-live reveal reveal-up" style="--delay:200ms">
         <div class="sc-stripe"></div>
         <div class="sc-body">
           <div class="sc-icon">
@@ -1883,12 +1883,12 @@ async function subscribeNewsletter(e) {
     if (!Array.isArray(data) || data.length === 0) return; // garde les cartes fallback
     const grid = document.getElementById('videos-grid');
     if (!grid) return;
-    grid.innerHTML = data.map(v => {
+    grid.innerHTML = data.map((v, i) => {
       const ytId = extractYtId(v.youtube_id);
       const thumb = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
       const link  = `https://youtu.be/${ytId}`;
       return `
-        <a href="${link}" target="_blank" rel="noopener" class="video-card">
+        <a href="${link}" target="_blank" rel="noopener" class="video-card reveal reveal-up" style="--delay:${i * 100}ms">
           <div class="video-thumb" style="background:#0f172a;background-image:url('${thumb}');background-size:cover;background-position:center">
             <div class="video-play-btn">▶</div>
             <span class="video-badge">${v.category || ''}</span>
@@ -1899,6 +1899,8 @@ async function subscribeNewsletter(e) {
           </div>
         </a>`;
     }).join('');
+    // Observe newly added cards
+    if (window.observeReveal) grid.querySelectorAll('.reveal').forEach(el => window.observeReveal(el));
   })
   .catch(() => {}); // silencieux : le fallback statique reste affiché
 })();
