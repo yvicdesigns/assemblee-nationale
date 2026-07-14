@@ -1154,7 +1154,7 @@
 
     <div class="transparence-header">
       <div class="transparence-badge">Transparence démocratique</div>
-      <h2 class="section-title" style="color:#fff;margin-bottom:10px;">L'Assemblée Nationale en chiffres</h2>
+      <h2 class="section-title" style="color:#fff;margin-bottom:6px;font-size:1.6rem;">L'Assemblée Nationale en chiffres</h2>
       <p class="transparence-sub">Données en temps réel — 15ᵉ Législature · République du Congo</p>
     </div>
 
@@ -1242,7 +1242,7 @@
    a une spécificité plus haute (0,1,1) que .transparence-section (0,1,0) */
 section.transparence-section {
   background: linear-gradient(135deg, #012d15 0%, #024d24 40%, #013820 100%) !important;
-  padding: 72px 0 60px;
+  padding: 40px 0 36px;
   position: relative;
   overflow: hidden;
 }
@@ -1260,28 +1260,28 @@ section.transparence-section {
   background: radial-gradient(ellipse at 70% 50%, rgba(0,154,68,.15) 0%, transparent 60%);
   pointer-events: none;
 }
-.transparence-header { text-align: center; margin-bottom: 52px; }
+.transparence-header { text-align: center; margin-bottom: 24px; }
 .transparence-badge {
   display: inline-block;
   background: rgba(0,154,68,.25);
   border: 1px solid rgba(0,154,68,.5);
   color: #6ee7a0;
-  font-size: .75rem;
+  font-size: .7rem;
   font-weight: 700;
   letter-spacing: .08em;
   text-transform: uppercase;
-  padding: 5px 16px;
+  padding: 3px 12px;
   border-radius: 20px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
-.transparence-sub { color: rgba(255,255,255,.55); font-size: .88rem; }
+.transparence-sub { color: rgba(255,255,255,.55); font-size: .82rem; }
 
 /* ── Grille compteurs ── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 40px;
+  gap: 12px;
+  margin-bottom: 16px;
   position: relative;
   z-index: 1;
 }
@@ -1291,60 +1291,60 @@ section.transparence-section {
 .stat-card {
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.1);
-  border-radius: 14px;
-  padding: 28px 24px;
+  border-radius: 12px;
+  padding: 16px 18px;
   text-align: center;
   transition: background .25s, transform .25s;
   backdrop-filter: blur(4px);
 }
 .stat-card:hover {
   background: rgba(255,255,255,.11);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
-.stat-icon { font-size: 1.8rem; margin-bottom: 12px; }
+.stat-icon { font-size: 1.3rem; margin-bottom: 6px; }
 .stat-number {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: 2.1rem;
   font-weight: 700;
   color: #fff;
   line-height: 1;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   letter-spacing: -1px;
 }
 .stat-card.stat-live .stat-number { color: #6ee7a0; }
 .stat-label {
-  font-size: .85rem;
+  font-size: .78rem;
   font-weight: 700;
   color: rgba(255,255,255,.9);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
-.stat-detail { font-size: .72rem; color: rgba(255,255,255,.45); }
+.stat-detail { font-size: .68rem; color: rgba(255,255,255,.45); }
 
 /* ── Barre législature ── */
 .legislature-bar {
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.1);
-  border-radius: 14px;
-  padding: 24px 28px;
-  margin-bottom: 36px;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 20px;
   position: relative;
   z-index: 1;
 }
 .legislature-bar__header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 14px;
+  align-items: center;
+  margin-bottom: 10px;
 }
-.legislature-bar__title { font-weight: 700; color: #fff; font-size: .95rem; margin-bottom: 3px; }
-.legislature-bar__sub   { font-size: .76rem; color: rgba(255,255,255,.5); }
-.legislature-bar__pct   { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #6ee7a0; }
+.legislature-bar__title { font-weight: 700; color: #fff; font-size: .87rem; margin-bottom: 2px; }
+.legislature-bar__sub   { font-size: .7rem; color: rgba(255,255,255,.5); }
+.legislature-bar__pct   { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #6ee7a0; }
 .legislature-bar__track {
-  height: 8px;
+  height: 6px;
   background: rgba(255,255,255,.12);
   border-radius: 4px;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 .legislature-bar__fill {
   height: 100%;
@@ -1355,7 +1355,7 @@ section.transparence-section {
 .legislature-bar__labels {
   display: flex;
   justify-content: space-between;
-  font-size: .72rem;
+  font-size: .68rem;
   color: rgba(255,255,255,.4);
 }
 
@@ -1363,7 +1363,7 @@ section.transparence-section {
 .transparence-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
   position: relative;
   z-index: 1;
@@ -1371,13 +1371,13 @@ section.transparence-section {
 .transparence-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.15);
   color: rgba(255,255,255,.85);
-  padding: 10px 20px;
+  padding: 7px 16px;
   border-radius: 8px;
-  font-size: .83rem;
+  font-size: .78rem;
   font-weight: 600;
   text-decoration: none;
   transition: all .2s;
