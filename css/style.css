@@ -3067,8 +3067,8 @@ section:nth-child(even) { background: var(--gris-c); }
 
 /* ── RÉSEAUX SOCIAUX ── */
 .social-section {
-  padding: 64px 0;
-  background: linear-gradient(135deg, #012d15 0%, #024d24 100%);
+  padding: 72px 0;
+  background: #f8fafc;
   position: relative;
 }
 .social-section::before {
@@ -3078,47 +3078,107 @@ section:nth-child(even) { background: var(--gris-c); }
   height: 3px;
   background: linear-gradient(90deg, #009A44 33.3%, #FBDE4A 33.3% 66.6%, #DC241F 66.6%);
 }
+.social-header { text-align: center; margin-bottom: 44px; }
+.social-eyebrow {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--vert);
+  margin-bottom: 8px;
+}
+.social-sub { font-size: .9rem; color: #64748b; margin-top: 6px; max-width: 520px; margin-left: auto; margin-right: auto; }
+
 .social-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 36px;
+  gap: 22px;
 }
-@media (max-width: 700px) { .social-grid { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .social-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .social-grid { grid-template-columns: 1fr; } }
+
 .social-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 32px 24px;
   border-radius: 16px;
   text-decoration: none;
-  text-align: center;
-  transition: transform .2s, box-shadow .2s;
-  border: 1px solid rgba(255,255,255,.1);
-  backdrop-filter: blur(4px);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transition: transform .22s, box-shadow .22s;
 }
-.social-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,.25); }
-.social-fb { background: rgba(24,119,242,.18); }
-.social-yt { background: rgba(255,0,0,.15); }
-.social-live { background: rgba(0,154,68,.18); }
-.social-fb .social-logo  { color: #60a5fa; }
-.social-yt .social-logo  { color: #f87171; }
-.social-live .social-logo{ color: #4ade80; }
-.social-name { font-weight: 800; font-size: 1.05rem; color: #fff; }
-.social-handle { font-size: .78rem; color: rgba(255,255,255,.55); }
-.social-cta {
-  margin-top: 6px;
-  padding: 9px 20px;
+.social-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,0,0,.1); }
+
+.sc-stripe { height: 4px; }
+.social-fb .sc-stripe  { background: #1877F2; }
+.social-yt .sc-stripe  { background: #FF0000; }
+.social-live .sc-stripe{ background: #009A44; }
+
+.sc-body {
+  padding: 26px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.sc-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.social-fb .sc-icon  { background: #e8f0fe; color: #1877F2; }
+.social-yt .sc-icon  { background: #fff1f0; color: #FF0000; }
+.social-live .sc-icon{ background: #e6f7ed; color: #009A44; }
+
+.sc-platform {
+  font-size: .98rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1.2;
+}
+.sc-handle { font-size: .77rem; color: #94a3b8; margin-top: 2px; }
+.sc-desc { font-size: .82rem; color: #475569; line-height: 1.6; flex: 1; }
+
+/* LIVE badge */
+.sc-live-dot {
+  width: 7px; height: 7px;
+  background: #DC241F;
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink-dot 1.4s ease-in-out infinite;
+}
+.sc-live-label {
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: #DC241F;
+}
+@keyframes blink-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
   border-radius: 8px;
   font-size: .78rem;
   font-weight: 700;
-  background: rgba(255,255,255,.12);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.2);
-  transition: background .18s;
+  align-self: flex-start;
+  margin-top: 4px;
+  transition: background .15s, color .15s;
 }
-.social-card:hover .social-cta { background: rgba(255,255,255,.22); }
+.social-fb .sc-btn  { background: #e8f0fe; color: #1877F2; }
+.social-yt .sc-btn  { background: #fff1f0; color: #CC0000; }
+.social-live .sc-btn{ background: #e6f7ed; color: #009A44; }
+.social-fb:hover  .sc-btn { background: #1877F2; color: #fff; }
+.social-yt:hover  .sc-btn { background: #FF0000; color: #fff; }
+.social-live:hover .sc-btn{ background: #009A44; color: #fff; }
 
 /* ── LIENS UTILES ── */
 .liens-utiles-section { padding: 64px 0; background: #fff; }
