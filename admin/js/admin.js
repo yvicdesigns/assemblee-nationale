@@ -1528,8 +1528,8 @@ async function loadMediaSection() {
 function switchMediaTab(tab) {
   document.getElementById('media-panel-photos').style.display = tab === 'photos' ? 'block' : 'none';
   document.getElementById('media-panel-videos').style.display = tab === 'videos' ? 'block' : 'none';
-  document.getElementById('media-tab-photos').className = 'btn ' + (tab === 'photos' ? 'btn-primary' : 'btn-ghost');
-  document.getElementById('media-tab-videos').className = 'btn ' + (tab === 'videos' ? 'btn-primary' : 'btn-ghost');
+  document.getElementById('media-tab-photos').className = 'media-tab-btn' + (tab === 'photos' ? ' active' : '');
+  document.getElementById('media-tab-videos').className = 'media-tab-btn' + (tab === 'videos' ? ' active' : '');
 }
 
 /* ── PHOTOS ── */
@@ -1541,23 +1541,24 @@ async function loadMediaPhotos() {
   if (error) { el.innerHTML = emptyHTML('Erreur : ' + error.message); return; }
   if (!data?.length) { el.innerHTML = emptyHTML('Aucune photo. Cliquez sur « Ajouter une photo ».'); return; }
 
-  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:20px;">
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;padding:20px;">
     ${data.map(p => `
-      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;">
-        <div style="height:140px;background:#f1f5f9;overflow:hidden;">
+      <div class="media-card">
+        <div class="media-card-img">
           ${p.photo_url
-            ? `<img src="${esc(p.photo_url)}" alt="${esc(p.title)}" style="width:100%;height:140px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'">`
-            : `<div style="height:140px;display:flex;align-items:center;justify-content:center;font-size:2rem;">📷</div>`}
+            ? `<img src="${esc(p.photo_url)}" alt="${esc(p.title)}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=no-img style=height:140px;display:flex;align-items:center;justify-content:center;font-size:2rem>🖼️</div>'">`
+            : `<div class="no-img" style="height:140px;display:flex;align-items:center;justify-content:center;font-size:2rem;">🖼️</div>`}
         </div>
-        <div style="padding:10px;">
-          <p style="font-size:.82rem;font-weight:600;margin:0 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.title)}</p>
-          <p style="font-size:.72rem;color:var(--muted);margin:0 0 8px;">
+        <div class="media-card-body">
+          <p class="media-card-title">${esc(p.title)}</p>
+          <div class="media-card-meta">
             <span style="background:#dcfce7;color:#166534;padding:1px 7px;border-radius:10px;font-size:.68rem;">${esc(p.category)}</span>
-            ${p.taken_at ? ' · ' + new Date(p.taken_at).toLocaleDateString('fr-FR') : ''}
-          </p>
-          <div style="display:flex;gap:6px;">
-            <button onclick="editMediaPhoto('${p.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">✏️ Modifier</button>
-            <button onclick="deleteMediaPhoto('${p.id}')" class="btn btn-sm" style="flex:1;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑️</button>
+            ${p.taken_at ? '<span>' + new Date(p.taken_at).toLocaleDateString('fr-FR') + '</span>' : ''}
+          </div>
+          <div class="media-card-actions">
+            ${p.photo_url ? `<a href="${esc(p.photo_url)}" target="_blank" rel="noopener" class="btn-voir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Voir</a>` : ''}
+            <button onclick="editMediaPhoto('${p.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">Modifier</button>
+            <button onclick="deleteMediaPhoto('${p.id}')" class="btn btn-sm" style="padding:4px 8px;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑</button>
           </div>
         </div>
       </div>`).join('')}
@@ -1566,22 +1567,58 @@ async function loadMediaPhotos() {
 
 function openMediaPhotoModal(photo) {
   document.getElementById('photoModalTitle').textContent = photo ? 'Modifier la photo' : 'Ajouter une photo';
-  document.getElementById('photo-id').value = photo?.id || '';
-  document.getElementById('photo-title').value = photo?.title || '';
-  document.getElementById('photo-url').value = photo?.photo_url || '';
-  document.getElementById('photo-category').value = photo?.category || 'Session';
-  document.getElementById('photo-taken-at').value = photo?.taken_at || '';
+  document.getElementById('photo-id').value          = photo?.id || '';
+  document.getElementById('photo-title').value       = photo?.title || '';
+  document.getElementById('photo-url').value         = photo?.photo_url || '';
+  document.getElementById('photo-category').value    = photo?.category || 'Session';
+  document.getElementById('photo-taken-at').value    = photo?.taken_at || '';
   document.getElementById('photo-description').value = photo?.description || '';
   previewPhoto(photo?.photo_url || '');
-  document.getElementById('modalMediaPhoto').classList.remove('hidden');
+  const overlay = document.getElementById('modalMediaPhoto');
+  overlay.classList.remove('hidden');
+  overlay.classList.add('open');
 }
 
-function closeMediaPhotoModal() { document.getElementById('modalMediaPhoto').classList.add('hidden'); }
+function closeMediaPhotoModal() {
+  const overlay = document.getElementById('modalMediaPhoto');
+  overlay.classList.remove('open');
+  overlay.classList.add('hidden');
+}
 
 function previewPhoto(url) {
-  const img = document.getElementById('photo-preview');
-  if (url && url.startsWith('http')) { img.src = url; img.style.display = 'block'; }
-  else { img.style.display = 'none'; }
+  const img         = document.getElementById('photo-preview');
+  const placeholder = document.getElementById('mediaPhotoPlaceholder');
+  const zone        = document.getElementById('mediaPhotoZone');
+  if (url && url.startsWith('http')) {
+    img.src = url; img.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+    if (zone) zone.classList.add('has-image');
+  } else {
+    img.src = ''; img.style.display = 'none';
+    if (placeholder) placeholder.style.display = '';
+    if (zone) zone.classList.remove('has-image');
+  }
+}
+
+async function handleMediaPhotoUpload() {
+  const file = document.getElementById('mediaPhotoFile')?.files[0];
+  if (!file) return;
+  const spinner = document.getElementById('mediaPhotoSpinner');
+  if (spinner) spinner.classList.add('active');
+  try {
+    const ext  = file.name.split('.').pop();
+    const path = `mediatheque/photos/${Date.now()}.${ext}`;
+    const { error: upErr } = await db.storage.from(BUCKET).upload(path, file, { upsert: true });
+    if (upErr) throw upErr;
+    const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
+    document.getElementById('photo-url').value = publicUrl;
+    previewPhoto(publicUrl);
+    toast('✓ Photo uploadée', 'success');
+  } catch (err) {
+    toast('Erreur upload : ' + err.message, 'error');
+  } finally {
+    if (spinner) spinner.classList.remove('active');
+  }
 }
 
 async function editMediaPhoto(id) {
@@ -1632,24 +1669,25 @@ async function loadMediaVideos() {
 
   el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:20px;">
     ${data.map(v => `
-      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;">
-        <div style="position:relative;aspect-ratio:16/9;background:#0f172a;overflow:hidden;">
-          <img src="https://img.youtube.com/vi/${esc(v.youtube_id)}/mqdefault.jpg" alt="${esc(v.title)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
-          <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;">
+      <div class="media-card">
+        <div class="media-card-img" style="aspect-ratio:16/9;height:auto">
+          <img src="https://img.youtube.com/vi/${esc(v.youtube_id)}/mqdefault.jpg" alt="${esc(v.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;">
             <a href="https://youtu.be/${esc(v.youtube_id)}" target="_blank" rel="noopener" style="width:40px;height:40px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="#009A44" style="margin-left:3px"><path d="M8 5v14l11-7z"/></svg>
             </a>
           </div>
         </div>
-        <div style="padding:10px;">
-          <p style="font-size:.82rem;font-weight:600;margin:0 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(v.title)}</p>
-          <p style="font-size:.72rem;color:var(--muted);margin:0 0 8px;">
+        <div class="media-card-body">
+          <p class="media-card-title">${esc(v.title)}</p>
+          <div class="media-card-meta">
             <span style="background:#dcfce7;color:#166534;padding:1px 7px;border-radius:10px;font-size:.68rem;">${esc(v.category)}</span>
-            ${v.published_at ? ' · ' + new Date(v.published_at).toLocaleDateString('fr-FR') : ''}
-          </p>
-          <div style="display:flex;gap:6px;">
-            <button onclick="editMediaVideo('${v.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">✏️ Modifier</button>
-            <button onclick="deleteMediaVideo('${v.id}')" class="btn btn-sm" style="flex:1;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑️</button>
+            ${v.published_at ? '<span>' + new Date(v.published_at).toLocaleDateString('fr-FR') + '</span>' : ''}
+          </div>
+          <div class="media-card-actions">
+            <a href="https://youtu.be/${esc(v.youtube_id)}" target="_blank" rel="noopener" class="btn-voir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>YouTube</a>
+            <button onclick="editMediaVideo('${v.id}')" class="btn btn-ghost btn-sm" style="flex:1;font-size:.72rem;">Modifier</button>
+            <button onclick="deleteMediaVideo('${v.id}')" class="btn btn-sm" style="padding:4px 8px;font-size:.72rem;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;cursor:pointer;">🗑</button>
           </div>
         </div>
       </div>`).join('')}
@@ -1658,22 +1696,35 @@ async function loadMediaVideos() {
 
 function openMediaVideoModal(video) {
   document.getElementById('videoModalTitle').textContent = video ? 'Modifier la vidéo' : 'Ajouter une vidéo';
-  document.getElementById('video-id').value = video?.id || '';
-  document.getElementById('video-title').value = video?.title || '';
-  document.getElementById('video-youtube-id').value = video?.youtube_id || '';
-  document.getElementById('video-category').value = video?.category || 'Séances plénières';
+  document.getElementById('video-id').value           = video?.id || '';
+  document.getElementById('video-title').value        = video?.title || '';
+  document.getElementById('video-youtube-id').value   = video?.youtube_id || '';
+  document.getElementById('video-category').value     = video?.category || 'Séances plénières';
   document.getElementById('video-published-at').value = video?.published_at || '';
-  document.getElementById('video-description').value = video?.description || '';
+  document.getElementById('video-description').value  = video?.description || '';
   previewVideo(video?.youtube_id || '');
-  document.getElementById('modalMediaVideo').classList.remove('hidden');
+  const overlay = document.getElementById('modalMediaVideo');
+  overlay.classList.remove('hidden');
+  overlay.classList.add('open');
 }
 
-function closeMediaVideoModal() { document.getElementById('modalMediaVideo').classList.add('hidden'); }
+function closeMediaVideoModal() {
+  const overlay = document.getElementById('modalMediaVideo');
+  overlay.classList.remove('open');
+  overlay.classList.add('hidden');
+}
 
 function previewVideo(ytId) {
-  const img = document.getElementById('video-preview');
-  if (ytId && ytId.length >= 6) { img.src = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`; img.style.display = 'block'; }
-  else { img.style.display = 'none'; }
+  const img  = document.getElementById('video-preview');
+  const link = document.getElementById('video-yt-link');
+  if (ytId && ytId.length >= 6) {
+    img.src = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+    img.style.display = 'block';
+    if (link) { link.href = `https://youtu.be/${ytId}`; link.style.display = 'inline-flex'; }
+  } else {
+    img.style.display = 'none';
+    if (link) link.style.display = 'none';
+  }
 }
 
 async function editMediaVideo(id) {

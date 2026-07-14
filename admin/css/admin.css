@@ -467,6 +467,87 @@ input,textarea,select{font-family:var(--font)}
 .table-wrap{overflow-x:auto}
 
 /* =========================================
+   MODAL — FIX SECONDARY MODALS VISIBILITY
+   Tous les modals secondaires (hors #modalOverlay) utilisent
+   classList.remove('hidden') pour s'ouvrir.
+   Sans cette règle, .modal-overlay{display:none} les garde cachés.
+   ========================================= */
+.modal-overlay:not(#modalOverlay):not(.hidden){display:flex;align-items:center;justify-content:center}
+
+/* =========================================
+   FORM-INPUT — alias for field-input
+   ========================================= */
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:9px 13px;border:2px solid var(--border);border-radius:8px;
+  font-size:.87rem;color:var(--text);background:var(--bg);transition:border-color var(--trans);
+  font-family:inherit;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);outline:none}
+.form-textarea{min-height:80px;resize:vertical;line-height:1.6}
+
+/* =========================================
+   MÉDIATHÈQUE — tabs redesign
+   ========================================= */
+.media-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px}
+.media-tab-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 20px;
+  font-size:.85rem;font-weight:600;border:none;background:transparent;
+  cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;
+  margin-bottom:-2px;transition:all var(--trans);
+}
+.media-tab-btn svg{stroke:currentColor;transition:stroke var(--trans)}
+.media-tab-btn:hover{color:var(--text)}
+.media-tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+
+/* Media photo upload zone */
+.media-upload-zone{
+  border:2px dashed var(--border);border-radius:12px;
+  overflow:hidden;cursor:pointer;transition:border-color var(--trans);
+  position:relative;background:var(--bg);
+  min-height:160px;display:flex;align-items:center;justify-content:center;
+}
+.media-upload-zone:hover{border-color:var(--primary)}
+.media-upload-zone.has-image{border-style:solid;padding:0}
+.media-upload-zone .upload-placeholder{
+  text-align:center;padding:24px;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.media-upload-zone .upload-placeholder svg{stroke:var(--muted);margin-bottom:4px}
+.media-upload-zone .upload-placeholder p{font-size:.83rem;color:var(--muted);margin:0}
+.media-upload-zone .upload-placeholder small{font-size:.72rem;color:var(--muted)}
+.media-upload-zone img.zone-preview{width:100%;max-height:200px;object-fit:cover;display:block}
+.media-upload-zone .zone-overlay{
+  display:none;position:absolute;inset:0;background:rgba(0,0,0,.45);
+  align-items:center;justify-content:center;
+  color:#fff;font-size:.82rem;font-weight:600;gap:6px;
+}
+.media-upload-zone.has-image:hover .zone-overlay{display:flex}
+.media-upload-zone .zone-spinner{
+  display:none;position:absolute;inset:0;background:rgba(255,255,255,.7);
+  align-items:center;justify-content:center;
+}
+.media-upload-zone .zone-spinner.active{display:flex}
+
+/* Media cards improved hover */
+.media-card{
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  background:var(--card);transition:box-shadow var(--trans),transform var(--trans);
+}
+.media-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.media-card-img{height:140px;background:#f1f5f9;overflow:hidden;position:relative}
+.media-card-img img{width:100%;height:100%;object-fit:cover}
+.media-card-img .no-img{height:100%;display:flex;align-items:center;justify-content:center}
+.media-card-body{padding:10px}
+.media-card-title{font-size:.82rem;font-weight:600;margin:0 0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.media-card-meta{font-size:.72rem;color:var(--muted);margin:0 0 8px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.media-card-actions{display:flex;gap:6px}
+.media-card-actions .btn-voir{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 8px;
+  background:#eff6ff;color:#1d4ed8;border-radius:6px;font-size:.72rem;
+  font-weight:600;text-decoration:none;border:none;cursor:pointer;
+}
+.media-card-actions .btn-voir:hover{background:#dbeafe}
+
+/* =========================================
    GUIDE RAPIDE — improved cards
    ========================================= */
 .guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:20px}
