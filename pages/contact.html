@@ -11,56 +11,203 @@
   <link rel="preconnect" href="https://djqrmcuagrfvahmcwbro.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="../css/style.css">
+
   <style>
-    .contact-info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-bottom: 48px;
-    }
-    .contact-info-card {
-      background: var(--gris-c);
-      border-radius: 8px;
-      padding: 28px 24px;
-      text-align: center;
-      border-bottom: 4px solid var(--vert);
-    }
-    .contact-info-card:nth-child(2) { border-color: var(--rouge); }
-    .contact-info-card:nth-child(3) { border-color: var(--jaune); }
-    .contact-info-icon { font-size: 2rem; margin-bottom: 14px; }
-    .contact-info-title {
-      font-family: var(--font-h);
-      font-size: 1rem;
-      color: var(--noir);
-      margin-bottom: 10px;
-    }
-    .contact-info-text { font-size: 0.875rem; color: var(--gris-m); line-height: 1.7; }
-    .contact-main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 48px;
-    }
-    .map-placeholder {
-      background: var(--gris-b);
-      border-radius: 8px;
-      height: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      border: 2px dashed var(--gris-m);
-      color: var(--gris-m);
-      font-size: 0.9rem;
-      text-align: center;
-      padding: 24px;
-    }
-    .map-placeholder span { font-size: 2.5rem; }
-    @media (max-width: 768px) {
-      .contact-info-grid { grid-template-columns: 1fr; }
-      .contact-main-grid { grid-template-columns: 1fr; }
-    }
+  /* ── CONTACT PAGE ── */
+  .contact-page { padding: 60px 0 80px; background: #f8fafc; }
+
+  /* Info cards row */
+  .contact-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 52px;
+  }
+  @media(max-width:860px){ .contact-cards { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:560px){ .contact-cards { grid-template-columns: 1fr; } }
+
+  .cinfo-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 26px 22px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .cinfo-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.09); transform: translateY(-2px); }
+  .cinfo-icon {
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cinfo-icon svg { stroke: currentColor; }
+  .cinfo-icon.green  { background: #e6f7ed; color: #009A44; }
+  .cinfo-icon.red    { background: #fff1f0; color: #DC241F; }
+  .cinfo-icon.yellow { background: #fffbeb; color: #b45309; }
+  .cinfo-label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: #94a3b8; margin-bottom: 4px;
+  }
+  .cinfo-title { font-family: var(--font-h); font-size: .97rem; color: #0f172a; margin-bottom: 5px; }
+  .cinfo-text  { font-size: .82rem; color: #475569; line-height: 1.65; }
+  .cinfo-link  { font-size: .8rem; font-weight: 600; color: var(--vert); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; }
+  .cinfo-link:hover { text-decoration: underline; }
+
+  /* Main 2-column layout */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media(max-width:900px){ .contact-grid { grid-template-columns: 1fr; } }
+
+  /* Form panel */
+  .contact-form-panel {
+    background: #fff;
+    border-radius: 18px;
+    padding: 36px 32px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0,0,0,.06);
+  }
+  .contact-form-panel h2 {
+    font-family: var(--font-h);
+    font-size: 1.4rem;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .contact-form-panel .cf-sub {
+    font-size: .85rem; color: #64748b; margin-bottom: 28px; line-height: 1.6;
+  }
+
+  .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width:500px){ .cf-row { grid-template-columns: 1fr; } }
+
+  .cf-group { margin-bottom: 18px; }
+  .cf-label {
+    display: block; font-size: .78rem; font-weight: 700;
+    color: #374151; margin-bottom: 6px;
+  }
+  .cf-label .req { color: #DC241F; }
+  .cf-input, .cf-select, .cf-textarea {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid #e2e8f0; border-radius: 9px;
+    font-size: .875rem; color: #0f172a;
+    background: #f8fafc; font-family: inherit;
+    transition: border-color .18s, background .18s, box-shadow .18s;
+  }
+  .cf-input:focus, .cf-select:focus, .cf-textarea:focus {
+    border-color: #009A44; background: #fff;
+    outline: none; box-shadow: 0 0 0 3px rgba(0,154,68,.12);
+  }
+  .cf-textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+
+  /* Subject chips */
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .cf-chip {
+    padding: 5px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600;
+    border: 1.5px solid #e2e8f0; background: #f8fafc; color: #475569;
+    cursor: pointer; transition: all .15s;
+  }
+  .cf-chip:hover, .cf-chip.active {
+    border-color: #009A44; background: #e6f7ed; color: #009A44;
+  }
+
+  .cf-submit {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, #009A44, #00c957);
+    color: #fff; border: none; border-radius: 10px;
+    font-size: .9rem; font-weight: 700; cursor: pointer; font-family: inherit;
+    transition: opacity .18s, transform .18s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .cf-submit:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+  .cf-submit:disabled { opacity: .65; cursor: not-allowed; }
+
+  .cf-success {
+    display: none; margin-top: 16px; padding: 14px 18px;
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+    border-radius: 10px; color: #166534; font-weight: 600; font-size: .87rem;
+  }
+  .cf-error {
+    display: none; margin-top: 16px; padding: 14px 18px;
+    background: #fef2f2; border: 1px solid #fecaca;
+    border-radius: 10px; color: #991b1b; font-size: .87rem;
+  }
+
+  /* Map panel */
+  .contact-map-panel { display: flex; flex-direction: column; gap: 18px; }
+  #leaflet-map {
+    width: 100%; height: 380px; border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    overflow: hidden;
+    position: relative; z-index: 0;
+  }
+
+  /* Acces card */
+  .acces-card {
+    background: #fff; border-radius: 14px; padding: 22px 22px;
+    border: 1px solid #e2e8f0; border-left: 4px solid #009A44;
+  }
+  .acces-card h4 {
+    font-family: var(--font-h); font-size: .95rem; color: #0f172a; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .acces-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .acces-list li {
+    font-size: .83rem; color: #475569;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .acces-list .acces-icon {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+    background: #f1f5f9;
+  }
+
+  /* Social buttons */
+  .contact-social-row {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .contact-social-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 9px; font-size: .8rem; font-weight: 700;
+    text-decoration: none; transition: all .18s;
+    border: 1.5px solid;
+  }
+  .csb-fb  { background: #e8f0fe; color: #1877F2; border-color: #bfdbfe; }
+  .csb-yt  { background: #fff1f0; color: #CC0000; border-color: #fecaca; }
+  .csb-fb:hover { background: #1877F2; color: #fff; border-color: #1877F2; }
+  .csb-yt:hover { background: #FF0000; color: #fff; border-color: #FF0000; }
+
+  /* Page hero override */
+  .page-hero {
+    background: linear-gradient(135deg, #012d15 0%, #024d24 60%, #013820 100%);
+    position: relative; overflow: hidden;
+  }
+  .page-hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(0,154,68,.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* FAQ quick */
+  .contact-faq { margin-top: 52px; }
+  .contact-faq h2 { font-family: var(--font-h); font-size: 1.3rem; color: #0f172a; margin-bottom: 20px; }
+  .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media(max-width:660px){ .faq-grid { grid-template-columns: 1fr; } }
+  .faq-item {
+    background: #fff; border-radius: 12px; padding: 20px 18px;
+    border: 1px solid #e2e8f0;
+  }
+  .faq-q { font-size: .87rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+  .faq-a { font-size: .8rem; color: #64748b; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -90,7 +237,7 @@
   <div class="container">
     <a href="../index.html" class="site-logo">
       <img src="../logo/logo-dark-small.png" alt="Assemblée Nationale — République du Congo" class="site-logo__img">
-    </a>
+    </a>
     <nav class="main-nav" role="navigation" aria-label="Navigation principale">
       <ul class="nav-list">
         <li class="nav-item"><a href="../index.html" class="nav-link">Accueil</a></li>
@@ -158,6 +305,7 @@
   </div>
 </header>
 
+<!-- Page Hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__breadcrumb">
@@ -166,129 +314,197 @@
       <span>Nous contacter</span>
     </div>
     <h1 class="page-hero__title">Nous Contacter</h1>
-    <p class="page-hero__sub">Assemblée Nationale de la République du Congo — Brazzaville</p>
+    <p class="page-hero__sub">Assemblée Nationale de la République du Congo · Brazzaville</p>
   </div>
 </div>
 
-<div class="page-content">
+<!-- Main content -->
+<div class="contact-page">
   <div class="container">
 
-    <!-- Cartes info -->
-    <div class="contact-info-grid">
-      <div class="contact-info-card">
-        <div class="contact-info-icon">📍</div>
-        <h3 class="contact-info-title">Notre adresse</h3>
-        <p class="contact-info-text">
-          Rond-point de la place de la République (Ex CCF),
-          entre le boulevard Denis SASSOU-NGUESSO
-          et l'Avenue Charles de Gaulle,
-          <strong>Brazzaville, République du Congo</strong>
-        </p>
+    <!-- 3 info cards -->
+    <div class="contact-cards">
+
+      <div class="cinfo-card reveal reveal-up" style="--delay:0ms">
+        <div class="cinfo-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cinfo-label">Adresse</div>
+          <div class="cinfo-title">Siège de l'Assemblée Nationale</div>
+          <p class="cinfo-text">Rond-point de la place de la République (Ex CCF), Brazzaville, République du Congo</p>
+          <a class="cinfo-link" href="https://www.google.com/maps/search/Assembl%C3%A9e+Nationale+Brazzaville+Congo" target="_blank" rel="noopener">
+            Voir sur Google Maps →
+          </a>
+        </div>
       </div>
-      <div class="contact-info-card">
-        <div class="contact-info-icon">📱</div>
-        <h3 class="contact-info-title">Réseaux sociaux</h3>
-        <p class="contact-info-text">
-          <strong>Facebook :</strong> AssembleeNationale.cg<br>
-          <strong>YouTube :</strong> Assemblée Nationale Congo<br><br>
-          Suivez-nous pour les dernières actualités parlementaires.
-        </p>
+
+      <div class="cinfo-card reveal reveal-up" style="--delay:80ms">
+        <div class="cinfo-icon red">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cinfo-label">Formulaire en ligne</div>
+          <div class="cinfo-title">Écrivez-nous</div>
+          <p class="cinfo-text">Utilisez le formulaire ci-dessous pour toute question, suggestion ou demande d'information officielle.</p>
+          <a class="cinfo-link" href="#contact-form">Accéder au formulaire →</a>
+        </div>
       </div>
-      <div class="contact-info-card">
-        <div class="contact-info-icon">📺</div>
-        <h3 class="contact-info-title">Séances en direct</h3>
-        <p class="contact-info-text">
-          Assistez aux séances plénières en streaming sur notre chaîne YouTube officielle.
-          Retrouvez également les archives des débats parlementaires.
-        </p>
+
+      <div class="cinfo-card reveal reveal-up" style="--delay:160ms">
+        <div class="cinfo-icon yellow">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div>
+          <div class="cinfo-label">Horaires d'accueil</div>
+          <div class="cinfo-title">Ouvert du lundi au vendredi</div>
+          <p class="cinfo-text">
+            Matin : 8h00 – 12h30<br>
+            Après-midi : 14h00 – 17h30<br>
+            <em style="font-size:.75rem;color:#94a3b8">Fermé les jours fériés</em>
+          </p>
+        </div>
       </div>
+
     </div>
 
-    <!-- Formulaire + Carte -->
-    <div class="contact-main-grid">
+    <!-- Form + Map grid -->
+    <div class="contact-grid">
 
-      <div>
-        <h2 class="section-title">Formulaire de contact</h2>
-        <p style="color: var(--gris-m); margin-bottom: 28px; font-size: 0.9rem;">
-          Vous pouvez nous adresser vos questions, suggestions ou demandes d'information
-          via ce formulaire. Nous vous répondrons dans les meilleurs délais.
-        </p>
+      <!-- FORM -->
+      <div id="contact-form" class="contact-form-panel reveal reveal-up" style="--delay:0ms">
+        <h2>Envoyer un message</h2>
+        <p class="cf-sub">Remplissez ce formulaire pour nous adresser votre demande. Nous vous répondrons sous 48 heures ouvrables.</p>
 
-        <form class="contact-form" novalidate>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="nom">Nom <span style="color:var(--rouge)">*</span></label>
-              <input class="form-input" type="text" id="nom" name="nom" placeholder="Votre nom" required>
+        <!-- Subject chips -->
+        <div class="cf-chips" id="chipGroup">
+          <button type="button" class="cf-chip active" data-val="Information générale">Information générale</button>
+          <button type="button" class="cf-chip" data-val="Accès aux documents">Accès aux documents</button>
+          <button type="button" class="cf-chip" data-val="Presse & Médias">Presse &amp; Médias</button>
+          <button type="button" class="cf-chip" data-val="Visite officielle">Visite officielle</button>
+          <button type="button" class="cf-chip" data-val="Autre">Autre</button>
+        </div>
+
+        <form novalidate id="contactForm">
+          <input type="hidden" id="chip-sujet" value="Information générale">
+
+          <div class="cf-row">
+            <div class="cf-group">
+              <label class="cf-label" for="nom">Nom <span class="req">*</span></label>
+              <input class="cf-input" type="text" id="nom" placeholder="Ex : Mabiala" required>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="prenom">Prénom <span style="color:var(--rouge)">*</span></label>
-              <input class="form-input" type="text" id="prenom" name="prenom" placeholder="Votre prénom" required>
+            <div class="cf-group">
+              <label class="cf-label" for="prenom">Prénom <span class="req">*</span></label>
+              <input class="cf-input" type="text" id="prenom" placeholder="Ex : Jean-Pierre" required>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="email">Adresse e-mail <span style="color:var(--rouge)">*</span></label>
-            <input class="form-input" type="email" id="email" name="email" placeholder="exemple@domaine.com" required>
+
+          <div class="cf-group">
+            <label class="cf-label" for="email">Adresse e-mail <span class="req">*</span></label>
+            <input class="cf-input" type="email" id="email" placeholder="exemple@domaine.com" required>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="sujet">Sujet <span style="color:var(--rouge)">*</span></label>
-            <input class="form-input" type="text" id="sujet" name="sujet" placeholder="Objet de votre message" required>
+
+          <div class="cf-group">
+            <label class="cf-label" for="sujet">Précisez votre sujet <span class="req">*</span></label>
+            <input class="cf-input" type="text" id="sujet" placeholder="Décrivez brièvement l'objet de votre demande" required>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="message">Message <span style="color:var(--rouge)">*</span></label>
-            <textarea class="form-textarea" id="message" name="message" placeholder="Rédigez votre message ici..." required></textarea>
+
+          <div class="cf-group">
+            <label class="cf-label" for="message">Message <span class="req">*</span></label>
+            <textarea class="cf-textarea" id="message" placeholder="Rédigez votre message ici…" required></textarea>
           </div>
-          <button type="submit" class="btn btn-vert" id="contactSubmitBtn" style="padding: 13px 32px; font-size: 0.95rem;">
+
+          <button type="submit" class="cf-submit" id="contactSubmitBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             Envoyer le message
           </button>
-          <div id="contactSuccess" style="display:none;margin-top:16px;padding:14px 18px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;color:#166534;font-weight:600;">
+
+          <div class="cf-success" id="contactSuccess">
             ✓ Votre message a bien été envoyé. Nous vous répondrons dans les meilleurs délais.
           </div>
-          <div id="contactError" style="display:none;margin-top:16px;padding:14px 18px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#991b1b;">
-            Une erreur est survenue. Veuillez réessayer ou nous contacter directement par téléphone.
+          <div class="cf-error" id="contactError">
+            Une erreur est survenue. Veuillez réessayer ou nous contacter via les réseaux sociaux.
           </div>
         </form>
       </div>
 
-      <div>
-        <h2 class="section-title">Notre localisation</h2>
-        <p style="color: var(--gris-m); margin-bottom: 20px; font-size: 0.9rem;">
-          L'Assemblée nationale est située au cœur de Brazzaville, capitale de la République du Congo.
-        </p>
+      <!-- MAP + ACCES -->
+      <div class="contact-map-panel reveal reveal-up" style="--delay:120ms">
 
-        <div class="map-placeholder">
-          <span>🗺️</span>
-          <strong>Assemblée Nationale</strong>
-          <p>Rond-point de la place de la République<br>Brazzaville, République du Congo</p>
-        </div>
+        <!-- Leaflet map -->
+        <div id="leaflet-map"></div>
 
-        <div style="margin-top: 28px; padding: 20px; background: var(--gris-c); border-radius: 8px; border-left: 4px solid var(--vert);">
-          <h4 style="font-family: var(--font-h); margin-bottom: 12px; color: var(--noir);">Accès</h4>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-            <li style="font-size: 0.85rem; color: var(--gris-m); display: flex; gap: 8px; align-items: flex-start;">
-              <span>🚗</span> Boulevard Denis SASSOU-NGUESSO
+        <!-- Accès -->
+        <div class="acces-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#009A44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            Comment accéder
+          </h4>
+          <ul class="acces-list">
+            <li>
+              <span class="acces-icon">🚗</span>
+              <span>Boulevard Denis Sassou-Nguesso — accès principal depuis le nord</span>
             </li>
-            <li style="font-size: 0.85rem; color: var(--gris-m); display: flex; gap: 8px; align-items: flex-start;">
-              <span>🚗</span> Avenue Charles de Gaulle
+            <li>
+              <span class="acces-icon">🚗</span>
+              <span>Avenue Charles de Gaulle — accès depuis le sud</span>
             </li>
-            <li style="font-size: 0.85rem; color: var(--gris-m); display: flex; gap: 8px; align-items: flex-start;">
-              <span>📍</span> Rond-point de la place de la République (Ex CCF)
+            <li>
+              <span class="acces-icon">📍</span>
+              <span>Rond-point de la place de la République (Ex Centre Culturel Français)</span>
+            </li>
+            <li>
+              <span class="acces-icon">🅿️</span>
+              <span>Parking visiteurs disponible à l'entrée du bâtiment</span>
             </li>
           </ul>
         </div>
 
-        <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-          <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" class="btn btn-vert" style="display: flex; align-items: center; gap: 8px;">
+        <!-- Social -->
+        <div class="contact-social-row">
+          <a href="https://www.facebook.com/AssembleeNationale.cg" target="_blank" rel="noopener" class="contact-social-btn csb-fb">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23.1 24 18.1 24 12.1z"/></svg>
-            Facebook
+            Suivre sur Facebook
           </a>
-          <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" class="btn btn-rouge" style="display: flex; align-items: center; gap: 8px;">
+          <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" rel="noopener" class="contact-social-btn csb-yt">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5a3 3 0 0 0-2.1 2.2A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
-            YouTube
+            S'abonner YouTube
           </a>
         </div>
-      </div>
 
+      </div>
     </div>
+
+    <!-- FAQ rapide -->
+    <div class="contact-faq">
+      <h2 class="reveal reveal-up">Questions fréquentes</h2>
+      <div class="faq-grid">
+        <div class="faq-item reveal reveal-up" style="--delay:0ms">
+          <p class="faq-q">Comment obtenir un compte rendu de séance ?</p>
+          <p class="faq-a">Les comptes rendus des séances plénières sont disponibles dans la rubrique <a href="pleniere.html" style="color:#009A44">Comptes rendus &amp; PV</a> ou sur demande via ce formulaire.</p>
+        </div>
+        <div class="faq-item reveal reveal-up" style="--delay:80ms">
+          <p class="faq-q">Comment suivre les séances en direct ?</p>
+          <p class="faq-a">Rendez-vous sur notre <a href="direct.html" style="color:#009A44">Web TV</a> ou sur la <a href="https://www.youtube.com/channel/UCuV1K2uIysyBwig6dm7kzIw" target="_blank" style="color:#009A44">chaîne YouTube officielle</a> lors des sessions parlementaires.</p>
+        </div>
+        <div class="faq-item reveal reveal-up" style="--delay:160ms">
+          <p class="faq-q">Comment contacter directement un député ?</p>
+          <p class="faq-a">Consultez l'<a href="deputes.html" style="color:#009A44">annuaire des 151 députés</a> pour trouver les informations de votre représentant selon votre circonscription.</p>
+        </div>
+        <div class="faq-item reveal reveal-up" style="--delay:240ms">
+          <p class="faq-q">Les visites du bâtiment sont-elles possibles ?</p>
+          <p class="faq-a">Des visites officielles peuvent être organisées sur demande formelle. Sélectionnez "Visite officielle" dans le formulaire ci-dessus et précisez votre demande.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -339,42 +555,118 @@
 </footer>
 
 <button class="scroll-top" title="Haut de page">↑</button>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/main.js"></script>
 <script src="../js/cms.js"></script>
+
 <script>
+/* ── Leaflet Map ── */
+(function () {
+  // Coordonnées Assemblée Nationale, Brazzaville (Rond-point de la République)
+  const LAT = -4.2677, LNG = 15.2718;
+
+  const map = L.map('leaflet-map', {
+    center: [LAT, LNG],
+    zoom: 15,
+    zoomControl: true,
+    scrollWheelZoom: false,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
+  }).addTo(map);
+
+  // Icône verte personnalisée
+  const greenIcon = L.divIcon({
+    className: '',
+    html: `<div style="
+      width:38px;height:38px;border-radius:50% 50% 50% 0;
+      background:#009A44;transform:rotate(-45deg);
+      border:3px solid #fff;box-shadow:0 4px 12px rgba(0,154,68,.4);
+      position:relative;">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:rotate(45deg)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      </div>
+    </div>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+    popupAnchor: [0, -42],
+  });
+
+  const popup = L.popup({ maxWidth: 240, className: 'an-popup' }).setContent(`
+    <div style="padding:4px 2px;">
+      <strong style="font-size:.92rem;color:#0f172a">Assemblée Nationale</strong><br>
+      <span style="font-size:.78rem;color:#64748b">République du Congo</span><br>
+      <hr style="margin:8px 0;border-color:#e2e8f0">
+      <span style="font-size:.78rem;color:#475569">Rond-point de la place de la République<br>Brazzaville, Congo</span><br>
+      <a href="https://www.google.com/maps/search/Assemblée+Nationale+Brazzaville+Congo"
+         target="_blank" rel="noopener"
+         style="display:inline-block;margin-top:8px;font-size:.75rem;font-weight:700;color:#009A44;text-decoration:none">
+        Ouvrir dans Google Maps →
+      </a>
+    </div>
+  `);
+
+  L.marker([LAT, LNG], { icon: greenIcon })
+    .addTo(map)
+    .bindPopup(popup)
+    .openPopup();
+})();
+
+/* ── Subject chips ── */
+document.querySelectorAll('.cf-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    document.getElementById('chip-sujet').value = chip.dataset.val;
+  });
+});
+
+/* ── Contact form submit ── */
 (function () {
   const SB_URL = 'https://djqrmcuagrfvahmcwbro.supabase.co';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcXJtY3VhZ3JmdmFobWN3YnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MjExMDEsImV4cCI6MjA5MzI5NzEwMX0.S8xpx9xLGIilit5OME-GsxM59X7ezIyplFKFDZBWmjE';
   const db = supabase.createClient(SB_URL, SB_KEY);
 
-  document.querySelector('.contact-form').addEventListener('submit', async (e) => {
+  document.getElementById('contactForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = document.getElementById('contactSubmitBtn');
+    const btn     = document.getElementById('contactSubmitBtn');
     const success = document.getElementById('contactSuccess');
-    const errEl  = document.getElementById('contactError');
+    const errEl   = document.getElementById('contactError');
+
+    const nom     = document.getElementById('nom').value.trim();
+    const prenom  = document.getElementById('prenom').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const sujet   = document.getElementById('chip-sujet').value + ' — ' + document.getElementById('sujet').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    if (!nom || !prenom || !email || !message) {
+      errEl.textContent = 'Veuillez remplir tous les champs obligatoires.';
+      errEl.style.display = 'block';
+      return;
+    }
 
     btn.disabled = true;
-    btn.textContent = 'Envoi en cours…';
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Envoi en cours…';
     success.style.display = 'none';
     errEl.style.display   = 'none';
 
-    const { error } = await db.from('contact_messages').insert({
-      nom:     document.getElementById('nom').value.trim(),
-      prenom:  document.getElementById('prenom').value.trim(),
-      email:   document.getElementById('email').value.trim(),
-      sujet:   document.getElementById('sujet').value.trim(),
-      message: document.getElementById('message').value.trim(),
-    });
+    const { error } = await db.from('contact_messages').insert({ nom, prenom, email, sujet, message });
 
     if (error) {
+      errEl.textContent   = 'Une erreur est survenue. Veuillez réessayer ou nous contacter via les réseaux sociaux.';
       errEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Envoyer le message';
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Envoyer le message';
     } else {
       success.style.display = 'block';
       e.target.reset();
-      btn.textContent = '✓ Message envoyé';
+      document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('.cf-chip').classList.add('active');
+      btn.innerHTML = '✓ Message envoyé';
     }
   });
 })();
