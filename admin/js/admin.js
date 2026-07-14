@@ -46,22 +46,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 // NAVIGATION
 // =========================================
 const TITLES = {
-  accueil:    '🏠 Tableau de bord',
-  articles:   '✍️ Articles & Publications',
-  'cms-pages':'📄 Pages personnalisées',
-  slides:     '🖼️ Carrousel — Bannières',
-  actualites: '📰 Actualités',
-  president:  '👤 Le Président',
-  bureau:     '👥 Le Bureau',
-  agenda:     '📅 Agenda',
-  deputes:    '🏛️ Les Députés',
-  messages:   '✉️ Messages reçus',
-  media:      '🖼️ Médiathèque',
-  live:       '🔴 En Direct',
-  archives:   '📂 Archives & Documents',
-  seances:    '🏛️ Séances plénières',
-  groupes:    '🎯 Groupes parlementaires',
-  parametres: '⚙️ Paramètres généraux',
+  accueil:              'Tableau de bord',
+  articles:             'Articles & Publications',
+  'cms-pages':          'Pages personnalisées',
+  slides:               'Carrousel — Bannières',
+  actualites:           'Actualités',
+  president:            'Le Président',
+  bureau:               'Le Bureau',
+  agenda:               'Agenda institutionnel',
+  deputes:              'Les Députés',
+  messages:             'Messages reçus',
+  media:                'Médiathèque',
+  live:                 'En Direct',
+  archives:             'Archives & Documents',
+  seances:              'Séances plénières',
+  groupes:              'Groupes parlementaires',
+  newsletter:           'Newsletter',
+  parametres:           'Paramètres généraux',
+  'questions-ecrites':  'Questions écrites',
+  'questions-orales':   'Questions orales',
+  interpellations:      'Interpellations',
+  'journaux-debats':    'Journaux des débats',
 };
 
 function goTo(name) {
@@ -90,8 +95,12 @@ async function loadSection(name) {
     case 'archives':    await loadArchives(); break;
     case 'seances':     await loadSeances(); break;
     case 'groupes':     await loadGroupes(); break;
-    case 'live':        await loadLive(); break;
-    case 'parametres':  await loadParametres(); break;
+    case 'live':                await loadLive(); break;
+    case 'parametres':          await loadParametres(); break;
+    case 'questions-ecrites':   await loadQuestionsEcrites(); break;
+    case 'questions-orales':    await loadQuestionsOrales(); break;
+    case 'interpellations':     await loadInterpellations(); break;
+    case 'journaux-debats':     await loadJournauxDebats(); break;
   }
 }
 
@@ -99,7 +108,7 @@ async function loadSection(name) {
 // STATS
 // =========================================
 async function loadStats() {
-  const [s, a, b, ag, art, pg, dep, msg] = await Promise.all([
+  const [s, a, b, ag, art, pg, dep, msg, sc, nl] = await Promise.all([
     db.from('slides').select('id', { count: 'exact', head: true }),
     db.from('actualites').select('id', { count: 'exact', head: true }),
     db.from('bureau').select('id', { count: 'exact', head: true }),
@@ -108,20 +117,30 @@ async function loadStats() {
     db.from('pages').select('id', { count: 'exact', head: true }),
     db.from('deputes').select('id', { count: 'exact', head: true }),
     db.from('contact_messages').select('id', { count: 'exact', head: true }).eq('lu', false),
+    db.from('seances_plenieres').select('id', { count: 'exact', head: true }),
+    db.from('newsletter_subscribers').select('id', { count: 'exact', head: true }).eq('active', true),
   ]);
   const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n ?? '—'; };
-  set('stat-slides', s.count);
+  // Dashboard stats
+  set('stat-slides',     s.count);
   set('stat-actualites', a.count);
-  set('stat-bureau', b.count);
-  set('stat-agenda', ag.count);
-  set('badge-slides', s.count);
+  set('stat-bureau',     b.count);
+  set('stat-agenda',     ag.count);
+  set('stat-messages',   msg.count ?? 0);
+  set('stat-deputes',    dep.count);
+  set('stat-seances',    sc.count);
+  set('stat-newsletter', nl.count);
+  // Sidebar badges
+  set('badge-slides',     s.count);
   set('badge-actualites', a.count);
-  set('badge-bureau', b.count);
-  set('badge-agenda', ag.count);
-  set('badge-articles', art.count);
-  set('badge-cms-pages', pg.count);
-  set('badge-deputes', dep.count);
-  set('badge-messages', msg.count ?? 0);
+  set('badge-bureau',     b.count);
+  set('badge-agenda',     ag.count);
+  set('badge-articles',   art.count);
+  set('badge-cms-pages',  pg.count);
+  set('badge-deputes',    dep.count);
+  set('badge-messages',   msg.count ?? 0);
+  set('badge-seances',    sc.count);
+  set('badge-newsletter', nl.count);
 }
 
 // =========================================
@@ -2100,4 +2119,480 @@ async function deleteGroupe(id) {
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
   toast('Groupe supprimé', 'success');
   loadGroupes();
+}
+
+// =========================================
+// QUESTIONS ÉCRITES
+// =========================================
+let qeData = [];
+let qeEditingId = null;
+
+const QE_STATUT_BADGES = {
+  'Posee':       'badge badge-posee',
+  'Repondue':    'badge badge-repondue',
+  'Sans reponse':'badge badge-sans-rep',
+};
+const QE_STATUT_LABELS = { 'Posee':'Posée', 'Repondue':'Répondue', 'Sans reponse':'Sans réponse' };
+
+async function loadQuestionsEcrites() {
+  const tbody = document.getElementById('qe-list');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('questions_ecrites').select('*').order('date', { ascending: false });
+  if (error) { toast('Erreur : ' + error.message, 'error'); qeData = []; renderQE([]); return; }
+  qeData = data || [];
+
+  const badge = document.getElementById('badge-questions-ecrites');
+  if (badge) badge.textContent = qeData.length;
+  filterQuestionsEcrites();
+}
+
+function filterQuestionsEcrites() {
+  const q  = (document.getElementById('qe-search')?.value || '').toLowerCase();
+  const st = document.getElementById('qe-statut')?.value || '';
+  const filtered = qeData.filter(r => {
+    if (st && r.statut !== st) return false;
+    if (q && !((r.sujet||'').toLowerCase().includes(q) || (r.auteur_nom||'').toLowerCase().includes(q) || (r.destinataire||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  document.getElementById('qe-count').textContent = filtered.length;
+  renderQE(filtered);
+}
+
+function renderQE(list) {
+  const el = document.getElementById('qe-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Aucune question écrite</td></tr>'; return; }
+  el.innerHTML = list.map(r => {
+    const d = r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('fr-FR') : '—';
+    const cls = QE_STATUT_BADGES[r.statut] || 'badge badge-gray';
+    const lbl = QE_STATUT_LABELS[r.statut] || r.statut || '—';
+    return `<tr>
+      <td style="font-size:.8rem;color:var(--muted)">${r.numero ?? '—'}</td>
+      <td style="font-size:.8rem;white-space:nowrap">${d}</td>
+      <td style="font-weight:600;font-size:.82rem">${esc(r.auteur_nom || '—')}</td>
+      <td style="font-size:.8rem">${esc(r.destinataire || '—')}</td>
+      <td style="max-width:240px;font-size:.82rem">${esc(r.sujet || '—')}</td>
+      <td style="font-size:.75rem;color:var(--muted)">${esc(r.session || '—')}</td>
+      <td><span class="${cls}">${lbl}</span>${r.reponse_url ? ` <a href="${esc(r.reponse_url)}" target="_blank" style="font-size:.7rem;color:var(--primary);margin-left:4px">PDF</a>` : ''}</td>
+      <td><div class="actions">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editQE('${r.id}')" title="Modifier">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteQE('${r.id}')" title="Supprimer">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openQEModal(data) {
+  qeEditingId = data?.id || null;
+  document.getElementById('qeModalTitle').textContent = data ? 'Modifier la question écrite' : 'Nouvelle question écrite';
+  document.getElementById('qe-numero').value       = data?.numero ?? '';
+  document.getElementById('qe-date').value         = data?.date || '';
+  document.getElementById('qe-session').value      = data?.session || 'Session mars 2026';
+  document.getElementById('qe-auteur').value       = data?.auteur_nom || '';
+  document.getElementById('qe-destinataire').value = data?.destinataire || '';
+  document.getElementById('qe-sujet').value        = data?.sujet || '';
+  document.getElementById('qe-contenu').value      = data?.contenu || '';
+  document.getElementById('qe-statut-form').value  = data?.statut || 'Posee';
+  document.getElementById('qe-reponse-url').value  = data?.reponse_url || '';
+  document.getElementById('qeModalOverlay').classList.remove('hidden');
+}
+
+async function editQE(id) {
+  const r = qeData.find(x => x.id === id);
+  if (r) openQEModal(r);
+}
+
+function closeQEModal() { document.getElementById('qeModalOverlay').classList.add('hidden'); qeEditingId = null; }
+
+async function saveQE() {
+  const sujet  = document.getElementById('qe-sujet').value.trim();
+  const auteur = document.getElementById('qe-auteur').value.trim();
+  const date   = document.getElementById('qe-date').value;
+  if (!sujet || !auteur || !date) { toast('Sujet, auteur et date sont obligatoires', 'error'); return; }
+
+  const payload = {
+    numero:        parseInt(document.getElementById('qe-numero').value) || null,
+    date,
+    session:       document.getElementById('qe-session').value.trim() || null,
+    auteur_nom:    auteur,
+    destinataire:  document.getElementById('qe-destinataire').value.trim() || null,
+    sujet,
+    contenu:       document.getElementById('qe-contenu').value.trim() || null,
+    statut:        document.getElementById('qe-statut-form').value,
+    reponse_url:   document.getElementById('qe-reponse-url').value.trim() || null,
+  };
+
+  const { error } = qeEditingId
+    ? await db.from('questions_ecrites').update(payload).eq('id', qeEditingId)
+    : await db.from('questions_ecrites').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(qeEditingId ? 'Question mise à jour' : 'Question enregistrée', 'success');
+  closeQEModal();
+  loadQuestionsEcrites();
+}
+
+async function deleteQE(id) {
+  if (!confirm('Supprimer cette question écrite ?')) return;
+  const { error } = await db.from('questions_ecrites').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Question supprimée', 'success');
+  loadQuestionsEcrites();
+}
+
+// =========================================
+// QUESTIONS ORALES
+// =========================================
+let qoData = [];
+let qoEditingId = null;
+
+const QO_STATUT_BADGES = {
+  'Programmee': 'badge badge-programmee',
+  'Posee':      'badge badge-posee',
+  'Repondue':   'badge badge-repondue',
+};
+const QO_STATUT_LABELS = { 'Programmee':'Programmée', 'Posee':'Posée', 'Repondue':'Répondue' };
+
+async function loadQuestionsOrales() {
+  const tbody = document.getElementById('qo-list');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('questions_orales').select('*').order('date_seance', { ascending: false });
+  if (error) { toast('Erreur : ' + error.message, 'error'); qoData = []; renderQO([]); return; }
+  qoData = data || [];
+
+  const badge = document.getElementById('badge-questions-orales');
+  if (badge) badge.textContent = qoData.length;
+  filterQuestionsOrales();
+}
+
+function filterQuestionsOrales() {
+  const q  = (document.getElementById('qo-search')?.value || '').toLowerCase();
+  const st = document.getElementById('qo-statut')?.value || '';
+  const filtered = qoData.filter(r => {
+    if (st && r.statut !== st) return false;
+    if (q && !((r.sujet||'').toLowerCase().includes(q) || (r.auteur_nom||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  document.getElementById('qo-count').textContent = filtered.length;
+  renderQO(filtered);
+}
+
+function renderQO(list) {
+  const el = document.getElementById('qo-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Aucune question orale</td></tr>'; return; }
+  el.innerHTML = list.map(r => {
+    const d = r.date_seance ? new Date(r.date_seance + 'T00:00:00').toLocaleDateString('fr-FR') : '—';
+    const cls = QO_STATUT_BADGES[r.statut] || 'badge badge-gray';
+    const lbl = QO_STATUT_LABELS[r.statut] || r.statut || '—';
+    return `<tr>
+      <td style="font-size:.8rem;color:var(--muted)">${r.numero ?? '—'}</td>
+      <td style="font-size:.8rem;white-space:nowrap">${d}</td>
+      <td style="font-weight:600;font-size:.82rem">${esc(r.auteur_nom || '—')}</td>
+      <td style="font-size:.8rem">${esc(r.destinataire || '—')}</td>
+      <td style="max-width:240px;font-size:.82rem">${esc(r.sujet || '—')}</td>
+      <td style="font-size:.75rem;color:var(--muted)">${esc(r.session || '—')}</td>
+      <td><span class="${cls}">${lbl}</span></td>
+      <td><div class="actions">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editQO('${r.id}')" title="Modifier">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteQO('${r.id}')" title="Supprimer">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openQOModal(data) {
+  qoEditingId = data?.id || null;
+  document.getElementById('qoModalTitle').textContent = data ? 'Modifier la question orale' : 'Nouvelle question orale';
+  document.getElementById('qo-numero').value       = data?.numero ?? '';
+  document.getElementById('qo-date').value         = data?.date_seance || '';
+  document.getElementById('qo-session').value      = data?.session || 'Session mars 2026';
+  document.getElementById('qo-auteur').value       = data?.auteur_nom || '';
+  document.getElementById('qo-destinataire').value = data?.destinataire || '';
+  document.getElementById('qo-sujet').value        = data?.sujet || '';
+  document.getElementById('qo-statut-form').value  = data?.statut || 'Programmee';
+  document.getElementById('qoModalOverlay').classList.remove('hidden');
+}
+
+async function editQO(id) {
+  const r = qoData.find(x => x.id === id);
+  if (r) openQOModal(r);
+}
+
+function closeQOModal() { document.getElementById('qoModalOverlay').classList.add('hidden'); qoEditingId = null; }
+
+async function saveQO() {
+  const sujet  = document.getElementById('qo-sujet').value.trim();
+  const auteur = document.getElementById('qo-auteur').value.trim();
+  const date   = document.getElementById('qo-date').value;
+  if (!sujet || !auteur || !date) { toast('Sujet, auteur et date sont obligatoires', 'error'); return; }
+
+  const payload = {
+    numero:       parseInt(document.getElementById('qo-numero').value) || null,
+    date_seance:  date,
+    session:      document.getElementById('qo-session').value.trim() || null,
+    auteur_nom:   auteur,
+    destinataire: document.getElementById('qo-destinataire').value.trim() || null,
+    sujet,
+    statut:       document.getElementById('qo-statut-form').value,
+  };
+
+  const { error } = qoEditingId
+    ? await db.from('questions_orales').update(payload).eq('id', qoEditingId)
+    : await db.from('questions_orales').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(qoEditingId ? 'Question mise à jour' : 'Question enregistrée', 'success');
+  closeQOModal();
+  loadQuestionsOrales();
+}
+
+async function deleteQO(id) {
+  if (!confirm('Supprimer cette question orale ?')) return;
+  const { error } = await db.from('questions_orales').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Question supprimée', 'success');
+  loadQuestionsOrales();
+}
+
+// =========================================
+// INTERPELLATIONS
+// =========================================
+let interpData = [];
+let interpEditingId = null;
+
+const INTERP_STATUT_BADGES = {
+  'Deposee':    'badge badge-deposee',
+  'Programmee': 'badge badge-programmee',
+  'Debattue':   'badge badge-debattue',
+  'Classee':    'badge badge-classee',
+};
+const INTERP_STATUT_LABELS = { 'Deposee':'Déposée', 'Programmee':'Programmée', 'Debattue':'Débattue', 'Classee':'Classée' };
+
+async function loadInterpellations() {
+  const tbody = document.getElementById('interp-list');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('interpellations').select('*').order('date', { ascending: false });
+  if (error) { toast('Erreur : ' + error.message, 'error'); interpData = []; renderInterp([]); return; }
+  interpData = data || [];
+
+  const badge = document.getElementById('badge-interpellations');
+  if (badge) badge.textContent = interpData.length;
+  filterInterpellations();
+}
+
+function filterInterpellations() {
+  const q  = (document.getElementById('interp-search')?.value || '').toLowerCase();
+  const st = document.getElementById('interp-statut')?.value || '';
+  const filtered = interpData.filter(r => {
+    if (st && r.statut !== st) return false;
+    if (q && !((r.sujet||'').toLowerCase().includes(q) || (r.auteur_nom||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  document.getElementById('interp-count').textContent = filtered.length;
+  renderInterp(filtered);
+}
+
+function renderInterp(list) {
+  const el = document.getElementById('interp-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Aucune interpellation</td></tr>'; return; }
+  el.innerHTML = list.map(r => {
+    const d = r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('fr-FR') : '—';
+    const cls = INTERP_STATUT_BADGES[r.statut] || 'badge badge-gray';
+    const lbl = INTERP_STATUT_LABELS[r.statut] || r.statut || '—';
+    return `<tr>
+      <td style="font-size:.8rem;color:var(--muted)">${r.numero ?? '—'}</td>
+      <td style="font-size:.8rem;white-space:nowrap">${d}</td>
+      <td style="font-weight:600;font-size:.82rem">${esc(r.auteur_nom || '—')}</td>
+      <td style="max-width:240px;font-size:.82rem">${esc(r.sujet || '—')}</td>
+      <td style="font-size:.75rem;color:var(--muted)">${esc(r.session || '—')}</td>
+      <td><span class="${cls}">${lbl}</span></td>
+      <td><div class="actions">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editInterp('${r.id}')" title="Modifier">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteInterp('${r.id}')" title="Supprimer">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openInterpModal(data) {
+  interpEditingId = data?.id || null;
+  document.getElementById('interpModalTitle').textContent = data ? 'Modifier l\'interpellation' : 'Nouvelle interpellation';
+  document.getElementById('interp-numero').value       = data?.numero ?? '';
+  document.getElementById('interp-date').value         = data?.date || '';
+  document.getElementById('interp-session').value      = data?.session || 'Session mars 2026';
+  document.getElementById('interp-auteur').value       = data?.auteur_nom || '';
+  document.getElementById('interp-sujet').value        = data?.sujet || '';
+  document.getElementById('interp-description').value  = data?.description || '';
+  document.getElementById('interp-statut-form').value  = data?.statut || 'Deposee';
+  document.getElementById('interpModalOverlay').classList.remove('hidden');
+}
+
+async function editInterp(id) {
+  const r = interpData.find(x => x.id === id);
+  if (r) openInterpModal(r);
+}
+
+function closeInterpModal() { document.getElementById('interpModalOverlay').classList.add('hidden'); interpEditingId = null; }
+
+async function saveInterp() {
+  const sujet  = document.getElementById('interp-sujet').value.trim();
+  const auteur = document.getElementById('interp-auteur').value.trim();
+  const date   = document.getElementById('interp-date').value;
+  if (!sujet || !auteur || !date) { toast('Sujet, auteur et date sont obligatoires', 'error'); return; }
+
+  const payload = {
+    numero:      parseInt(document.getElementById('interp-numero').value) || null,
+    date,
+    session:     document.getElementById('interp-session').value.trim() || null,
+    auteur_nom:  auteur,
+    sujet,
+    description: document.getElementById('interp-description').value.trim() || null,
+    statut:      document.getElementById('interp-statut-form').value,
+  };
+
+  const { error } = interpEditingId
+    ? await db.from('interpellations').update(payload).eq('id', interpEditingId)
+    : await db.from('interpellations').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(interpEditingId ? 'Interpellation mise à jour' : 'Interpellation enregistrée', 'success');
+  closeInterpModal();
+  loadInterpellations();
+}
+
+async function deleteInterp(id) {
+  if (!confirm('Supprimer cette interpellation ?')) return;
+  const { error } = await db.from('interpellations').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Interpellation supprimée', 'success');
+  loadInterpellations();
+}
+
+// =========================================
+// JOURNAUX DES DÉBATS
+// =========================================
+let jdData = [];
+let jdEditingId = null;
+
+const JD_TYPE_BADGES = {
+  'Integral':   'badge badge-integral',
+  'Resume':     'badge badge-resume',
+  'Provisoire': 'badge badge-provisoire',
+};
+const JD_TYPE_LABELS = { 'Integral':'CR Intégral', 'Resume':'CR Analytique', 'Provisoire':'Provisoire' };
+
+async function loadJournauxDebats() {
+  const tbody = document.getElementById('jd-list');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Chargement…</td></tr>';
+
+  const { data, error } = await db.from('journaux_debats').select('*').order('date_seance', { ascending: false });
+  if (error) { toast('Erreur : ' + error.message, 'error'); jdData = []; renderJD([]); return; }
+  jdData = data || [];
+
+  const badge = document.getElementById('badge-journaux-debats');
+  if (badge) badge.textContent = jdData.length;
+  filterJournauxDebats();
+}
+
+function filterJournauxDebats() {
+  const q  = (document.getElementById('jd-search')?.value || '').toLowerCase();
+  const ty = document.getElementById('jd-type')?.value || '';
+  const filtered = jdData.filter(r => {
+    if (ty && r.type_doc !== ty) return false;
+    if (q && !((r.titre||'').toLowerCase().includes(q) || (r.numero_ref||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  document.getElementById('jd-count').textContent = filtered.length;
+  renderJD(filtered);
+}
+
+function renderJD(list) {
+  const el = document.getElementById('jd-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Aucun journal des débats</td></tr>'; return; }
+  el.innerHTML = list.map(r => {
+    const d = r.date_seance ? new Date(r.date_seance + 'T00:00:00').toLocaleDateString('fr-FR') : '—';
+    const cls = JD_TYPE_BADGES[r.type_doc] || 'badge badge-gray';
+    const lbl = JD_TYPE_LABELS[r.type_doc] || r.type_doc || '—';
+    const pdf = r.file_url
+      ? `<a href="${esc(r.file_url)}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:.72rem;">PDF</a>`
+      : '<span style="color:var(--muted);font-size:.75rem">—</span>';
+    const pub = r.is_public
+      ? '<span class="badge badge-green">Publié</span>'
+      : '<span class="badge badge-gray">Masqué</span>';
+    return `<tr>
+      <td style="font-family:monospace;font-size:.78rem">${esc(r.numero_ref || '—')}</td>
+      <td style="max-width:220px;font-weight:600;font-size:.82rem">${esc(r.titre || '—')}</td>
+      <td style="font-size:.8rem;white-space:nowrap">${d}</td>
+      <td style="font-size:.75rem;color:var(--muted)">${esc(r.session || '—')}</td>
+      <td><span class="${cls}">${lbl}</span></td>
+      <td>${pdf}</td>
+      <td>${pub}</td>
+      <td><div class="actions">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editJD('${r.id}')" title="Modifier">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteJD('${r.id}')" title="Supprimer">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openJDModal(data) {
+  jdEditingId = data?.id || null;
+  document.getElementById('jdModalTitle').textContent = data ? 'Modifier le journal' : 'Nouveau journal des débats';
+  document.getElementById('jd-ref').value        = data?.numero_ref || '';
+  document.getElementById('jd-date').value       = data?.date_seance || '';
+  document.getElementById('jd-titre').value      = data?.titre || '';
+  document.getElementById('jd-session').value    = data?.session || 'Session mars 2026';
+  document.getElementById('jd-type-form').value  = data?.type_doc || 'Integral';
+  document.getElementById('jd-file-url').value   = data?.file_url || '';
+  document.getElementById('jd-published').value  = data?.published_at || '';
+  document.getElementById('jd-is-public').checked = data ? !!data.is_public : true;
+  document.getElementById('jdModalOverlay').classList.remove('hidden');
+}
+
+async function editJD(id) {
+  const r = jdData.find(x => x.id === id);
+  if (r) openJDModal(r);
+}
+
+function closeJDModal() { document.getElementById('jdModalOverlay').classList.add('hidden'); jdEditingId = null; }
+
+async function saveJD() {
+  const ref   = document.getElementById('jd-ref').value.trim();
+  const titre = document.getElementById('jd-titre').value.trim();
+  const date  = document.getElementById('jd-date').value;
+  if (!ref || !titre || !date) { toast('Référence, titre et date sont obligatoires', 'error'); return; }
+
+  const payload = {
+    numero_ref:   ref,
+    titre,
+    date_seance:  date,
+    session:      document.getElementById('jd-session').value.trim() || null,
+    type_doc:     document.getElementById('jd-type-form').value,
+    file_url:     document.getElementById('jd-file-url').value.trim() || null,
+    published_at: document.getElementById('jd-published').value || null,
+    is_public:    document.getElementById('jd-is-public').checked,
+  };
+
+  const { error } = jdEditingId
+    ? await db.from('journaux_debats').update(payload).eq('id', jdEditingId)
+    : await db.from('journaux_debats').insert([payload]);
+
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast(jdEditingId ? 'Journal mis à jour' : 'Journal enregistré', 'success');
+  closeJDModal();
+  loadJournauxDebats();
+}
+
+async function deleteJD(id) {
+  if (!confirm('Supprimer ce journal des débats ?')) return;
+  const { error } = await db.from('journaux_debats').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Journal supprimé', 'success');
+  loadJournauxDebats();
 }

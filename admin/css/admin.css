@@ -405,3 +405,73 @@ input,textarea,select{font-family:var(--font)}
 @media(max-width:480px){
   .stats-grid{grid-template-columns:1fr}
 }
+
+/* =========================================
+   SVG ICON NAV
+   ========================================= */
+.nav-icon{display:flex;align-items:center;justify-content:center;width:20px;flex-shrink:0}
+.nav-icon svg{stroke:rgba(255,255,255,.45);transition:stroke var(--trans);flex-shrink:0}
+.nav-item:hover .nav-icon svg{stroke:rgba(255,255,255,.85)}
+.nav-item.active .nav-icon svg{stroke:#fff}
+.nav-item.active{background:var(--primary);color:white;box-shadow:0 2px 8px rgba(0,154,68,.3)}
+.sidebar-logo-icon{display:flex;align-items:center;justify-content:center}
+
+/* Section label with faint rule */
+.sidebar-section-label{display:flex;align-items:center;gap:8px}
+.sidebar-section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07);margin-left:4px}
+
+/* =========================================
+   STATS V2 GRID (8 cards)
+   ========================================= */
+.stats-grid-8{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:1100px){.stats-grid-8{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.stats-grid-8{grid-template-columns:1fr}}
+
+.stat-card-v2{
+  background:var(--card);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:12px;border-left:3px solid var(--primary);
+  transition:box-shadow var(--trans);cursor:pointer;
+}
+.stat-card-v2:hover{box-shadow:var(--shadow-md)}
+.stat-card-v2 .sv2-icon{
+  width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  background:var(--primary-light);flex-shrink:0;
+}
+.stat-card-v2 .sv2-icon svg{stroke:var(--primary)}
+.stat-card-v2 .sv2-num{font-size:1.5rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.stat-card-v2 .sv2-label{font-size:.72rem;color:var(--muted);margin-top:3px}
+.stat-card-v2.blue{border-color:#3b82f6}.stat-card-v2.blue .sv2-icon{background:#eff6ff}.stat-card-v2.blue .sv2-icon svg{stroke:#3b82f6}
+.stat-card-v2.amber{border-color:#f59e0b}.stat-card-v2.amber .sv2-icon{background:#fffbeb}.stat-card-v2.amber .sv2-icon svg{stroke:#d97706}
+.stat-card-v2.red{border-color:var(--danger)}.stat-card-v2.red .sv2-icon{background:#fef2f2}.stat-card-v2.red .sv2-icon svg{stroke:var(--danger)}
+.stat-card-v2.purple{border-color:#7c3aed}.stat-card-v2.purple .sv2-icon{background:#f5f3ff}.stat-card-v2.purple .sv2-icon svg{stroke:#7c3aed}
+.stat-card-v2.teal{border-color:#0891b2}.stat-card-v2.teal .sv2-icon{background:#ecfeff}.stat-card-v2.teal .sv2-icon svg{stroke:#0891b2}
+.stat-card-v2.indigo{border-color:#4f46e5}.stat-card-v2.indigo .sv2-icon{background:#eef2ff}.stat-card-v2.indigo .sv2-icon svg{stroke:#4f46e5}
+
+/* =========================================
+   BADGE STATUTS — contrôle parlementaire
+   ========================================= */
+.badge-posee{background:#dbeafe;color:#1d4ed8}
+.badge-repondue{background:#dcfce7;color:#166534}
+.badge-sans-rep{background:#fee2e2;color:#dc2626}
+.badge-programmee{background:#fef9c3;color:#854d0e}
+.badge-debattue{background:#dcfce7;color:#166534}
+.badge-classee{background:#f1f5f9;color:#64748b}
+.badge-deposee{background:#dbeafe;color:#1d4ed8}
+.badge-integral{background:#f5f3ff;color:#5b21b6}
+.badge-resume{background:#eff6ff;color:#1d4ed8}
+.badge-provisoire{background:#fef9c3;color:#854d0e}
+
+/* =========================================
+   TABLE OVERFLOW
+   ========================================= */
+.table-wrap{overflow-x:auto}
+
+/* =========================================
+   GUIDE RAPIDE — improved cards
+   ========================================= */
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:20px}
+.guide-card{border-radius:10px;padding:18px;cursor:pointer;transition:all var(--trans);border-left:4px solid;background:var(--card)}
+.guide-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.guide-card-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.guide-card h4{font-size:.87rem;font-weight:700;margin-bottom:4px}
+.guide-card p{font-size:.77rem;color:var(--muted);line-height:1.45}

@@ -50,7 +50,9 @@
   <!-- ======== SIDEBAR ======== -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">🏛️</div>
+      <div class="sidebar-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(0,154,68,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
       <div class="sidebar-logo-text">
         <strong>ASSEMBLÉE NATIONALE</strong>
         <span>Panneau d'administration</span>
@@ -60,83 +62,120 @@
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Tableau de bord</div>
       <button class="nav-item active" data-section="accueil">
-        <span class="nav-icon">🏠</span> Accueil
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span>
+        Tableau de bord
       </button>
 
       <div class="sidebar-section-label">Publications</div>
       <button class="nav-item" data-section="articles">
-        <span class="nav-icon">✍️</span> Articles / Blog
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></span>
+        Articles / Blog
         <span class="nav-badge" id="badge-articles">—</span>
       </button>
       <button class="nav-item" data-section="cms-pages">
-        <span class="nav-icon">📄</span> Pages
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        Pages
         <span class="nav-badge" id="badge-cms-pages">—</span>
       </button>
 
       <div class="sidebar-section-label">Contenu du site</div>
       <button class="nav-item" data-section="slides">
-        <span class="nav-icon">🖼️</span> Carrousel / Bannières
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg></span>
+        Carrousel / Bannières
         <span class="nav-badge" id="badge-slides">—</span>
       </button>
       <button class="nav-item" data-section="actualites">
-        <span class="nav-icon">📰</span> Actualités
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg></span>
+        Actualités
         <span class="nav-badge" id="badge-actualites">—</span>
       </button>
       <button class="nav-item" data-section="agenda">
-        <span class="nav-icon">📅</span> Agenda
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        Agenda
         <span class="nav-badge" id="badge-agenda">—</span>
       </button>
 
       <div class="sidebar-section-label">Personnalités</div>
       <button class="nav-item" data-section="president">
-        <span class="nav-icon">👤</span> Le Président
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        Le Président
       </button>
       <button class="nav-item" data-section="bureau">
-        <span class="nav-icon">👥</span> Le Bureau
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        Le Bureau
         <span class="nav-badge" id="badge-bureau">—</span>
       </button>
 
       <div class="sidebar-section-label">Assemblée</div>
       <button class="nav-item" data-section="deputes">
-        <span class="nav-icon">🏛️</span> Les Députés
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+        Les Députés
         <span class="nav-badge" id="badge-deputes">—</span>
       </button>
-      <button class="nav-item" data-section="messages">
-        <span class="nav-icon">✉️</span> Messages reçus
-        <span class="nav-badge" id="badge-messages">—</span>
+      <button class="nav-item" data-section="groupes">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
+        Groupes parlementaires
+        <span class="nav-badge" id="badge-groupes">—</span>
       </button>
 
-      <button class="nav-item" data-section="newsletter">
-        <span class="nav-icon">📬</span> Newsletter
-        <span class="nav-badge" id="badge-newsletter">—</span>
+      <div class="sidebar-section-label">Travaux parlementaires</div>
+      <button class="nav-item" data-section="seances">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg></span>
+        Séances plénières
+        <span class="nav-badge" id="badge-seances">—</span>
       </button>
-
+      <button class="nav-item" data-section="questions-ecrites">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+        Questions écrites
+        <span class="nav-badge" id="badge-questions-ecrites">—</span>
+      </button>
+      <button class="nav-item" data-section="questions-orales">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+        Questions orales
+        <span class="nav-badge" id="badge-questions-orales">—</span>
+      </button>
+      <button class="nav-item" data-section="interpellations">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        Interpellations
+        <span class="nav-badge" id="badge-interpellations">—</span>
+      </button>
+      <button class="nav-item" data-section="journaux-debats">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        Journaux des débats
+        <span class="nav-badge" id="badge-journaux-debats">—</span>
+      </button>
       <button class="nav-item" data-section="archives">
-        <span class="nav-icon">📂</span> Archives & Documents
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        Archives & Documents
         <span class="nav-badge" id="badge-archives">—</span>
       </button>
 
-      <button class="nav-item" data-section="seances">
-        <span class="nav-icon">🏛️</span> Séances plénières
-        <span class="nav-badge" id="badge-seances">—</span>
+      <div class="sidebar-section-label">Communication</div>
+      <button class="nav-item" data-section="messages">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span>
+        Messages reçus
+        <span class="nav-badge" id="badge-messages">—</span>
       </button>
-
-      <button class="nav-item" data-section="groupes">
-        <span class="nav-icon">🎯</span> Groupes parlementaires
-        <span class="nav-badge" id="badge-groupes">—</span>
+      <button class="nav-item" data-section="newsletter">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg></span>
+        Newsletter
+        <span class="nav-badge" id="badge-newsletter">—</span>
       </button>
 
       <div class="sidebar-section-label">Médias</div>
       <button class="nav-item" data-section="media">
-        <span class="nav-icon">🖼️</span> Médiathèque
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg></span>
+        Médiathèque
       </button>
 
       <div class="sidebar-section-label">Configuration</div>
       <button class="nav-item" data-section="live">
-        <span class="nav-icon">🔴</span> En Direct
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg></span>
+        En Direct
       </button>
       <button class="nav-item" data-section="parametres">
-        <span class="nav-icon">⚙️</span> Paramètres généraux
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        Paramètres généraux
       </button>
     </nav>
 
@@ -166,49 +205,95 @@
 
       <!-- ==== ACCUEIL ==== -->
       <div id="section-accueil" class="section">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon">🖼️</div>
-            <div><div class="stat-num" id="stat-slides">—</div><div class="stat-label">Slides carrousel</div></div>
+
+        <!-- Stats 8 cartes -->
+        <div class="stats-grid-8">
+          <div class="stat-card-v2" onclick="goTo('slides')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg></div>
+            <div><div class="sv2-num" id="stat-slides">—</div><div class="sv2-label">Slides carrousel</div></div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon">📰</div>
-            <div><div class="stat-num" id="stat-actualites">—</div><div class="stat-label">Actualités</div></div>
+          <div class="stat-card-v2 blue" onclick="goTo('actualites')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg></div>
+            <div><div class="sv2-num" id="stat-actualites">—</div><div class="sv2-label">Actualités</div></div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div><div class="stat-num" id="stat-bureau">—</div><div class="stat-label">Membres du Bureau</div></div>
+          <div class="stat-card-v2 amber" onclick="goTo('bureau')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div><div class="sv2-num" id="stat-bureau">—</div><div class="sv2-label">Membres du Bureau</div></div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon">📅</div>
-            <div><div class="stat-num" id="stat-agenda">—</div><div class="stat-label">Événements agenda</div></div>
+          <div class="stat-card-v2 red" onclick="goTo('messages')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
+            <div><div class="sv2-num" id="stat-messages">—</div><div class="sv2-label">Messages non lus</div></div>
+          </div>
+          <div class="stat-card-v2 purple" onclick="goTo('agenda')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <div><div class="sv2-num" id="stat-agenda">—</div><div class="sv2-label">Événements agenda</div></div>
+          </div>
+          <div class="stat-card-v2 teal" onclick="goTo('deputes')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+            <div><div class="sv2-num" id="stat-deputes">—</div><div class="sv2-label">Députés</div></div>
+          </div>
+          <div class="stat-card-v2 indigo" onclick="goTo('seances')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg></div>
+            <div><div class="sv2-num" id="stat-seances">—</div><div class="sv2-label">Séances plénières</div></div>
+          </div>
+          <div class="stat-card-v2 blue" onclick="goTo('newsletter')">
+            <div class="sv2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg></div>
+            <div><div class="sv2-num" id="stat-newsletter">—</div><div class="sv2-label">Abonnés newsletter</div></div>
           </div>
         </div>
 
+        <!-- Guide rapide -->
         <div class="section-card">
           <div class="section-card-header">
-            <div class="section-card-title">🚀 Guide rapide</div>
+            <div class="section-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Actions rapides
+            </div>
+            <a href="../index.html" target="_blank" class="btn btn-ghost btn-sm">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Voir le site
+            </a>
           </div>
-          <div style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 16px;">
-            <div style="background:var(--primary-light);border-radius:8px;padding:18px;border-left:4px solid var(--primary);">
-              <div style="font-size:1.5rem;margin-bottom:8px;">🖼️</div>
-              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Changer le carrousel</h4>
-              <p style="font-size:.8rem;color:var(--muted);">Ajoutez, modifiez ou supprimez les images de la bannière principale.</p>
+          <div class="guide-grid">
+            <div class="guide-card" style="border-color:var(--primary);background:#f0fdf4;" onclick="goTo('slides')">
+              <div class="guide-card-icon" style="background:var(--primary-light)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg></div>
+              <h4>Carrousel d'accueil</h4>
+              <p>Modifier les images et titres de la bannière principale du site.</p>
             </div>
-            <div style="background:#eff6ff;border-radius:8px;padding:18px;border-left:4px solid #3b82f6;">
-              <div style="font-size:1.5rem;margin-bottom:8px;">📰</div>
-              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Publier une actualité</h4>
-              <p style="font-size:.8rem;color:var(--muted);">Créez et gérez les articles d'actualité avec photos.</p>
+            <div class="guide-card" style="border-color:#3b82f6;background:#eff6ff;" onclick="goTo('actualites')">
+              <div class="guide-card-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2z"/></svg></div>
+              <h4>Publier une actualité</h4>
+              <p>Créer un article d'actualité avec photo, catégorie et date.</p>
             </div>
-            <div style="background:#fffbeb;border-radius:8px;padding:18px;border-left:4px solid #f59e0b;">
-              <div style="font-size:1.5rem;margin-bottom:8px;">👤</div>
-              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Mettre à jour le Président</h4>
-              <p style="font-size:.8rem;color:var(--muted);">Changez la photo et la biographie du Président.</p>
+            <div class="guide-card" style="border-color:#f59e0b;background:#fffbeb;" onclick="goTo('agenda')">
+              <div class="guide-card-icon" style="background:#fef3c7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <h4>Ajouter un événement</h4>
+              <p>Planifier une séance, commission ou visite officielle à l'agenda.</p>
             </div>
-            <div style="background:#fef2f2;border-radius:8px;padding:18px;border-left:4px solid var(--danger);">
-              <div style="font-size:1.5rem;margin-bottom:8px;">👥</div>
-              <h4 style="font-size:.9rem;font-weight:700;margin-bottom:6px;">Gérer le Bureau</h4>
-              <p style="font-size:.8rem;color:var(--muted);">Mettez à jour les membres et photos du Bureau.</p>
+            <div class="guide-card" style="border-color:#7c3aed;background:#f5f3ff;" onclick="goTo('president')">
+              <div class="guide-card-icon" style="background:#ede9fe"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <h4>Profil du Président</h4>
+              <p>Mettre à jour la photo, biographie et fonctions du Président.</p>
+            </div>
+            <div class="guide-card" style="border-color:var(--danger);background:#fef2f2;" onclick="goTo('deputes')">
+              <div class="guide-card-icon" style="background:#fee2e2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+              <h4>Gérer les Députés</h4>
+              <p>Ajouter ou modifier les profils des 151 députés.</p>
+            </div>
+            <div class="guide-card" style="border-color:#0891b2;background:#ecfeff;" onclick="goTo('seances')">
+              <div class="guide-card-icon" style="background:#cffafe"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>
+              <h4>Séances plénières</h4>
+              <p>Publier l'ordre du jour et le compte rendu d'une séance.</p>
+            </div>
+            <div class="guide-card" style="border-color:#4f46e5;background:#eef2ff;" onclick="goTo('media')">
+              <div class="guide-card-icon" style="background:#e0e7ff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg></div>
+              <h4>Médiathèque</h4>
+              <p>Ajouter des photos et vidéos YouTube dans la galerie.</p>
+            </div>
+            <div class="guide-card" style="border-color:#64748b;background:#f8fafc;" onclick="goTo('live')">
+              <div class="guide-card-icon" style="background:#f1f5f9"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg></div>
+              <h4>Diffuser en direct</h4>
+              <p>Activer le live YouTube et gérer les replays des séances passées.</p>
             </div>
           </div>
         </div>
@@ -944,6 +1029,371 @@
               <input class="field-input" id="param-live_url" placeholder="https://youtube.com/...">
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== QUESTIONS ÉCRITES ==== -->
+      <div id="section-questions-ecrites" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Questions écrites
+            </div>
+            <button class="btn btn-primary" onclick="openQEModal()">+ Nouvelle question</button>
+          </div>
+          <div style="padding:12px 20px;background:#eff6ff;border-bottom:1px solid var(--border);font-size:.8rem;color:#1e40af;">
+            Les questions écrites permettent aux députés d'interroger le gouvernement par écrit. Le gouvernement dispose d'un délai pour répondre.
+          </div>
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input id="qe-search" type="search" placeholder="🔍 Rechercher…" style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;" oninput="filterQuestionsEcrites()">
+            <select id="qe-statut" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;background:white;" onchange="filterQuestionsEcrites()">
+              <option value="">Tous statuts</option>
+              <option value="Posee">Posée</option>
+              <option value="Repondue">Répondue</option>
+              <option value="Sans reponse">Sans réponse</option>
+            </select>
+            <span style="font-size:.8rem;color:var(--muted)"><span id="qe-count">—</span> question(s)</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>N°</th><th>Date</th><th>Auteur</th><th>Destinataire</th><th>Sujet</th><th>Session</th><th>Statut</th><th style="width:90px">Actions</th>
+              </tr></thead>
+              <tbody id="qe-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Questions Écrites -->
+      <div class="modal-overlay hidden" id="qeModalOverlay" onclick="if(event.target===this)closeQEModal()">
+        <div class="modal" style="max-width:600px">
+          <div class="modal-header">
+            <div class="modal-title" id="qeModalTitle">Nouvelle question écrite</div>
+            <button class="modal-close" onclick="closeQEModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="field-row">
+              <div class="field-group" style="flex:0 0 80px;">
+                <label class="field-label">N°</label>
+                <input id="qe-numero" class="field-input" type="number" placeholder="1">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Date <span class="req">*</span></label>
+                <input id="qe-date" class="field-input" type="date">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Session</label>
+                <input id="qe-session" class="field-input" placeholder="Session mars 2026" value="Session mars 2026">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Auteur (Député) <span class="req">*</span></label>
+                <input id="qe-auteur" class="field-input" placeholder="Prénom NOM">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Destinataire (Ministre) <span class="req">*</span></label>
+                <input id="qe-destinataire" class="field-input" placeholder="Ministre de…">
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Sujet <span class="req">*</span></label>
+              <input id="qe-sujet" class="field-input" placeholder="Objet de la question…">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Contenu / Corps de la question</label>
+              <textarea id="qe-contenu" class="field-textarea" rows="4" placeholder="Texte intégral de la question…"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Statut</label>
+                <select id="qe-statut-form" class="field-select">
+                  <option value="Posee">Posée</option>
+                  <option value="Repondue">Répondue</option>
+                  <option value="Sans reponse">Sans réponse</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">URL réponse (PDF)</label>
+                <input id="qe-reponse-url" class="field-input" placeholder="https://… (optionnel)">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeQEModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveQE()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== QUESTIONS ORALES ==== -->
+      <div id="section-questions-orales" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              Questions orales
+            </div>
+            <button class="btn btn-primary" onclick="openQOModal()">+ Nouvelle question</button>
+          </div>
+          <div style="padding:12px 20px;background:#f0fdf4;border-bottom:1px solid var(--border);font-size:.8rem;color:#166534;">
+            Les questions orales sont posées en séance plénière et font l'objet d'une réponse immédiate du ministre.
+          </div>
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input id="qo-search" type="search" placeholder="🔍 Rechercher…" style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;" oninput="filterQuestionsOrales()">
+            <select id="qo-statut" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;background:white;" onchange="filterQuestionsOrales()">
+              <option value="">Tous statuts</option>
+              <option value="Programmee">Programmée</option>
+              <option value="Posee">Posée</option>
+              <option value="Repondue">Répondue</option>
+            </select>
+            <span style="font-size:.8rem;color:var(--muted)"><span id="qo-count">—</span> question(s)</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>N°</th><th>Date séance</th><th>Auteur</th><th>Destinataire</th><th>Sujet</th><th>Session</th><th>Statut</th><th style="width:90px">Actions</th>
+              </tr></thead>
+              <tbody id="qo-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Questions Orales -->
+      <div class="modal-overlay hidden" id="qoModalOverlay" onclick="if(event.target===this)closeQOModal()">
+        <div class="modal" style="max-width:580px">
+          <div class="modal-header">
+            <div class="modal-title" id="qoModalTitle">Nouvelle question orale</div>
+            <button class="modal-close" onclick="closeQOModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="field-row">
+              <div class="field-group" style="flex:0 0 80px;">
+                <label class="field-label">N°</label>
+                <input id="qo-numero" class="field-input" type="number" placeholder="1">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Date de séance <span class="req">*</span></label>
+                <input id="qo-date" class="field-input" type="date">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Session</label>
+                <input id="qo-session" class="field-input" placeholder="Session mars 2026" value="Session mars 2026">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Auteur (Député) <span class="req">*</span></label>
+                <input id="qo-auteur" class="field-input" placeholder="Prénom NOM">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Destinataire (Ministre) <span class="req">*</span></label>
+                <input id="qo-destinataire" class="field-input" placeholder="Ministre de…">
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Sujet <span class="req">*</span></label>
+              <input id="qo-sujet" class="field-input" placeholder="Objet de la question…">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Statut</label>
+              <select id="qo-statut-form" class="field-select">
+                <option value="Programmee">Programmée</option>
+                <option value="Posee">Posée</option>
+                <option value="Repondue">Répondue</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeQOModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveQO()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== INTERPELLATIONS ==== -->
+      <div id="section-interpellations" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Interpellations
+            </div>
+            <button class="btn btn-primary" onclick="openInterpModal()">+ Nouvelle interpellation</button>
+          </div>
+          <div style="padding:12px 20px;background:#fefce8;border-bottom:1px solid var(--border);font-size:.8rem;color:#854d0e;">
+            L'interpellation est un acte de contrôle parlementaire permettant aux députés de demander des comptes au gouvernement sur sa politique.
+          </div>
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input id="interp-search" type="search" placeholder="🔍 Rechercher…" style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;" oninput="filterInterpellations()">
+            <select id="interp-statut" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;background:white;" onchange="filterInterpellations()">
+              <option value="">Tous statuts</option>
+              <option value="Deposee">Déposée</option>
+              <option value="Programmee">Programmée</option>
+              <option value="Debattue">Débattue</option>
+              <option value="Classee">Classée</option>
+            </select>
+            <span style="font-size:.8rem;color:var(--muted)"><span id="interp-count">—</span> interpellation(s)</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>N°</th><th>Date</th><th>Auteur</th><th>Sujet</th><th>Session</th><th>Statut</th><th style="width:90px">Actions</th>
+              </tr></thead>
+              <tbody id="interp-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Interpellations -->
+      <div class="modal-overlay hidden" id="interpModalOverlay" onclick="if(event.target===this)closeInterpModal()">
+        <div class="modal" style="max-width:580px">
+          <div class="modal-header">
+            <div class="modal-title" id="interpModalTitle">Nouvelle interpellation</div>
+            <button class="modal-close" onclick="closeInterpModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="field-row">
+              <div class="field-group" style="flex:0 0 80px;">
+                <label class="field-label">N°</label>
+                <input id="interp-numero" class="field-input" type="number" placeholder="1">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Date <span class="req">*</span></label>
+                <input id="interp-date" class="field-input" type="date">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Session</label>
+                <input id="interp-session" class="field-input" placeholder="Session mars 2026" value="Session mars 2026">
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Auteur (Député) <span class="req">*</span></label>
+              <input id="interp-auteur" class="field-input" placeholder="Prénom NOM">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Sujet <span class="req">*</span></label>
+              <input id="interp-sujet" class="field-input" placeholder="Objet de l'interpellation…">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Description / Détail</label>
+              <textarea id="interp-description" class="field-textarea" rows="4" placeholder="Exposé des motifs…"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Statut</label>
+              <select id="interp-statut-form" class="field-select">
+                <option value="Deposee">Déposée</option>
+                <option value="Programmee">Programmée</option>
+                <option value="Debattue">Débattue</option>
+                <option value="Classee">Classée</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeInterpModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveInterp()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== JOURNAUX DES DÉBATS ==== -->
+      <div id="section-journaux-debats" class="section hidden">
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Journaux des débats
+            </div>
+            <button class="btn btn-primary" onclick="openJDModal()">+ Ajouter un journal</button>
+          </div>
+          <div style="padding:12px 20px;background:#f5f3ff;border-bottom:1px solid var(--border);font-size:.8rem;color:#5b21b6;">
+            Les journaux des débats (compte rendus officiels) retranscrivent intégralement les débats en séance plénière.
+          </div>
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input id="jd-search" type="search" placeholder="🔍 Rechercher…" style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;" oninput="filterJournauxDebats()">
+            <select id="jd-type" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;outline:none;background:white;" onchange="filterJournauxDebats()">
+              <option value="">Tous types</option>
+              <option value="Integral">Compte rendu intégral</option>
+              <option value="Resume">Compte rendu analytique</option>
+              <option value="Provisoire">Provisoire</option>
+            </select>
+            <span style="font-size:.8rem;color:var(--muted)"><span id="jd-count">—</span> journal(aux)</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Référence</th><th>Titre / Séance</th><th>Date séance</th><th>Session</th><th>Type</th><th>PDF</th><th>Publié</th><th style="width:90px">Actions</th>
+              </tr></thead>
+              <tbody id="jd-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Journaux des Débats -->
+      <div class="modal-overlay hidden" id="jdModalOverlay" onclick="if(event.target===this)closeJDModal()">
+        <div class="modal" style="max-width:580px">
+          <div class="modal-header">
+            <div class="modal-title" id="jdModalTitle">Nouveau journal des débats</div>
+            <button class="modal-close" onclick="closeJDModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Référence <span class="req">*</span></label>
+                <input id="jd-ref" class="field-input" placeholder="JD-2026-001">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Date de séance <span class="req">*</span></label>
+                <input id="jd-date" class="field-input" type="date">
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Titre <span class="req">*</span></label>
+              <input id="jd-titre" class="field-input" placeholder="Séance plénière du…">
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Session</label>
+                <input id="jd-session" class="field-input" placeholder="Session mars 2026" value="Session mars 2026">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Type</label>
+                <select id="jd-type-form" class="field-select">
+                  <option value="Integral">Compte rendu intégral</option>
+                  <option value="Resume">Compte rendu analytique</option>
+                  <option value="Provisoire">Provisoire</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">URL du fichier PDF</label>
+              <input id="jd-file-url" class="field-input" placeholder="https://… (laisser vide si non disponible)">
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Date de publication</label>
+                <input id="jd-published" class="field-input" type="date">
+              </div>
+              <div class="field-group" style="display:flex;align-items:flex-end;padding-bottom:2px;">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                  <label class="toggle">
+                    <input type="checkbox" id="jd-is-public" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <span style="font-size:.82rem;font-weight:600;">Visible sur le site</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeJDModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="saveJD()">Enregistrer</button>
           </div>
         </div>
       </div>
